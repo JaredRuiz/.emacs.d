@@ -1,0 +1,8 @@
+My personal emacs stuff!
+
+Quick tips:
+To see if a function is bound to a key (and other stuff) do:
+ `C-h f function-name`
+
+Conversely, given a key sequence, to get the function name do: 
+`C-h k key-sequence`
