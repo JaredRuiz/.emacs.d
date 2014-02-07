@@ -1,9 +1,9 @@
 ;; appearance.el
 
-;; Remove initial "Emacs" splash screen
+;; Removes initial "Emacs" splash screen
 (setq inhibit-startup-message t)
 
-;;Color options, etc.
+;; Color options, etc.
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -22,10 +22,14 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 128 :width normal)))))
 
-;;gives column numbers 
+;; Gives line numbers on side of buffer
+(global-linum-mode 1)
+
+;; Gives column numbers at bottom of buffer
 (setq column-number-mode t)
 
-;;function to display file pathnames, in reverse order, so as to easier identify and switch buffers
+;; Display file pathnames, in reverse order, so as to easier identify
+;+  and switch buffers
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'reverse)
 
@@ -36,7 +40,8 @@
 (setq js-indent-level 2)
 
 ;; Benjamin Ferrari's kick-ass xml 'pretty print' function.
-;; Dont even need to include (begin end). Just navigate to the beginning of an xml doc and call function
+;; Dont even need to include (begin end). Just navigate to the beginning 
+;+ of an xml doc and call this function.
 ;; TODO: perhaps move this to an xml-specific file later on
 (defun bf-pretty-print-xml-region (begin end)
   "Pretty format XML markup in region. You need to have nxml-mode
