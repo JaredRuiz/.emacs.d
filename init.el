@@ -12,4 +12,7 @@
 (require 'key-bindings)
 (require 'appearance)
 (require 'kill-and-delete)
+(require 'improve-comments)
+;; only require on a mac
+(require 'mac)
 

@@ -10,6 +10,11 @@
 ;; Function in kill-and-delete.el
 (define-key global-map (kbd "C-,") 'backward-kill-line)
 
+;; Add quick comments
+;;(define-key global-map (kbd "C-/") 'comment-dwim) 
+(define-key global-map (kbd "C-/") 'comment-or-uncomment-region-or-line)
+
+
 (provide 'key-bindings)
 
 
