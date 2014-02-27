@@ -6,3 +6,10 @@ To see if a function is bound to a key (and other stuff) do:
 
 Conversely, given a key sequence, to get the function name do: 
 `C-h k key-sequence`
+
+Ideas for future programs:
+  A smarter 'delete' function. For instance, something like "'hello'" with the point between the o and the ', should only dlete to ' rather than ". Similarly, a smarter M-f and M-b function, which does something similar to above, but only when moving the point.
+
+  
+
+  
