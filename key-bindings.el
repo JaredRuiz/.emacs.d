@@ -3,6 +3,7 @@
 ;; RET just returns; C-m doesn't do anything
 (global-unset-key (kbd "C-m"))
 (global-unset-key (kbd "<return>"))
+(define-key global-map (kbd "<return>") 'newline)
 
 ;; Quickly hop between brackets of functions
 (define-key global-map (kbd "C-(") 'backward-sexp)
