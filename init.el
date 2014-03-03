@@ -17,15 +17,10 @@ To see if a function is bound to a key (and other stuff) do:
  `C-h f function-name`
 
 Conversely, given a key sequence, to get the function name do: 
-`C-h k key-sequence`
+`C-h k key-sequence`")
 
-Further ideas:
- C-x C-a --> let this act as a shortcut to immediately jump to the beginning of the first word of a line 
- (hence if there are indentations or comments, it will skip over those)
-
-
-
-")
+;; forward/backward/delete only goes to Uppercase
+(global-subword-mode 1)
 
 (require 'key-bindings)
 (require 'appearance)
