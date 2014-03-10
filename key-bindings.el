@@ -30,6 +30,8 @@
 ;; use to atuo-generate and ending tag when in nxml mode
 (define-key global-map (kbd "C-c C-]") 'nxml-finish-element)
 
+(define-key global-map (kbd "M-p") 'fast-last-sentence-end)
+(define-key global-map (kbd "M-n") 'fast-next-sentence-beginning)
 
 (provide 'key-bindings)
 

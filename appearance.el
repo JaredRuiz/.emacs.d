@@ -38,6 +38,10 @@
 (setq-default tab-width 2)
 (setq indent-line-function `insert-tab)
 (setq js-indent-level 2)
+(setq sh-basis-offset 0
+      sh-indentation 2
+      sh-indent-for-case-label 0
+      sh-indent-for-case-alt '+)
 
 ;; Benjamin Ferrari's kick-ass xml 'pretty print' function.
 ;; Dont even need to include (begin end). Just navigate to the beginning 
