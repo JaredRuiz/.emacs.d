@@ -22,11 +22,22 @@ Conversely, given a key sequence, to get the function name do:
 ;; forward/backward/delete only goes to Uppercase
 (global-subword-mode 1)
 
+(add-hook 'shell-mode-hook 'my-shell-hook)
+
+(add-hook 'eshell-preoutput-filter-functions
+          'ansi-color-filter-apply)
+
+(add-hook 'comint-output-filter-functions
+          'comint-watch-for-password-prompt)
+
+
 (require 'key-bindings)
 (require 'appearance)
 (require 'kill-and-delete)
 (require 'improve-comments)
 (require 'fast-point)
+(require 'better-xml)
+(require 'custom-shell)
 
 (require 'package)
 (require 'package)
@@ -43,3 +54,4 @@ Conversely, given a key sequence, to get the function name do:
 ;; only require on a mac
 ;; (require 'mac)
 
+(put 'erase-buffer 'disabled nil)
