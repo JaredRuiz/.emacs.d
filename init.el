@@ -27,8 +27,8 @@ Conversely, given a key sequence, to get the function name do:
 (add-hook 'eshell-preoutput-filter-functions
           'ansi-color-filter-apply)
 
-(add-hook 'comint-output-filter-functions
-          'comint-watch-for-password-prompt)
+;; (add-hook 'comint-output-filter-functions
+;;           'comint-watch-for-password-prompt)
 
 
 (require 'key-bindings)

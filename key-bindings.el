@@ -33,6 +33,11 @@
 (define-key global-map (kbd "M-p") 'fast-last-sentence-end)
 (define-key global-map (kbd "M-n") 'fast-next-sentence-beginning)
 
+(define-key global-map (kbd "C-x M-p") 'fast-last-sentence-end-new)
+(define-key global-map (kbd "C-x M-n") 'fast-next-sentence-beginning-new)
+
+
+
 (provide 'key-bindings)
 
 

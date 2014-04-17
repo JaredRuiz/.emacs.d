@@ -1,7 +1,5 @@
 ;; custom-shell.el
 
-
-
 (defun my-clear()
   (interactive)
   (erase-buffer)
