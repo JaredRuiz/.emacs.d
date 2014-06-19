@@ -1,6 +1,15 @@
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'load-path "~/.emacs.d/wrap-region/")
 
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                        ("marmalade" . "http://marmalade-repo.org/packages/")))
+(require 'package)
+(add-to-list 'package-archives 
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+(require 'wrap-region)
+
+
 
 ;; store backup files in a folder other than where the files are actually contained
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -31,6 +40,7 @@ Conversely, given a key sequence, to get the function name do:
 ;;           'comint-watch-for-password-prompt)
 
 
+
 (require 'key-bindings)
 (require 'appearance)
 (require 'kill-and-delete)
@@ -39,19 +49,13 @@ Conversely, given a key sequence, to get the function name do:
 (require 'better-xml)
 (require 'custom-shell)
 
-(require 'package)
-(require 'package)
-(add-to-list 'package-archives 
-    '("marmalade" .
-      "http://marmalade-repo.org/packages/"))
-(package-initialize)
-(require 'wrap-region)
+
 
 
 
 
 
 ;; only require on a mac
-;; (require 'mac)
+(require 'mac)
 
 (put 'erase-buffer 'disabled nil)
