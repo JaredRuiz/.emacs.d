@@ -25,4 +25,8 @@ by using nxml's indentation rules."
   (indent-region)
     (message "Ah, much better!"))
 
+(eval-after-load "nxml-mode"
+  '(define-key nxml-mode-map (kbd "C-c C-f") nil))
+
+
 (provide 'better-xml)
