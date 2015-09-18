@@ -30,16 +30,17 @@
 (global-set-key (kbd "C-'") 'insert-pair)
 
 ;; easy keys to split window.
-;; (global-set-key (kbd "M-1") 'split-window-vertically)
-;; (global-set-key (kbd "M-2") 'split-window-horizontally)
-;; (global-set-key (kbd "M-3") 'delete-window)
-;; (global-set-key (kbd "M-4") 'delete-other-windows)
-;; These seem to work better..
 (global-set-key (kbd "<M-up>") 'split-window-vertically)
 (global-set-key (kbd "<M-right>") 'split-window-horizontally)
 (global-set-key (kbd "<M-left>") 'delete-window)
 (global-set-key (kbd "<M-down>") 'delete-other-windows)
 (global-set-key (kbd "M-s") 'other-window)
+
+;; Multiple Cursors
+(global-set-key (kbd "C-|") 'mc/edit-lines)
+;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c <C-left>") 'mc/mark-all-like-this)
 
 (provide 'key-bindings)
 

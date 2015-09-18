@@ -32,7 +32,6 @@
 ;+  and switch buffers
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'reverse)
-
 ;; Trying to get tabs working correctly
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
