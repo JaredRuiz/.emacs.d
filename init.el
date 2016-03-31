@@ -1,6 +1,19 @@
 (add-to-list 'load-path "~/.emacs.d/")
+;; TODO: whats going on here ???
 ;;(add-to-list 'load-path "~/.emacs.d/wrap-region/")
 (add-to-list 'load-path "~/.emacs.d/nxhtml/autostart.el")
+
+;; jshint in emacs...see: https://github.com/daleharvey/jshint-mode
+(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
+(setq exec-path
+      '(
+    "/usr/local/bin"
+    "/usr/bin"
+    ))
+(add-to-list 'load-path "~/.emacs.d/jshint-mode")
+(require 'flymake-jshint)
+(add-hook 'javascript-mode-hook
+     (lambda () (flymake-mode t)))
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                         ("marmalade" . "http://marmalade-repo.org/packages/")))
