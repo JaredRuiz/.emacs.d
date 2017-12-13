@@ -13,6 +13,7 @@
 ;; Add quick comments
 (define-key global-map (kbd "C-/") 'comment-or-uncomment-region-or-line)
 (define-key global-map (kbd "C-x C-/") 'indent-for-comment)
+(define-key global-map (kbd "M-r") 'replace-string)
 
 ;; nxml key bindings
 (define-key global-map [C-tab] 'completion-at-point)
@@ -41,6 +42,8 @@
 ;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 ;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c <C-left>") 'mc/mark-all-like-this)
+
+(global-set-key (kbd "C-x f") 'find-name-dired)
 
 (provide 'key-bindings)
 
