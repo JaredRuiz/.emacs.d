@@ -1,0 +1,64 @@
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { NgForm } from '@angular/forms';
+declare var $: any;
+
+@Component({
+  selector: 'app-edit-equipment-purchase-order',
+  templateUrl: './edit-equipment-purchase-order.component.html'
+})
+
+export class EditEquipmentPurchaseOrderComponent {
+
+  @ViewChild('editEquipmentPurchaseOrderForm') editEquipmentPurchaseOrderForm: NgForm;
+
+  equipmentToEditTracked = new EquipmentViewModel();
+  @Input() set equipmentToEdit(value: EquipmentViewModel) {
+    this.equipmentToEditTracked = $.extend(true, {}, value);
+    this.originalEquipmentToEdit = $.extend(true, {}, value);
+  }
+  get equipmentToEdit() {
+    return $.extend(true, {}, this.equipmentToEditTracked);
+  }
+
+  selectedEquipmentItemOriginalQuantity = 0;
+  originalEquipmentToEdit: EquipmentViewModel;
+
+  @Output() cancelEquipmentPurchaseOrderTriggered = new EventEmitter();
+  @Output() updateEquipmentPurchaseOrderDetailsTriggered = new EventEmitter<any>();
+
+  constructor() { }
+
+  onCreationDateSelectionTriggered(date) {
+    this.equipmentToEditTracked.purchaseOrder.creationDate = date;
+  }
+
+  onDeliveryDateSelectionTriggered(date) {
+    this.equipmentToEditTracked.purchaseOrder.deliveryDate = date;
+  }
+
+  onUpdateEquipmentPurchaseOrderDetailsClicked() {
+    if (this.isFormValid()) {
+      this.updateEquipmentPurchaseOrderDetailsTriggered.emit(this.equipmentToEditTracked);
+    }
+  }
+
+  onCancelEquipmentPurchaseOrderUpdatesClicked() {
+    this.editEquipmentPurchaseOrderForm.resetForm();
+    this.editEquipmentPurchaseOrderForm.reset();
+    const originalPO = this.originalEquipmentToEdit.purchaseOrder,
+      currentPO = this.equipmentToEditTracked.purchaseOrder;
+
+    currentPO.number = originalPO.number;
+    currentPO.creationDate = originalPO.creationDate;
+    currentPO.deliveryDate = originalPO.deliveryDate;
+
+    this.cancelEquipmentPurchaseOrderTriggered.emit();
+  }
+
+  isFormValid() {
+    return this.editEquipmentPurchaseOrderForm.valid &&
+      this.editEquipmentPurchaseOrderForm.submitted && this.equipmentToEditTracked.purchaseOrder.creationDate &&
+      this.editEquipmentPurchaseOrderForm.submitted && this.equipmentToEditTracked.purchaseOrder.deliveryDate;
+  }
+}

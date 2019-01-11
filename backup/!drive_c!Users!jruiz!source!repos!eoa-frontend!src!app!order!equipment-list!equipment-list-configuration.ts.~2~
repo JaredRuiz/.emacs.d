@@ -1,0 +1,90 @@
+import { EquipmentViewModel } from '../shared/viewmodels/equipment-viewmodel';
+
+export const EquipmentListConfiguration = {
+    filterSettings: [
+        {
+            type: 'Construction',
+            property: 'constructionGroupName',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Department',
+            property: 'departmentDescription',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Category',
+            property: 'category',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Vendor',
+            property: 'vendor',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Manufacturer',
+            property: 'manufacturer',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Status',
+            property: 'orderingStatus',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Finish',
+            property: 'finishesFilterString',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'HiddenOrderingStatus',
+            property: 'orderingStatus',
+            values: [],
+            hide: true
+        },
+        {
+            type: 'HiddenProcurementMethod',
+            property: 'procurementMethod',
+            values: [],
+            hide: true
+        },
+    ],
+    viewTypeFilterCriteriaSettings: [
+        { 'label': 'All Items', 'value': '1' },
+        { 'label': 'Deleted Items', 'value': '2' },
+        { 'label': 'Discrepancies', 'value': '3' },
+        { 'label': 'New Items', 'value': '4' }
+    ],
+    groupByCriteriaSettings: [
+        { 'label': 'Department', 'value': (e: EquipmentViewModel) => e.departmentNumber + ' ' + e.departmentDescription },
+        { 'label': 'Manufacturer', 'value': (e: EquipmentViewModel) => e.manufacturer },
+        { 'label': 'Vendor', 'value': (e: EquipmentViewModel) => e.vendor },
+        {
+            'label': 'Delivery Date', 'value': (e: EquipmentViewModel) => {
+                if (!e.deliveryDate) { return ''; }
+                const date = new Date(e.deliveryDate);
+                return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+            }
+        },
+        { 'label': 'Construction Group', 'value': (e: EquipmentViewModel) => e.constructionGroupName },
+        { 'label': 'Category', 'value': (e: EquipmentViewModel) => e.category },
+    ],
+    orderByCriteriaSettings: [
+        { 'label': 'E. Code', 'value': 'equipmentCode' },
+        { 'label': 'Department', 'value': 'departmentDescription' },
+        { 'label': 'Quantity', 'value': 'currentTotalQuantity' },
+        { 'label': 'Manufacturer', 'value': 'manufacturer' },
+        { 'label': 'Vendor', 'value': 'vendor' },
+        { 'label': 'RB #', 'value': 'revisionBulletinNo' },
+        { 'label': 'Delivery Date', 'value': 'deliveryDate' },
+        { 'label': 'Status', 'value': 'orderingStatus' },
+    ]
+};

@@ -1,0 +1,8 @@
+env:LAUNCHER_ARGS = "-p ""<path to dotnet.exe>"" -a ""exec \""<path to webapp main dll>\"""" -pidFile $([System.IO.Path]::GetTempFileName()) -wd ""<path to webapp root folder>"" -pr <project name>"
+$env:LAUNCHER_PATH = "<path to VSIISExeLauncher.exe>"
+& "<path to iisexpress.exe>" /config:"<path to applicationhost.config>" /site:"<webapp name>"
+
+
+  env:LAUNCHER_ARGS = "-p ""C:\Program Files\dotnet\dotnet.exe"" -a ""exec \""C:\Users\jruiz\source\repos\eoa-order-api\Wegmans.EOA.Order.API\bin\Debug\netcoreapp2.1\Wegmans.EOA.Order.API.dll\"""" -pidFile $([System.IO.Path]::GetTempFileName()) -wd ""C:\Users\jruiz\source\repos\eoa-order-api\Wegmans.EOA.Order.API"" -pr <project name>"
+$env:LAUNCHER_PATH = "<path to VSIISExeLauncher.exe>"
+& "<path to iisexpress.exe>" /config:"<path to applicationhost.config>" /site:"<webapp name>"

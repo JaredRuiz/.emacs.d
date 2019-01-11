@@ -1,0 +1,29 @@
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-shopping-cart',
+  templateUrl: './shopping-cart.component.html'
+})
+export class ShoppingCartComponent implements OnInit {
+
+  @Input() shoppingCartDetailsText;
+
+  @Input() shoppingCartButtonText;
+
+  @Output() shoppingCartSubmitActionTriggered = new EventEmitter();
+
+  @Output() shoppingCartCancelActionTriggered = new EventEmitter();
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  onShoppingCartSubmitActionButtonClick() {
+    this.shoppingCartSubmitActionTriggered.emit();
+  }
+
+  onShoppingCartCancelActionButtonClicked() {
+    this.shoppingCartCancelActionTriggered.emit();
+  }
+}

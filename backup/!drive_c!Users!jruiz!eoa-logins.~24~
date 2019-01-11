@@ -1,0 +1,22 @@
+Updated all passwords:
+ecuser@wfmeoa.onmicrosoft.com
+EOAEC123$
+
+ipuser@wfmeoa.onmicrosoft.com
+EOAIP123$
+
+dsguser@wfmeoa.onmicrosoft.com
+EOADSG123$
+
+orderuser@wfmeoa.onmicrosoft.com
+EOAORDER123$
+
+
+"DocumentDbConnectionString": "AccountEndpoint=https://eoa-db-dev.documents.azure.com:443/;AccountKey=3nRocWnvVbo5V71U1KO3i1dHWHSt9VLjTqpjknL1WUbWx6hhSuFsnT8ch6X0SHzHdd4SkVRZ9HWOoaGCjlh5Uw==;"
+
+AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;Database=EOA;
+
+
+  AccountEndpoint=https://eoa-upload.documents.azure.com:443/;AccountKey=E7M6GsvWq9wdnEhwZF6YThYaLG98re3xITY3uUW6ncGfMYvTKaVBNGR4PrbqTDMMiiu3UPaIpsXfhyrnIp3wHA==;Database=eoa-upload
+
+  AccountEndpoint=https://eoa-upload.documents.azure.com:443/;AccountKey=E7M6GsvWq9wdnEhwZF6YThYaLG98re3xITY3uUW6ncGfMYvTKaVBNGR4PrbqTDMMiiu3UPaIpsXfhyrnIp3wHA==;Database=eoa-upload;

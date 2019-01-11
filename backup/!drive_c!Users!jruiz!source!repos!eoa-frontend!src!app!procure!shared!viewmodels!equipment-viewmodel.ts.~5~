@@ -1,0 +1,45 @@
+import { Equipment } from '@app/procure/shared/contracts/equipment';
+import { EquipmentCardModel } from '@app/shared-ui/equipment-card-model';
+import { CommentViewModel } from '@app/procure/shared/viewmodels/comment-viewmodel';
+import { PurchaseOrder } from '@app/procure/shared/contracts/purchase-order';
+import { Finish } from '@app/procure/shared/contracts/finish';
+
+export class EquipmentViewModel implements Equipment, EquipmentCardModel {
+
+    id: string;
+    equipmentCode: string;
+    storeNumber: string;
+    partSecondaryCommodityCode: string;
+    partSecondaryCommodityDescription: string;
+    previousTotalQuantity: number;
+    currentTotalQuantity: number;
+    floorQuantity: Array<
+        {
+            floor: string;
+            quantity: number;
+        }>;
+    departmentDescription: string;
+    departmentNumber: string;
+    partNumber: string;
+    manufacturer: string;
+    manufacturerDescription: string;
+    vendor: string;
+    deliveryDate: string;
+    requestedBy: string;
+    comments: Array<CommentViewModel>;
+    purchaseOrder: PurchaseOrder;
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+
+    hasComments: boolean;
+    projectId: string;
+    procurementMethod: string;
+    orderingStatus: string;
+
+    quantityChangeECVerified: boolean;
+    quantityChangeIPVerified: boolean;
+    finishesSpecificationRequired: boolean;
+    finishesMissing: boolean;
+    finishes: Array<Finish>;
+}

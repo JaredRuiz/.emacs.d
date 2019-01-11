@@ -1,0 +1,819 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Wegmans.EOA.Common.Contracts.Entities;
+using Wegmans.EOA.Common.Contracts.Services;
+using Wegmans.EOA.Common.Security;
+using Wegmans.EOA.Order.API.Models;
+using Wegmans.EOA.Order.API.Utils;
+
+namespace Wegmans.EOA.Order.API.Controllers
+{
+    [Route("api/order")]
+    public class OrderController : Controller
+    {
+        private readonly IStorageService<ProjectEntity> _projectRepository;
+        private readonly IStorageService<ConstructionGroupEntity> _constructionGroupRepository;
+        private readonly IStorageService<RevitQueueEntity> _revitQueueRepo;
+        private readonly IMapper _mapper;
+
+        private ProjectEntity _matchedProjectEntity;
+        private EquipmentItemEntity _matchedEquipmentEntity;
+        private CommentEntity _matchedCommentEntity;
+
+        private EquipmentDto _mappedEquipmentResult;
+
+        public OrderController(
+            IStorageService<ProjectEntity> projectRepository, 
+            IStorageService<ConstructionGroupEntity> constructionGroupRepository, 
+            IStorageService<RevitQueueEntity> revitStorage,
+            IMapper mapper)
+        {
+            _projectRepository = projectRepository;
+            _constructionGroupRepository = constructionGroupRepository;
+            _revitQueueRepo = revitStorage;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        [Route("projects")]
+        [Produces(typeof(List<ProjectListItemDto>))]
+        [Authorize]
+        public async Task<IActionResult> GetProjects()
+        {
+            var projectResults = await _projectRepository.Find(x => !x.IsDeleted && x.IsActive,
+                x => new ProjectEntity
+                {
+                    Id = x.Id,
+                    ProjectName = x.ProjectName,
+                    IsRemodel = x.IsRemodel,
+                    ViewCount = x.ViewCount,
+                    DeliveryScheduleAssigned = x.DeliveryScheduleAssigned
+                });
+
+            if (projectResults == null)
+            {
+                return NotFound();
+            }
+            var projects = _mapper.Map<List<ProjectListItemDto>>(projectResults);
+            if (projects == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(projects);
+        }
+
+        [HttpGet]
+        [Route("project/{projectId}")]
+        [Produces(typeof(ProjectListItemDto))]
+        [Authorize]
+        public async Task<IActionResult> GetProjectDetails(string projectId)
+        {
+            var projectResults = await _projectRepository.Find(x => x.Id == projectId);
+
+            if (projectResults?.Count() == 0)
+            {
+                return NotFound();
+            }
+            var mappedProjectResult = _mapper.Map<ProjectDto>(projectResults.First());
+            if (mappedProjectResult == null)
+            {
+                return NotFound();
+            }
+
+            if (mappedProjectResult.Equipments == null)
+            {
+                return UnprocessableEntity("Equipments mapping produced empty result.");
+            }
+
+            return Ok(mappedProjectResult);
+        }
+
+        [HttpPost]
+        [Route("project/{projectId}/equipment/{equipmentId}/comment")]
+        [Produces(typeof(CommentDto))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> AddComment([FromBody] CommentAddDto commentAddDto, string projectId, string equipmentId)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId, equipmentId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (commentAddDto == null)
+            {
+                ModelState.AddModelError("COMMENT_NOT_VALID", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            _matchedCommentEntity = new CommentEntity();
+
+            // Convert comment dto to comment entity
+            _mapper.Map<CommentAddDto, CommentEntity>(commentAddDto, _matchedCommentEntity);
+
+            if (_matchedCommentEntity == null)
+            {
+                return UnprocessableEntity("Comment mapping produced empty comment.");
+            }
+
+            _matchedCommentEntity.Id = _matchedCommentEntity.Id ?? Guid.NewGuid().ToString();
+            _matchedCommentEntity.CreatedBy = _matchedCommentEntity.LastUpdatedBy = "system";
+            _matchedCommentEntity.LastUpdatedOn = DateTime.Now;
+
+            var existingCommentEntity = _matchedEquipmentEntity.Comments?.FirstOrDefault(comment => comment.Type == commentAddDto.Type);
+
+            if (existingCommentEntity == null)
+            {
+                // Add comment to the equipment comments 
+                _matchedEquipmentEntity.Comments.Add(_matchedCommentEntity);
+            }
+            else
+            {
+                _matchedEquipmentEntity.Comments[_matchedEquipmentEntity.Comments.IndexOf(existingCommentEntity)] = _matchedCommentEntity;
+            }
+
+            _matchedEquipmentEntity.LastUpdatedBy = "system";
+            _matchedEquipmentEntity.LastUpdatedOn = DateTime.Now;
+
+            // Update the project entity with comment entity added
+            _matchedProjectEntity = await _projectRepository.Update(_matchedProjectEntity);
+
+            // Get the comment entity from the saved response
+            _matchedCommentEntity = _matchedEquipmentEntity.Comments.FirstOrDefault(x => x.Id == _matchedCommentEntity.Id);
+            if (_matchedCommentEntity == null)
+            {
+                return UnprocessableEntity("Comment cannot be found in the equipment entity after persisting comment.");
+            }
+
+            // Map comment entity back to comment dto
+            var commentDto = _mapper.Map<CommentDto>(_matchedCommentEntity);
+            if (commentDto == null)
+            {
+                return UnprocessableEntity("Comment mapping produced empty comment after persisting the comment.");
+            }
+
+            return Ok(commentDto);
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}/equipment/{equipmentId}/comment/{commentId}")]
+        [Produces(typeof(CommentDto))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> SaveComment([FromBody] CommentDto commentDto, string projectId, string equipmentId, string commentId)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId, equipmentId, commentId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (commentDto == null)
+            {
+                ModelState.AddModelError("COMMENT_NOT_VALID", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            // Update comment in the equipment comments 
+            _matchedCommentEntity.Comment = commentDto.Comment;
+            _matchedCommentEntity.LastUpdatedBy = "system";
+            _matchedCommentEntity.LastUpdatedOn = DateTime.Now;
+
+            _matchedEquipmentEntity.LastUpdatedBy = "system";
+            _matchedEquipmentEntity.LastUpdatedOn = DateTime.Now;
+
+            // Update the project entity with comment entity added
+            _matchedProjectEntity = await _projectRepository.Update(_matchedProjectEntity);
+
+            dataValidationSuccess = validatePostProcessorResponseData(_matchedProjectEntity, equipmentId, ref dataLoadValidationFailedResult);
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            // Get the comment entity from the saved response
+            var commentEntity = _matchedEquipmentEntity.Comments.FirstOrDefault(x => x.Id == commentId);
+            if (commentEntity == null)
+            {
+                return UnprocessableEntity("Comment cannot be found in the equipment entity after persisting comment.");
+            }
+
+            // Map comment entity back to comment dto
+            commentDto = _mapper.Map<CommentDto>(commentEntity);
+            if (commentDto == null)
+            {
+                return UnprocessableEntity("Comment mapping produced empty comment after persisting the comment.");
+            }
+
+            return Ok(commentDto);
+        }
+
+        [HttpPost]
+        [Route("project")]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> CreateProject([FromBody]ProjectDto project)
+        {
+            if (string.IsNullOrEmpty(project.ProjectName.Trim()))
+            {
+                ModelState.AddModelError("PROJECT_NAME_IS_NOT_VALID", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            if (string.IsNullOrWhiteSpace(project.StoreNumber))
+            {
+                ModelState.AddModelError("STORE_NUMBER_IS_NOT_VALID", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            var projectToAdd = _mapper.Map<ProjectEntity>(project);
+
+            if (projectToAdd == null)
+            {
+                ModelState.AddModelError("PROJECT_IS_EMPTY", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            var duplicateProject = await _projectRepository.Find(projectItem => projectItem.ProjectName == project.ProjectName);
+
+            if (duplicateProject?.Count() > 0)
+            {
+                ModelState.AddModelError("PROJECT_WITH_SAME_NAME_ALREADY_EXISTS", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            projectToAdd.CreatedBy = projectToAdd.LastUpdatedBy = "system";
+            projectToAdd.LastUpdatedOn = DateTime.Now;
+
+            await _projectRepository.Add(projectToAdd);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}")]
+        [Produces(typeof(ProjectDto))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> UpdateProject(string projectId, [FromBody]ProjectDto projectToUpdate)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var isRequestValid = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId });
+            if (!isRequestValid)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (_matchedProjectEntity.LastUpdatedOn != projectToUpdate.LastUpdatedOn)
+            {
+                ModelState.AddModelError("PROJECT_STATUS_HAS_BEEN_UPDATED_IN_DIFFERENT_SESSION", string.Empty);
+                return BadRequest(new { ErrorCode = ModelState, ModifiedObject = _matchedProjectEntity });
+            }
+
+            var mappedProjectToUpdate = _mapper.Map<ProjectEntity>(projectToUpdate);
+
+            if (mappedProjectToUpdate == null)
+            {
+                ModelState.AddModelError("PROJECT_IS_EMPTY", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            mappedProjectToUpdate.LastUpdatedBy = "system";
+            mappedProjectToUpdate.LastUpdatedOn = DateTime.Now;
+
+            var updatedProject = await _projectRepository.Update(mappedProjectToUpdate);
+
+            if (updatedProject == null)
+            {
+                UnprocessableEntity("Project mapping produced empty result.");
+            }
+
+            return Ok(updatedProject);
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}/equipment-delivery-dates")]
+        [Produces(typeof(ProjectDto))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> GenerateDeliveryDates(string projectId)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (_matchedProjectEntity.LastUpdatedOn != _matchedProjectEntity.LastUpdatedOn)
+            {
+                ModelState.AddModelError("PROJECT_STATUS_HAS_BEEN_UPDATED_IN_DIFFERENT_SESSION", string.Empty);
+                return BadRequest(new { ErrorCode = ModelState, ModifiedObject = _matchedProjectEntity });
+            }
+
+            var constructionGroupList = await _constructionGroupRepository.Get();
+            foreach (var item in _matchedProjectEntity.Equipments)
+            {
+                generateEquipmentDeliveryDate(constructionGroupList, item);
+            }
+
+            _matchedProjectEntity.DeliveryScheduleAssigned = true;
+
+            _matchedProjectEntity.LastUpdatedBy = "system";
+            _matchedProjectEntity.LastUpdatedOn = DateTime.Now;
+
+            var updatedProject = await _projectRepository.Update(_matchedProjectEntity);
+
+            if (updatedProject == null)
+            {
+                UnprocessableEntity("Project mapping produced empty result.");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("project/{projectId}/equipment/{equipmentId}/{updatePath?}")]
+        [Produces(typeof(EquipmentDto))]
+<<<<<<< HEAD
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> PatchEquimentUpdates(string projectId, string equipmentId, string updatePath, [FromBody]JsonPatchDocument<EquipmentDto> modifiedEquipmentPatchList)
+=======
+        public async Task<IActionResult> PatchEquimentUpdates(string projectId, string equipmentId, string updatePath,
+            [FromBody] JsonPatchDocument<EquipmentDto> modifiedEquipmentPatchList)
+>>>>>>> develop
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId, equipmentId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            var updatedEquipment = patchEquipmentUpdates(_matchedEquipmentEntity, modifiedEquipmentPatchList, updatePath, ref dataLoadValidationFailedResult);
+
+            if (updatedEquipment == null)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            var updatedProject = await _projectRepository.Update(_matchedProjectEntity);
+
+            dataValidationSuccess = validatePostProcessorResponseData(updatedProject, equipmentId, ref dataLoadValidationFailedResult);
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            return Ok(updatedEquipment);
+        }
+
+        [HttpPatch]
+        [Route("project/{projectId}/equipment/{updatePath?}")]
+        [Produces(typeof(EquipmentDto))]
+        public async Task<IActionResult> PatchEquimentListUpdates(string projectId, string updatePath, [FromBody] JObject body)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            var equipmentToModifyIds = body["equipment"].ToObject<List<string>>();
+            var patchRules = body["patchRules"].ToObject<JsonPatchDocument<EquipmentDto>>();
+            var updatedEquipmentList = new List<EquipmentItemEntity>();
+            var taskList = new List<Task<IActionResult>>();
+
+            foreach (var id in equipmentToModifyIds)
+            {
+                taskList.Add(Task.Run(() =>
+                {
+                    var matchedEquipmentEntity = _matchedProjectEntity.Equipments.SingleOrDefault(equipment => equipment.Id == id);
+                    if (matchedEquipmentEntity == null)
+                    {
+                        dataLoadValidationFailedResult = NotFound("equipmentId");
+                        return dataLoadValidationFailedResult;
+                    }
+
+                    var updatedEquipmentItem = patchEquipmentUpdates(matchedEquipmentEntity, patchRules, updatePath,
+                        ref dataLoadValidationFailedResult);
+                    if (updatedEquipmentItem == null)
+                    {
+                        return dataLoadValidationFailedResult;
+                    }
+
+                    var updatedProject = _projectRepository.Update(_matchedProjectEntity).Result;
+                    dataValidationSuccess = validatePostProcessorResponseData(updatedProject,
+                        updatedEquipmentItem.Id,
+                        ref dataLoadValidationFailedResult);
+
+                    if (!dataValidationSuccess)
+                    {
+                        return dataLoadValidationFailedResult;
+                    }
+
+                    updatedEquipmentList.Add(updatedEquipmentItem);
+                    return Ok(updatedEquipmentItem);
+                }));
+            }
+
+            var allTasks = Task.WhenAll(taskList);
+            await allTasks;
+
+            var failedTasks = taskList.Where(task => task.Result.GetType() != typeof(OkObjectResult));
+
+            if (allTasks.Status == TaskStatus.RanToCompletion && failedTasks.Count() == 0)
+            {
+                return Ok(updatedEquipmentList);
+            }
+            else if (allTasks.Status == TaskStatus.RanToCompletion && failedTasks.Count() > 0)
+            {
+                var failureString = failedTasks.Count() + " items out of " + taskList.Count() +
+                                    " failed to update for the following reasons: \n";
+                foreach (var failedTask in failedTasks)
+                {
+                    failureString = failureString + failedTask.Status + "\n";
+                }
+
+                return BadRequest(failureString);
+            }
+            else 
+            {
+                return UnprocessableEntity(allTasks.Status);
+            }
+        }
+
+        private EquipmentItemEntity patchEquipmentUpdates(EquipmentItemEntity equipment, JsonPatchDocument<EquipmentDto> modifiedEquipmentPatchList, string updatePath,
+            ref IActionResult dataLoadValidationFailedResult)
+        {
+            var mappedEquipment = _mapper.Map<EquipmentDto>(equipment);
+            var clonedEquipment = mappedEquipment.Clone();
+
+            modifiedEquipmentPatchList.ApplyTo(mappedEquipment, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                dataLoadValidationFailedResult = BadRequest(ModelState);
+                return null;
+            }
+
+            bool isUpdateValid = true;
+            switch (updatePath)
+            {
+                case "orderingstatus":
+                    if (!validateEquipmentOrderingStatus(mappedEquipment, clonedEquipment.OrderingStatus))
+                    {
+                        mappedEquipment.OrderingStatus = clonedEquipment.OrderingStatus;
+                        isUpdateValid = false;
+                    }
+                    break;
+                case "alternatedeliverylocation":
+                    if (!(mappedEquipment.OrderingStatus == OrderingStatus.Added || mappedEquipment.OrderingStatus == OrderingStatus.Counted))
+                    {
+                        mappedEquipment.AlternateDeliveryLocation = clonedEquipment.AlternateDeliveryLocation;
+                        isUpdateValid = false;
+                    }
+                    break;
+                case "currentTotalquantity":
+                    if (!(mappedEquipment.OrderingStatus == OrderingStatus.Released || mappedEquipment.OrderingStatus == OrderingStatus.Ordered))
+                    {
+                        mappedEquipment.CurrentTotalQuantity = clonedEquipment.CurrentTotalQuantity;
+                        isUpdateValid = false;
+                    }
+                    break;
+            }
+
+            if (!isUpdateValid)
+            {
+                ModelState.AddModelError("EQUIPMENT_ITEM_HAS_BEEN_UPDATED_IN_DIFFERENT_SESSION", string.Empty);
+                dataLoadValidationFailedResult = BadRequest(new {ErrorCode = ModelState, ModifiedObject = mappedEquipment });
+                return null;
+            }
+
+            var matchedEquipmentEntity = _matchedProjectEntity.Equipments[_matchedProjectEntity.Equipments.IndexOf(_matchedProjectEntity.Equipments.First(x => x.Id == mappedEquipment.Id))];
+
+            _mapper.Map<EquipmentDto, EquipmentItemEntity>(mappedEquipment, matchedEquipmentEntity);
+
+            if (matchedEquipmentEntity.CurrentTotalQuantity == 0 && matchedEquipmentEntity.OrderingStatus == OrderingStatus.Requested)
+            {
+                matchedEquipmentEntity.OrderingStatus = OrderingStatus.Removed;
+                matchedEquipmentEntity.FloorQuantity.Clear();
+                matchedEquipmentEntity.DeliveryDate = null;
+                matchedEquipmentEntity.IsDeleted = true;
+            }
+
+            matchedEquipmentEntity.LastUpdatedBy = "system";
+            matchedEquipmentEntity.LastUpdatedOn = DateTime.Now;
+
+            return matchedEquipmentEntity;
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}/equipment/{equipmentId}/resolve")]
+        [Produces(typeof(EquipmentDto))]
+        public async Task<IActionResult> ResolveDiscrepancies(string projectId, string equipmentId)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId, equipmentId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            var mappedEquipment = _mapper.Map<EquipmentDto>(_matchedEquipmentEntity);
+            mappedEquipment.OrderDiscrepancies = new List<OrderDiscrepancy>();
+
+            var matchedEquipmentEntity = _matchedProjectEntity
+                .Equipments[_matchedProjectEntity.Equipments
+                    .IndexOf(_matchedProjectEntity.Equipments.First(x => x.Id == mappedEquipment.Id))
+                ];
+
+            _mapper.Map<EquipmentDto, EquipmentItemEntity>(mappedEquipment, matchedEquipmentEntity);
+            matchedEquipmentEntity.LastUpdatedBy = "system";
+            matchedEquipmentEntity.LastUpdatedOn = DateTime.Now;
+
+            var updatedProject = await _projectRepository.Update(_matchedProjectEntity);
+
+            dataValidationSuccess = validatePostProcessorResponseData(updatedProject, equipmentId, ref dataLoadValidationFailedResult);
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}/send-to-procure")]
+        [Produces(typeof(List<EquipmentDto>))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> SendToProcure(string projectId, [FromBody]string[] equipmentIds)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (equipmentIds?.Count() == 0)
+            {
+                ModelState.AddModelError("NO_EQUIPMENT_ITEMS_ARE_SELECTED", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            var hasAnyEquipmentItemStatusChanged = false;
+            _matchedProjectEntity.Equipments = _matchedProjectEntity.Equipments.Select(item =>
+            {
+                if (equipmentIds.Any(id => item.Id == id))
+                {
+                    if (item.OrderingStatus == OrderingStatus.Counted)
+                    {
+                        item.OrderingStatus = OrderingStatus.Requested;
+                        item.LastUpdatedBy = "system";
+                        item.LastUpdatedOn = DateTime.Now;
+                    }
+                    else
+                    {
+                        hasAnyEquipmentItemStatusChanged = true;
+                    }
+                }
+                return item;
+            }).ToList();
+
+            // Update the project entity
+            _matchedProjectEntity = await _projectRepository.Update(_matchedProjectEntity);
+
+            if (hasAnyEquipmentItemStatusChanged)
+            {
+                ModelState.AddModelError("SOME_EQUIPMENT_ITEMS_HAVE_BEEN_UPDATED_IN_DIFFERENT_SESSION", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            equipmentIds.ToList().ForEach(id =>
+            {
+                if (dataValidationSuccess)
+                {
+                    dataValidationSuccess = validatePostProcessorResponseData(_matchedProjectEntity, id, ref dataLoadValidationFailedResult);
+                }
+            });
+
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("project/{projectId}/equipment/{equipmentId}/split")]
+        [Produces(typeof(List<EquipmentDto>))]
+        [Authorize(Policy = Constants.EC_USER_POLICY)]
+        public async Task<IActionResult> SplitEquiment(string projectId, string equipmentId, [FromBody]SplitEquipmentDto splitEquipmentDto)
+        {
+            IActionResult dataLoadValidationFailedResult = null;
+            var dataValidationSuccess = validatePreprocessorRequestData(ref dataLoadValidationFailedResult, new string[] { projectId, equipmentId });
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            if (splitEquipmentDto == null || (splitEquipmentDto != null && splitEquipmentDto.SplitQuantity <= 0))
+            {
+                ModelState.AddModelError("NEW_EQUIPMENT_INSTANCE_IS_NOT_VALID", string.Empty);
+                return BadRequest(ModelState);
+            }
+
+            if (_matchedEquipmentEntity.CurrentTotalQuantity != splitEquipmentDto.RemainderQuantity + splitEquipmentDto.SplitQuantity ||
+                (_matchedEquipmentEntity.OrderingStatus != OrderingStatus.Counted))
+            {
+                ModelState.AddModelError("EQUIPMENT_VALUES_HAVE_BEEN_UPDATED_IN_DIFFERENT_SESSION", string.Empty);
+                return BadRequest(new { ErrorCode = ModelState, ModifiedObject = _matchedEquipmentEntity });
+            }
+
+            var splitEquipmentEntity = _matchedEquipmentEntity.Clone();
+            mapSplitEquipment(splitEquipmentDto, splitEquipmentEntity);
+
+            mapEditEquipment(splitEquipmentDto);
+
+            // Update the project entity with comment entity added
+            _matchedProjectEntity = await _projectRepository.Update(_matchedProjectEntity);
+
+            // Split equipment 1
+            dataValidationSuccess = validatePostProcessorResponseData(_matchedProjectEntity, equipmentId, ref dataLoadValidationFailedResult);
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            var returnable = new List<EquipmentDto> { _mappedEquipmentResult };
+
+            // Split equipment 2
+            dataValidationSuccess = validatePostProcessorResponseData(_matchedProjectEntity, splitEquipmentEntity.Id, ref dataLoadValidationFailedResult);
+            if (!dataValidationSuccess)
+            {
+                return dataLoadValidationFailedResult;
+            }
+
+            returnable.Add(_mappedEquipmentResult);
+
+            return Ok(returnable);
+        }
+
+        [Route("project/revitupdate")]
+        [HttpPost()]
+        public async Task<IActionResult> RevitUpdate([FromBody]RevitQueueDto revitUpdate)
+        {
+            await _revitQueueRepo.Add(_mapper.Map<RevitQueueEntity>(revitUpdate));
+            return Ok();
+        }
+
+
+        private bool validatePreprocessorRequestData(ref IActionResult dataLoadValidationFailedResult, params string[] ids)
+        {
+            // Input data validations
+            if (ids?.Count() == 0 || (ids.Count() > 0 && ids[0] == null))
+            {
+                ModelState.AddModelError("PROJECT_ID_NOT_VALID", string.Empty);
+                dataLoadValidationFailedResult = BadRequest(ModelState);
+                return false;
+            }
+
+            if (ids.Count() > 1 && ids[1] == null)
+            {
+                ModelState.AddModelError("EQUIPMENT_ID_NOT_VALID", string.Empty);
+                dataLoadValidationFailedResult = BadRequest(ModelState);
+                return false;
+            }
+
+            if (ids.Count() > 2 && ids[2] == null)
+            {
+                ModelState.AddModelError("COMMENT_ID_NOT_VALID", string.Empty);
+                dataLoadValidationFailedResult = BadRequest(ModelState);
+            }
+
+            // Retrieve project document
+            _matchedProjectEntity = _projectRepository.Get(ids[0]).Result;
+
+            if (_matchedProjectEntity == null)
+            {
+                dataLoadValidationFailedResult = NotFound("projectId");
+                return false;
+            }
+
+            if (ids.Count() > 1)
+            {
+                // Identify the correct equipment
+                _matchedEquipmentEntity = _matchedProjectEntity.Equipments.SingleOrDefault(equipment => equipment.Id == ids[1]);
+
+                if (_matchedEquipmentEntity == null)
+                {
+                    dataLoadValidationFailedResult = NotFound("equipmentId");
+                    return false;
+                }
+            }
+
+            if (ids.Count() > 2)
+            {
+                // Identify the correct comment
+                _matchedCommentEntity = _matchedEquipmentEntity.Comments.SingleOrDefault(x => x.Id == ids[2]);
+
+                if (_matchedCommentEntity == null)
+                {
+                    dataLoadValidationFailedResult = NotFound("commentId");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool validatePostProcessorResponseData(ProjectEntity updatedProject, string equipmentId, ref IActionResult dataLoadValidationFailedResult)
+        {
+            if (updatedProject == null)
+            {
+                dataLoadValidationFailedResult = UnprocessableEntity("Project mapping produced empty result.");
+            }
+
+            _mappedEquipmentResult = _mapper.Map<EquipmentDto>(updatedProject.Equipments.FirstOrDefault(equipment => equipment.Id == equipmentId));
+
+            if (_mappedEquipmentResult == null)
+            {
+                dataLoadValidationFailedResult = UnprocessableEntity("Equipment mapping produced empty result.");
+            }
+
+            return true;
+        }
+
+        private bool validateEquipmentOrderingStatus(EquipmentDto equipment, OrderingStatus matchedEquipmentOriginalOrderingStatus)
+        {
+            // TODO: Add below checks as well
+            // -Items with the Finishes Specification Required Indicator = “Yes” should have the required finish data attributes provided.
+            //  Procurement Method is transmitted over from REVIT and cannot be changed within EOA.
+            if (equipment.OrderingStatus == OrderingStatus.Requested && matchedEquipmentOriginalOrderingStatus == OrderingStatus.Counted && equipment.DeliveryDate != null && (equipment.ProcurementMethod == ProcurementMethod.EquipmentOrdering || equipment.ProcurementMethod == ProcurementMethod.IPDirectOrder))
+            {
+                return true;
+            }
+
+            // TODO: Add below checks as well
+            // -Items with the Finishes Specification Required Indicator = “Yes” should have the required finish data attributes provided.
+            //  Procurement Method is transmitted over from REVIT and cannot be changed within EOA.
+            if (equipment.OrderingStatus == OrderingStatus.Counted && (matchedEquipmentOriginalOrderingStatus == OrderingStatus.Requested || matchedEquipmentOriginalOrderingStatus == OrderingStatus.Added) && (equipment.ProcurementMethod == ProcurementMethod.EquipmentOrdering || equipment.ProcurementMethod == ProcurementMethod.IPDirectOrder))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void mapEditEquipment(SplitEquipmentDto splitEquipmentDto)
+        {
+            _matchedEquipmentEntity.PreviousTotalQuantity = _matchedEquipmentEntity.CurrentTotalQuantity = splitEquipmentDto.RemainderQuantity;
+            _matchedEquipmentEntity.DeliveryDate = splitEquipmentDto.EditItemDeliveryDate;
+            _matchedEquipmentEntity.RevisionBulletinNo = splitEquipmentDto.EditItemRevisionBulletinNo;
+            _matchedEquipmentEntity.LastUpdatedBy = "system";
+            _matchedEquipmentEntity.LastUpdatedOn = DateTime.Now;
+        }
+
+        private void mapSplitEquipment(SplitEquipmentDto splitEquipmentDto, EquipmentItemEntity splitEquipmentEntity)
+        {
+            splitEquipmentEntity.InitialTotalQuantity = splitEquipmentEntity.PreviousTotalQuantity = splitEquipmentEntity.CurrentTotalQuantity = splitEquipmentDto.SplitQuantity;
+            splitEquipmentEntity.DeliveryDate = splitEquipmentDto.SplitItemDeliveryDate;
+            splitEquipmentEntity.RevisionBulletinNo = splitEquipmentDto.SplitItemRevisionBulletinNo;
+            splitEquipmentEntity.AlternateDeliveryLocation = splitEquipmentDto.AlternateDeliveryLocation;
+            splitEquipmentEntity.Id = Guid.NewGuid().ToString();
+            splitEquipmentEntity.LastUpdatedBy = splitEquipmentEntity.CreatedBy = "system";
+            splitEquipmentEntity.LastUpdatedOn = DateTime.Now;
+            _matchedProjectEntity.Equipments.Add(splitEquipmentEntity);
+        }
+
+        private void generateEquipmentDeliveryDate(IEnumerable<ConstructionGroupEntity> constructionGroupList, EquipmentItemEntity item)
+        {
+            if (!string.IsNullOrEmpty(item.ConstructionGroup))
+            {
+                var matchedConstructionGroup = constructionGroupList?.FirstOrDefault(group => group.Name == item.ConstructionGroup);
+                var referenceDate = matchedConstructionGroup?.ReferenceDateType == ReferenceDateType.OpenDate ?
+                  _matchedProjectEntity?.OpenDate : _matchedProjectEntity?.TurnoverDate;
+                if (referenceDate.HasValue)
+                {
+                    var matchedDeliveryLeadDuration =
+                      matchedConstructionGroup?.DeliveryLeadDuration?.FirstOrDefault(x => x.DepartmentNumber == item.DepartmentNumber);
+                    if (matchedDeliveryLeadDuration != null && matchedDeliveryLeadDuration.DeliveryLeadWeeks.HasValue)
+                    {
+                        item.DeliveryDate = referenceDate.Value.AddDays(-(matchedDeliveryLeadDuration.DeliveryLeadWeeks.Value * 7));
+                        item.LastUpdatedBy = "system";
+                        item.LastUpdatedOn = DateTime.Now;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,96 @@
+// Base / Config / Constants
+@import 'base/colors';
+@import 'base/variables',
+'base/typography',
+'base/fontello',
+'base/fonts',
+'base/mixins',
+'base/icons';
+@import 'bootstrap.scss';
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~bootstrap/scss/bootstrap'; // Boostrap itself
+@import "~ngx-toastr/toastr-bs4-alert"; // Toast notifications
+// Layout
+// sidebar ... etc ...
+// Components
+@import 'components/buttons';
+@import 'components/ngSelect';
+@import 'components/forms';
+@import 'components/datePicker';
+@import 'components/switch';
+@import 'components/toastr';
+@import 'components/scrollbar';
+// Pages
+@import 'pages/mainPage';
+@import 'pages/errorPages';
+@import 'pages/welcomePage';
+@import 'pages/loginProcessPage';
+@import 'pages/shared-ui/badgePill';
+@import 'pages/shared-ui/filterCriteria';
+@import 'pages/shared-ui/filterList';
+@import 'pages/shared-ui/modalDialog';
+@import 'pages/shared-ui/selectedFilterCriteria';
+@import 'pages/shared-ui/shoppingCart';
+@import 'pages/equipmentListPage';
+@import 'pages/departmentListPage';
+@import 'pages/constructionGroupListPage';
+@import 'pages/projectListPage';
+@import 'pages/reportPage';
+
+body {
+  min-width: $body-minimum-width;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.Row {
+  @include make-row();
+  margin: 0;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.Scroll-Content {
+  overflow: auto;
+  height: calc(100vh - 108px);
+}
+
+.Sorted-Up {
+  span {
+    color: $off-blue !important;
+  }
+
+  ::after {
+    @extend .Sort-Up-Icon;
+    position: relative;
+    top: 2px;
+  }
+}
+
+.Sorted-Down {
+  span {
+    color: $off-blue !important;
+  }
+
+  ::after {
+    @extend .Sort-Down-Icon;
+    position: relative;
+    top: -2px;
+  }
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+// Remove the clear field x char appear in input fields in Edge
+::-ms-clear {
+  display: none;
+}

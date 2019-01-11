@@ -1,0 +1,94 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { DepartmentViewModel } from '@app/admin/shared/viewmodels/department.viewmodel';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { AdminService } from '@app/admin/shared/admin.service';
+
+@Component({
+  selector: 'app-department-list',
+  templateUrl: './department-list.component.html'
+})
+export class DepartmentListComponent implements OnInit {
+
+  @ViewChild('createDepartmentModal') createDepartmentModal: ModalDialogComponent;
+  @ViewChild('createDeptForm') createDeptForm: NgForm;
+
+  allDepartments: Array<DepartmentViewModel>;
+  departments: Array<DepartmentViewModel>;
+  selectedDepartment: DepartmentViewModel = new DepartmentViewModel();
+
+  searchTerm = '';
+
+  constructor(private adminService: AdminService) { }
+
+  ngOnInit() {
+
+    this.adminService.getDepartments(true).subscribe(x => {
+      this.allDepartments = <DepartmentViewModel[]>x;
+      this.allDepartments.sort((a, b) => (a.number + a.description).localeCompare(b.number + b.description));
+      this.filterDepartments();
+    });
+  }
+
+  onCreateNewDepartment() {
+    this.selectedDepartment = new DepartmentViewModel();
+    this.createDeptForm.form.reset();
+    this.createDepartmentModal.show();
+  }
+
+  onCreateDepartmentConfirmed() {
+    this.padSelectedDepartment();
+    this.adminService.createDepartment(this.selectedDepartment).subscribe(x => {
+      this.departments.push(<DepartmentViewModel>x);
+      this.departments.sort((a, b) => (a.number + a.description).localeCompare(b.number + b.description));
+      this.createDepartmentModal.hide();
+    }, e => {
+      const propertyInError = Object.keys(e.error)[0];
+      if (propertyInError === 'description') {
+        this.createDeptForm.form.controls['deptNameInput'].setErrors({ 'duplicate': true });
+      } else if (propertyInError === 'number') {
+        this.createDeptForm.form.controls['deptNumberInput'].setErrors({ 'duplicate': true });
+      }
+    });
+  }
+
+  onEditDepartment(department: DepartmentViewModel) {
+    // this.selectedDepartment = department;
+    this.createDepartmentModal.show();
+  }
+
+  onSearch() {
+    this.filterDepartments();
+  }
+
+  trackDepartment(index, department: DepartmentViewModel) {
+    return department ? department.id : index;
+  }
+
+  filterDepartments() {
+    if (!this.allDepartments) {
+      return;
+    }
+
+    if (!this.searchTerm) {
+      this.departments = this.allDepartments;
+      return;
+    }
+
+    this.departments = this.allDepartments.filter(x =>
+      (x.description && x.description.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
+      (x.number && x.number.toLowerCase().includes(this.searchTerm.toLowerCase()))
+    );
+  }
+
+  padSelectedDepartment() {
+    var departmentNumber = this.selectedDepartment.number;
+    if (departmentNumber.length <= 1) {
+      this.selectedDepartment.number = '00' + departmentNumber;
+    }
+
+    if (departmentNumber.length === 2) {
+      this.selectedDepartment.number = '0' + departmentNumber;
+    }
+  }
+}

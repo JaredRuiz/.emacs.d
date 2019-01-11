@@ -1,0 +1,72 @@
+<div class="Edit-Equipment-Item-Container">
+  <form #editEquipmentForm="ngForm" autocomplete="off" novalidate>
+    <div class="Edit-Equipment-Item-Current-Quantity-Card">
+      <div class="Edit-Equipment-Item-Current-Quantity-Row">
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="deliveryDateInput">Delivery Date</label>
+          <app-date-picker [Id]="'Equipment-Item-Delivery-Date'" [selectedDateValue]="equipmentItemSelectedToEditTracked.deliveryDate"
+            (dateSelectionTriggered)="onEquipmentItemDeliveryDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="currentRevisionBulletinNumberInput">Revision Bulletin</label>
+          <input type="text" name="currentRevisionBulletinNumberInput" #currentRevisionBulletinNo="ngModel" [(ngModel)]="equipmentItemSelectedToEditTracked.revisionBulletinNo"
+            class="Equipment-Item-Revision-Bulletin-No-Form-Control" id="currentRevisionBulletinNumberInput" [disabled]="disableButton()">
+        </div>
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="quantityInput">Quantity</label>
+          <div class="Equipment-Item-Quantity-Form-Control">
+            <span class="Equipment-Item-Quantity-Decrement-Icon" (click)="onOriginalQuantityChangeClicked(false)"></span>
+            <input type="text" readonly="true" name="currentTotalQuantityInput" #currentTotalQuantity="ngModel"
+              [(ngModel)]="equipmentItemSelectedToEditTracked.currentTotalQuantity" class="Equipment-Item-Quantity-Input"
+              id="currentTotalQuantityInput">
+            <span class="Equipment-Item-Quantity-Increment-Icon" (click)="onOriginalQuantityChangeClicked(true)"></span>
+            <button class="Equipment-Item-Split-Quantity-Button" [disabled]="disableSplitButton" (click)="disableSplitButton=true;onSplitQuantityButtonClicked()">
+              <span class="Equipment-Item-Split-Quantity-Button-Icon"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="displaySplitQuantity" class="Edit-Equipment-Item-New-Quantity-Card">
+      <div class="Edit-Equipment-Item-New-Quantity-Header-Row">
+        <div class="Header-Text">New Split Quantity</div>
+        <div class="Equipment-Item-Split-Remove-Icon" (click)="onHideSplitQuantityCardClicked()"></div>
+      </div>
+      <div class="Edit-Equipment-Item-New-Quantity-Row">
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="deliveryDateInput">Delivery Date</label>
+          <app-date-picker [Id]="'New-Equipment-Item-Delivery-Date'" [selectedDateValue]="splitEquipmentItem.splitItemDeliveryDate"
+            (dateSelectionTriggered)="onSplitEquipmentItemDeliveryDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="newRevisionBulletinNumberInput">Revision Bulletin</label>
+          <input type="text" name="newRevisionBulletinNumberInput" #newRevisionBulletinNo="ngModel" [(ngModel)]="splitEquipmentItem.splitItemRevisionBulletinNo"
+            class="Equipment-Item-Revision-Bulletin-No-Form-Control" id="newRevisionBulletinNumberInput">
+        </div>
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="quantityInput">Quantity</label>
+          <div class="Equipment-Item-New-Quantity-Form-Control">
+            <span class="Equipment-Item-Quantity-Decrement-Icon" (click)="onSplitEquipmentItemQuantityChangeClicked(false)"></span>
+            <input type="text" readonly="true" name="newTotalQuantityInput" #newTotalQuantity="ngModel" [(ngModel)]="splitEquipmentItem.splitQuantity"
+              class="Equipment-Item-Quantity-Input" id="newTotalQuantityInput">
+            <span class="Equipment-Item-Quantity-Increment-Icon" (click)="onSplitEquipmentItemQuantityChangeClicked(true)"></span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!addAlternateDeliveryLocation" class="Equipment-Item-Alt-Delivery-Loc-Form-Control-Group">
+        <button class="Add-Alt-Delivery-Loc-Button-SM" type="button" (click)="addAlternateDeliveryLocation=true">
+          <span class="ButtonText">+ ADD ALTERNATE DELIVERY LOCATION</span>
+        </button>
+      </div>
+      <div *ngIf="addAlternateDeliveryLocation" class="Equipment-Item-Alt-Delivery-Loc-Form-Control-Group">
+        <label for="alternateDeliveryLocationInput">Alternate Delivery Location</label>
+        <textarea id="alternateDeliveryLocationInput" class="Alt-Delivery-Loc-Input-SM" name="alternateDeliveryLocationInput"
+          [(ngModel)]="splitEquipmentItem.alternateDeliveryLocation"></textarea>
+      </div>
+    </div>
+    <div class="Equipment-Item-Buttons-Container">
+      <a class="Equipment-Item-Cancel-Button" (click)="onCancelEquipmentItemUpdatesClicked()">Cancel</a>
+      <button id="equipmentUpdatesSaveButton" type="submit" class="Equipment-Updates-Save-Button" (click)="onSaveEquipmentItemUpdatesClicked()">SAVE</button>
+    </div>
+  </form>
+</div>

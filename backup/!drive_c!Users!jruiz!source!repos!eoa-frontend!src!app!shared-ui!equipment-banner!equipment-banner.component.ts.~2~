@@ -1,0 +1,61 @@
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ItemAction } from '@app/shared/enums/item-action.enum';
+
+@Component({
+  selector: 'app-equipment-banner',
+  templateUrl: './equipment-banner.component.html'
+})
+export class EquipmentBannerComponent implements OnInit {
+
+  constructor() { }
+
+  @Input() equipment: any;
+  @Output() onBannerClicked = new EventEmitter();
+
+  showBanner = false;
+  bannerType = '';
+  bannerMessage = '';
+  buttonText = '';
+
+  ngOnInit() {
+    switch(this.equipment.itemAction) {
+      case ItemAction.NotOrdered:
+        this.showBanner = true;
+        this.bannerType = 'Discrepancy';
+        this.bannerMessage = 'This item has not yet been ordered';
+        break;
+      case ItemAction.Discrepancies:
+        this.showBanner = true;
+        this.bannerType = 'Discrepancy';
+        this.bannerMessage = 'This item has a discrepancy';
+        this.buttonText = 'View Discrepancies';
+        break;
+      case ItemAction.Deleted:
+        this.showBanner = true;
+        this.bannerType = 'Deleted';
+        this.bannerMessage = 'This item has been deleted';
+        break;
+      case ItemAction.MissingFinishes:
+        this.showBanner = true;
+        this.bannerType = 'Finishes';
+        this.bannerMessage = 'This item needs finishes';
+        break;
+      case ItemAction.FailedRelease:
+        this.showBanner = true;
+        this.bannerType = 'Discrepancy';
+        var failureMessage = this.equipment.purchaseOrder && this.equipment.purchaseOrder.message ? this.equipment.purchaseOrder.message : '';
+        this.bannerMessage = failureMessage ? 'This item failed to release for the following reason: ' + failureMessage :
+          'This item failed to release';
+        break;
+      case ItemAction.Ok:
+      default:
+        this.showBanner = false;
+        break;
+    }
+  }
+
+  onClicked() {
+    this.onBannerClicked.emit(this.equipment);
+  }
+
+}

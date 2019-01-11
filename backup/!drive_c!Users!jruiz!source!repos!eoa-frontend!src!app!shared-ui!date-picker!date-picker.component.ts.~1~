@@ -1,0 +1,77 @@
+import { Component, OnInit, ElementRef, Renderer2, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
+import { fromEvent, Subscription } from 'rxjs';
+declare var $: any;
+
+@Component({
+  selector: 'app-date-picker',
+  templateUrl: './date-picker.component.html'
+})
+export class DatePickerComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  datePicker: any;
+  selectedDate: Date = new Date;
+  isCalendarOpened = false;
+  subscription$ = new Subscription();
+
+  @Input() isSelectedDateValid = true;
+
+  protected _selectedDateValue: string;
+  @Input() set selectedDateValue(value: string) {
+    if (value) {
+      this.selectedDate = new Date(value);
+      this._selectedDateValue = new Date(value).toLocaleDateString();
+    }
+  }
+  get selectedDateValue() {
+    return this._selectedDateValue;
+  }
+
+  @Output() datePickerBackspaceKeyPressed = new EventEmitter();
+  @Output() dateSelectionTriggered = new EventEmitter();
+
+  @Input() Id: string;
+
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef) {
+    const mouseUp$ = fromEvent(document, 'mouseup');
+    this.subscription$.add(mouseUp$.subscribe((event: any) => {
+      if (!$(event.srcElement).parents().hasClass(this.Id + '-Form-Control-Calendar-Container') &&
+        this.datePicker.display !== 'none') {
+        this.isCalendarOpened = false;
+        this.renderer.setStyle(this.datePicker, 'display', 'none');
+      } else {
+        this.isCalendarOpened = true;
+      }
+    }));
+  }
+
+  ngOnInit() { }
+
+  ngAfterViewInit() {
+    this.datePicker =
+      this.el.nativeElement.querySelector('.' + this.Id + '-Form-Control-Calendar-Container .datepicker-inline');
+    this.renderer.setStyle(this.datePicker, 'display', 'none');
+  }
+
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+  }
+
+  onCalendarButtonClicked() {
+    this.renderer.setStyle(this.datePicker, 'display', $(this.datePicker).css('display') === 'block' ? 'none' : 'block');
+    this.isCalendarOpened = $(this.datePicker).css('display') === 'block';
+  }
+
+  onDateSelected() {
+    this.isCalendarOpened = false;
+    this.isSelectedDateValid = true;
+    this.renderer.setStyle(this.datePicker, 'display', 'none');
+    this.selectedDateValue = this.selectedDate.toLocaleDateString();
+    this.dateSelectionTriggered.emit(this.selectedDateValue);
+  }
+
+  onKeyPressed(event) {
+    event.preventDefault();
+  }
+}

@@ -1,0 +1,43 @@
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { EquipmentViewModel } from '@app/order/shared/viewmodels/equipment-viewmodel';
+
+@Component({
+  selector: 'app-equipment-banner',
+  templateUrl: './equipment-banner.component.html'
+})
+export class EquipmentBannerComponent implements OnInit {
+
+  constructor() { }
+
+  @Input() equipment: EquipmentViewModel;
+  @Output() onBannerClicked = new EventEmitter();
+
+  showBanner = false;
+  bannerType = '';
+  bannerMessage = '';
+
+  ngOnInit() {
+    if (this.equipment.hasDiscrepancies) {
+      this.showBanner = true;
+      this.bannerType = 'Discrepancy';
+      this.bannerMessage = 'This item has a discrepancy';
+    } else if (this.equipment.orderingStatus === "Added") {
+      this.showBanner = true;
+      this.bannerType = 'New';
+      this.bannerMessage = 'This is a new item';
+    } else if (this.equipment.isDeleted) {
+      this.showBanner = true;
+      this.bannerType = 'Deleted';
+      this.bannerMessage = 'This item has been deleted';
+    } else if (this.equipment.finishesMissing) {
+      this.showBanner = true;
+      this.bannerType = 'Finishes';
+      this.bannerMessage = 'This item needs finishes';
+    }
+  }
+
+  onClicked() {
+    this.onBannerClicked.emit(this.equipment);
+  }
+
+}

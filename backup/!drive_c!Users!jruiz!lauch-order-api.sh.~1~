@@ -1,0 +1,3 @@
+#!/bin/sh
+
+dotnet run --project ~/source/repos/eoa-order-api/Wegmans.EOA.Order.API/Wegmans.EOA.Order.API.csproj

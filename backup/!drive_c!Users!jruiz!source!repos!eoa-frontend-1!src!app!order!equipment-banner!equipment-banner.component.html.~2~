@@ -1,0 +1,7 @@
+<div class="Discrepancies-Banner" *ngIf="showBanner">
+  <div class="Discrepancy-Circle"></div>
+  <div class="Discrepancies-Banner-Text">{{ bannerMessage }}</div>
+  <button class="View-Discrepancies-Button" (click)="onClicked()">
+    <span>View Discrepancies</span>
+  </button>
+</div>

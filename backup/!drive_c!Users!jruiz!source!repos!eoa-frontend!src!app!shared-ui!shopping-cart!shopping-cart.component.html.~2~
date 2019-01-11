@@ -1,0 +1,15 @@
+<div class="Shopping-Cart-Banner">
+  <div class="Shopping-Cart-Container">
+    <div class="Shopping-Cart-Ellipsis-Icon"></div>
+    <div class="Shopping-Cart-Details-Text">
+      <span>
+        <b>{{shoppingCartDetailsText}}</b>
+      </span>
+    </div>
+    <div class="Shopping-Cart-Button-Container">
+      <a class="Shopping-Cart-Cancel-Button" (click)="onShoppingCartCancelActionButtonClicked()">Cancel</a>
+      <button *ngIf="shoppingCartEditButtonText" (click)="onShoppingCartSubmitActionButtonClick()">{{shoppingCartEditButtonText}}</button>
+      <button *ngIf="shoppingCartActionButtonText" (click)="onShoppingCartSubmitActionButtonClick()">{{shoppingCartActionButtonText}}</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div [id]="modelId" (click)="onContainerClicked($event)" class="app-modal app-modal-opacity fade" role="dialog" tabindex="-1"
+  [ngClass]="{'show': visibleAnimate}" [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+  <div class="app-modal-dialog" role="document">
+    <div class="app-modal-content">
+      <div class="app-modal-header">
+        <ng-content select="[modal-section=header]"></ng-content>
+      </div>
+      <div class="app-modal-body">
+        <ng-content select="[modal-section=body]"></ng-content>
+      </div>
+      <div class="app-modal-footer" #modalFooter>
+        <ng-content select="[modal-section=footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

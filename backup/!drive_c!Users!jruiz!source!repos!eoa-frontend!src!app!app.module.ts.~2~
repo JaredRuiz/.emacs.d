@@ -1,0 +1,42 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from '@app/app.component';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { CommonModule } from '@angular/common';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EventBus } from '@app/shared/eventbus';
+import { ToastrManagerService } from '@app/shared/toastr-manager.service';
+import { UiScrollModule } from 'ngx-ui-scroll';
+
+import { MsalModule, MsalConfig } from '@azure/msal-angular';
+import { environment } from '@env/environment';
+import { SecurityModule } from '@app/security/security.module';
+import { HttpClientModule } from '@angular/common/http';
+import { WelcomeComponent } from './welcome/welcome.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    WelcomeComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    CommonModule,
+    ToastrModule.forRoot({ preventDuplicates: true }),
+    MsalModule.forRoot(environment.security as MsalConfig),
+    BrowserAnimationsModule,
+    UiScrollModule,
+    SecurityModule
+  ],
+  providers: [
+    EventBus,
+    ToastrService,
+    ToastrManagerService
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

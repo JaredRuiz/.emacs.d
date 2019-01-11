@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Sync name</Name>
+    <FullClassName>Wegmans.EOA.Revit.AddIn.EoaIntegrationPanel</FullClassName>
+    <Text>Sync text</Text> 
+    <Description>Sync description</Description>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+    <Assembly>C:\Users\jruiz\source/repos/Wegmans.EOA.Revit\Wegmans.EOA.Revit.AddIn\bin\Debug\Wegmans.EOA.Revit.AddIn.dll</Assembly>
+    <AddInId>604b1052-f742-4951-8576-c261d1993108</AddInId>
+
+    <VendorId>NAME</VendorId>
+    <VendorDescription>Your Company Information</VendorDescription>
+  </AddIn>
+</RevitAddIns>

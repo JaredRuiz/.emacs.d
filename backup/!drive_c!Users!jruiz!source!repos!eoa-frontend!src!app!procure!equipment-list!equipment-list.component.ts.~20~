@@ -1,0 +1,456 @@
+import { Component, ViewChild, ChangeDetectorRef, AfterContentChecked, TemplateRef, OnInit } from '@angular/core';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { FilterCriteriaItemModel } from '@app/shared/models/filter-criteria-item.model';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { ProcureService } from '@app/procure/shared/procure.service';
+import { SortService } from '@app/shared-ui/sorting/sort.service';
+import { Subscription } from 'rxjs';
+import { CommentViewModel } from '@app/order/shared/viewmodels/comment-viewmodel';
+import { FilterCriteriaItemDataValueModel } from '@app/shared/models/filter-criteria-item-data-value.model';
+import 'app/shared/string.extensions';
+import { ProcurementMethod } from '@app/shared/enums/procurement-method.enum';
+import { HttpErrorResponse } from '@angular/common/http';
+import { EventBus } from '@app/shared/eventbus';
+import { Events } from '@app/shared/events';
+import { OrderingStatus } from '@app/shared/enums/ordering-status.enum';
+import { EquipmentListConfiguration } from './equipment-list-configuration';
+import { RoleGuard } from '@app/security/role-guard';
+import { environment } from '@env/environment';
+import { EquipmentGroupCardModel } from '@app/shared-ui/equipment-group-card-model';
+
+@Component({
+  selector: 'app-procure-equipment-list',
+  templateUrl: './equipment-list.component.html'
+})
+export class EquipmentlistComponent implements OnInit, AfterContentChecked {
+
+  subscription$: Subscription;
+  groupByCriteria: Array<any>;
+  selectedGroupByCriteria: any;
+  orderByCriteria: Array<any>;
+  selectedOrderByCriteria: any;
+  viewingCriteria: Array<any>;
+  selectedViewingCriteria: any;
+
+  equipments: Array<EquipmentViewModel>;
+  equipmentToEditPurchaseOrder: EquipmentViewModel;
+  failedToReleaseItems: Array<EquipmentViewModel>;
+  failedToReleaseText: string;
+  selectedItemsCount = 0;
+  allEquipmentSelected = false;
+  showReleaseToEamBanner = false;
+  shoppingCartDetailsText: string;
+
+  filterCriteriaItems: FilterCriteriaItemModel[];
+  selectedFilterCriteriaItems: SelectedFilterCriteriaItemModel[];
+
+  procurementMethod = ProcurementMethod;
+  selectedEquipmentItem = new EquipmentViewModel();
+  purchasingComments = new CommentViewModel();
+
+  isInProcureRole = false;
+
+  @ViewChild('applyFiltersModal') applyFiltersModal: ModalDialogComponent;
+  @ViewChild('updateEquipmentItemModal') updateEquipmentItemModal: ModalDialogComponent;
+  @ViewChild('editEquipmentPurchaseOrderDetailsModal') editEquipmentPurchaseOrderDetailsModal: ModalDialogComponent;
+  @ViewChild('directBuy') directBuy: TemplateRef<any>;
+  @ViewChild('quantityIncremented') quantityIncremented: TemplateRef<any>;
+  @ViewChild('quantityDecremented') quantityDecremented: TemplateRef<any>;
+  @ViewChild('quantityDeleted') quantityDeleted: TemplateRef<any>;
+
+  amendPOForQuantityIncrement = true;
+
+  constructor(private procureService: ProcureService,
+    private sortService: SortService,
+    private cdRef: ChangeDetectorRef,
+    private bus: EventBus,
+    private roleCheck: RoleGuard) { }
+
+  ngOnInit() {
+    this.isInProcureRole = this.roleCheck.userIsInRole(environment.security.ipUserGroup);
+
+    this.filterCriteriaItems = <FilterCriteriaItemModel[]>EquipmentListConfiguration.filterSettings;
+
+    this.groupByCriteria = EquipmentListConfiguration.groupByCriteriaSettings;
+
+    this.selectedGroupByCriteria = this.groupByCriteria[0];
+
+    this.orderByCriteria = EquipmentListConfiguration.orderByCriteriaSettings;
+
+    this.selectedOrderByCriteria = this.orderByCriteria[0];
+
+    this.viewingCriteria = EquipmentListConfiguration.viewTypeFilterCriteriaSettings;
+
+    this.selectedViewingCriteria = this.viewingCriteria[0];
+
+    this.subscription$ = this.sortService.sorting$.subscribe(event => {
+      if (event && event.sortDirection) {
+        this.selectedOrderByCriteria = this.orderByCriteria.find(x => x.value === event.sortExpression);
+      } else {
+        this.selectedOrderByCriteria = this.orderByCriteria[0];
+      }
+    });
+
+    this.loadEquipment();
+  }
+
+  ngAfterContentChecked() {
+    this.cdRef.detectChanges();
+  }
+
+  onAddFilterClick() {
+    this.applyFiltersModal.show();
+  }
+
+  onReleaseToEamClick() {
+    const selectedEquipment = this.equipments.filter(x => x.selected);
+
+    this.procureService.releaseEquipmentToEam(selectedEquipment)
+      .subscribe(x => {
+        this.loadEquipment();
+        this.bus.publish(Events.SUCCESS_NOTIFICATION, 'Equipment sent to EAM');
+        this.showReleaseToEamBanner = false;
+      }, (errorResponse: HttpErrorResponse) => {
+        this.loadEquipment();
+        this.failedToReleaseText = this.failedToReleaseItems.length + 
+          ' items were unable to send to EAM because of ' + errorResponse.error;
+
+        this.showReleaseToEamBanner = false;
+      });
+  }
+
+  onCancelReleaseToEamClick() {
+    this.equipments.forEach(equipment => equipment.selected = false);
+    this.updateSelectedCount();
+    this.showReleaseToEamBanner = false;
+  }
+
+  onCancelFailedItemsClicked() {
+    this.failedToReleaseItems = [];
+    this.selectedFilterCriteriaItems = [];
+  }
+
+  onReviewFailedItemsClicked() {
+    const selectedFilterCriteriaItem = new SelectedFilterCriteriaItemModel(
+      OrderingStatus[OrderingStatus.FailedRelease],
+      'HiddenOrderingStatus',
+      'orderingStatus',
+      'Failed Release to EAM'
+      );
+
+    this.selectedFilterCriteriaItems = [selectedFilterCriteriaItem];
+  }
+
+  updateSelectedCount() {
+    setTimeout(() => {
+      this.selectedItemsCount = this.equipments.filter(x => x.selected).length;
+      this.allEquipmentSelected = this.selectedItemsCount === this.equipments.length;
+      this.showReleaseToEamBanner = this.selectedItemsCount > 0;
+    }, 1);
+  }
+
+  OnApplyFiltersActionTriggered(selectedFilterCriteriaItems: SelectedFilterCriteriaItemModel[]) {
+    this.selectedFilterCriteriaItems = selectedFilterCriteriaItems;
+    this.applyFiltersModal.hide();
+  }
+
+  OnCancelApplyingFiltersActionTriggered() {
+    this.applyFiltersModal.hide();
+  }
+
+  onGroupByChange(event) {
+    if (event) {
+    }
+  }
+
+  onSelectedFilterCriteriaRemoveTriggered(selectedFilterCriteriaItem: SelectedFilterCriteriaItemModel) {
+    this.selectedFilterCriteriaItems = this.selectedFilterCriteriaItems.
+      filter(item => item.text !== selectedFilterCriteriaItem.text
+        && item.text !== selectedFilterCriteriaItem.text && item.text !== selectedFilterCriteriaItem.text);
+  }
+
+  onClearAllClicked() {
+    this.selectedFilterCriteriaItems = new Array<SelectedFilterCriteriaItemModel>();
+  }
+
+  onEquipmentDetailsToggle(event, equipment: EquipmentViewModel) {
+    event.preventDefault();
+    equipment.expanded = !equipment.expanded;
+  }
+
+  onEditProcurementItemClicked(equipment: EquipmentViewModel) {
+    this.equipmentToEditPurchaseOrder = equipment;
+    this.editEquipmentPurchaseOrderDetailsModal.show();
+  }
+
+  onSaveComment(comment: CommentViewModel, equipment: EquipmentViewModel) {
+    if (comment.comment) {
+      if (!comment.id) {
+        this.procureService.AddCommentToEquipment(comment, equipment.projectId, equipment.id).subscribe(x => {
+          comment.id = x.id;
+          comment.comment = x.comment;
+          comment.createdBy = x.createdBy;
+          comment.createdOn = x.createdOn;
+          comment.beingEdited = false;
+          equipment.hasComments = true;
+        });
+      } else {
+        this.procureService.UpdateCommentInEquipment(comment, equipment.projectId, equipment.id).subscribe(x => {
+          comment.comment = x.comment;
+          comment.beingEdited = false;
+        });
+      }
+    } else {
+      comment.beingEdited = false;
+    }
+  }
+
+  onActionButtonClicked(equipmentItem: EquipmentViewModel) {
+    this.selectedEquipmentItem = equipmentItem;
+    this.purchasingComments = <CommentViewModel>{ type: 'Procurement Comments' };
+    this.updateEquipmentItemModal.show();
+  }
+
+  onDirectOrderSaveClicked() {
+    this.procureService.markEquipmentItemForDirectOrder(
+      this.selectedEquipmentItem.projectId,
+      this.selectedEquipmentItem.id,
+      this.purchasingComments.comment)
+      .subscribe(
+        () => {
+          this.bus.publish(
+            Events.SUCCESS_NOTIFICATION, 'Equipment item is updated successfully');
+          this.equipments = this.equipments.filter(x => x.id !== this.selectedEquipmentItem.id);
+          this.updateEquipmentItemModal.hide();
+        },
+        (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.status === 400 && errorResponse.error.errorCode['EQUIPMENT_STATUS_HAS_BEEN_UPDATED_IN_DIFFERENT_SESSION']) {
+            this.bus.publish(Events.WARNING_NOTIFICATION,
+              'Equipment: ' + this.selectedEquipmentItem.equipmentCode + ' has already been updated in another user session');
+          }
+          this.equipments = this.equipments.filter(x => x.id !== this.selectedEquipmentItem.id);
+          this.updateEquipmentItemModal.hide();
+        });
+  }
+
+  onAmendPOOptionSelected(value) {
+    this.amendPOForQuantityIncrement = value;
+  }
+
+  onIncrementedQuantitiesApplyActionClicked() {
+    this.procureService.incrementEquipmentItemQuantities(
+      this.selectedEquipmentItem.projectId,
+      this.selectedEquipmentItem.id,
+      this.purchasingComments.comment,
+      this.amendPOForQuantityIncrement)
+      .subscribe(
+        (newEquipmentItem: EquipmentViewModel) => {
+          this.updateEquipmentItemModal.hide();
+          this.bus.publish(
+            Events.SUCCESS_NOTIFICATION, 'Equipment item is updated successfully');
+          this.equipments = this.equipments.filter(x => x.id !== this.selectedEquipmentItem.id);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.status === 400 && errorResponse.error.errorCode['EQUIPMENT_ITEM_QUANTITY_IS_ALREADY_VERIFIED_BY_IP_USER']) {
+            this.procureService.getEquipmentList().subscribe(x => {
+              this.equipments = x;
+              this.generateFilterCriteria();
+            });
+            this.updateEquipmentItemModal.hide();
+            this.bus.publish(Events.WARNING_NOTIFICATION,
+              'Equipment item quantity is already verified by IP user and the page is refreshed');
+          }
+        });
+  }
+
+  onDecrementedQuantitiesAmendPOClicked() {
+    this.procureService.decrementEquipmentQuantites(
+      this.selectedEquipmentItem.projectId,
+      this.selectedEquipmentItem.id,
+      this.purchasingComments.comment)
+      .subscribe(
+        (newEquipmentItem: EquipmentViewModel) => {
+          this.updateEquipmentItemModal.hide();
+          this.bus.publish(
+            Events.SUCCESS_NOTIFICATION, 'Equipment item is updated successfully');
+          this.equipments = this.equipments.filter(x => x.id !== this.selectedEquipmentItem.id);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.status === 400 && errorResponse.error.errorCode['EQUIPMENT_ITEM_QUANTITY_IS_ALREADY_VERIFIED_BY_IP_USER']) {
+            this.procureService.getEquipmentList().subscribe(x => {
+              this.equipments = x;
+              this.generateFilterCriteria();
+            });
+            this.updateEquipmentItemModal.hide();
+            this.bus.publish(Events.WARNING_NOTIFICATION,
+              'Equipment item quantity is already verified by IP user and the page is refreshed');
+          }
+        });
+  }
+
+  onDeletedQuantitiesCancelPOClicked() {
+    this.procureService.deleteEquipmentQuantites(
+      this.selectedEquipmentItem.projectId,
+      this.selectedEquipmentItem.id,
+      this.purchasingComments.comment)
+      .subscribe(
+        (newEquipmentItem: EquipmentViewModel) => {
+          this.updateEquipmentItemModal.hide();
+          this.bus.publish(
+            Events.SUCCESS_NOTIFICATION, 'Equipment item is updated successfully');
+          this.equipments = this.equipments.filter(x => x.id !== this.selectedEquipmentItem.id);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.status === 400 && errorResponse.error.errorCode['EQUIPMENT_ITEM_QUANTITY_IS_ALREADY_VERIFIED_BY_IP_USER']) {
+            this.procureService.getEquipmentList().subscribe(x => {
+              this.equipments = x;
+              this.generateFilterCriteria();
+            });
+            this.updateEquipmentItemModal.hide();
+            this.bus.publish(Events.WARNING_NOTIFICATION,
+              'Equipment item quantity is already verified by IP user and the page is refreshed');
+          }
+        });
+  }
+
+  onEquipmentItemModalCancelClicked() {
+    this.updateEquipmentItemModal.hide();
+  }
+
+  onEquipmentItemSelectionChanged(groupValue : EquipmentGroupCardModel, equipmentValue: EquipmentViewModel) {
+    if (equipmentValue.selected) {
+      equipmentValue.selected = true;
+    } else {
+      equipmentValue.selected = false;
+      this.allEquipmentSelected = false;
+    }
+
+    const selectedGroup: EquipmentGroupCardModel = groupValue;
+    selectedGroup.selected = selectedGroup.items.every(x => x.selected);
+
+    this.selectedItemsCount = this.equipments.filter(x => x.selected).length;
+    this.shoppingCartDetailsText = this.selectedItemsCount > 0 ? this.selectedItemsCount + ' item(s) selected' : '';
+
+    this.updateSelectedCount();
+  }
+
+  onEquipmentItemsGroupSelectionChanged(group: EquipmentGroupCardModel) {
+    if (group && group.selected) {
+      group.items.forEach((equipmentItem: EquipmentViewModel, index) => {
+        equipmentItem.selected = false;
+      });
+      this.allEquipmentSelected = false;
+      group.selected = group.items.filter(x => x.selected).length > 0;
+    } else if (group && !group.selected) {
+      group.items.forEach((equipmentItem: EquipmentViewModel, index) => {
+        equipmentItem.selected = true;
+      });
+    }
+    this.selectedItemsCount = this.equipments.filter(x => x.selected).length;
+    this.shoppingCartDetailsText = this.selectedItemsCount > 0 ? this.selectedItemsCount + ' item(s) selected' : '';
+    this.updateSelectedCount();
+  }
+
+  hasQuantityChanged(equipment) {
+    if (equipment && equipment.currentTotalQuantity !== undefined) {
+      return equipment.currentTotalQuantity !== equipment.previousTotalQuantity
+        && equipment.orderingStatus !== OrderingStatus[OrderingStatus.Requested]
+        && equipment.quantityChangeECVerified === true && equipment.quantityChangeIPVerified === false;
+    }
+    return false;
+  }
+
+  getTemplate(equipment: EquipmentViewModel) {
+    if (!equipment || !this.isInProcureRole) {
+      return { name: '', template: null };
+    }
+
+    if (equipment.procurementMethod && equipment.procurementMethod.trimAll() === ProcurementMethod[ProcurementMethod.IPDirectOrder]) {
+      return { name: 'directbuy', template: this.directBuy };
+    }
+
+    if (equipment.currentTotalQuantity > equipment.previousTotalQuantity
+      && (equipment.orderingStatus === OrderingStatus[OrderingStatus.Released] ||
+        equipment.orderingStatus === OrderingStatus[OrderingStatus.Ordered]) && equipment.quantityChangeECVerified === true &&
+      equipment.quantityChangeIPVerified === false) {
+      return { name: 'incremented', template: this.quantityIncremented };
+    }
+
+    if ((equipment.currentTotalQuantity < equipment.previousTotalQuantity && equipment.currentTotalQuantity > 0)
+      && (equipment.orderingStatus === OrderingStatus[OrderingStatus.Released] ||
+        equipment.orderingStatus === OrderingStatus[OrderingStatus.Ordered]) && equipment.quantityChangeECVerified === true &&
+      equipment.quantityChangeIPVerified === false
+    ) {
+      return { name: 'decremented', template: this.quantityDecremented };
+    }
+
+    if (equipment.currentTotalQuantity === 0
+      && (equipment.orderingStatus === OrderingStatus[OrderingStatus.Released] ||
+        equipment.orderingStatus === OrderingStatus[OrderingStatus.Ordered]) && equipment.quantityChangeECVerified === true &&
+      equipment.quantityChangeIPVerified === false
+    ) {
+      return { name: 'deleted', template: this.quantityDeleted };
+    }
+
+    return { name: '', template: null };
+  }
+
+  onCancelEquipmentPurchaseOrderUpdatesClicked() {
+    this.editEquipmentPurchaseOrderDetailsModal.hide();
+  }
+
+  onUpdateEquipmentPurchaseOrderDetailsClicked(equipment: EquipmentViewModel) {
+    this.procureService
+      .updateEquipmentPurchaseOrder(equipment.projectId, equipment.id, equipment.purchaseOrder)
+      .subscribe((updatedEquipment: EquipmentViewModel) => {
+        this.editEquipmentPurchaseOrderDetailsModal.hide();
+        this.bus.publish(Events.SUCCESS_NOTIFICATION, 'Equipment item is updated successfully');
+        this.loadEquipment();
+      }, (errorResponse: HttpErrorResponse) => {
+        this.loadEquipment();
+        this.updateEquipmentItemModal.hide();
+        this.bus.publish(Events.WARNING_NOTIFICATION, errorResponse.message);
+      });
+  }
+
+  private loadEquipment() {
+    this.procureService.getEquipmentList().subscribe(equipment => {
+      this.equipments = equipment;
+      this.failedToReleaseItems = this.equipments.filter(eq => eq.orderingStatus === OrderingStatus[OrderingStatus.FailedRelease]);
+      this.failedToReleaseText = this.failedToReleaseItems.length + ' items were unable to send to EAM';
+      this.generateFilterCriteria();
+    });
+  }
+
+  private generateFilterCriteria(): any {
+    const filterCriteriaValues = new Map<string, Set<string>>();
+    for (const criteria of this.filterCriteriaItems) {
+      filterCriteriaValues.set(criteria.property, new Set<string>());
+    }
+
+    if (this.equipments && this.equipments.length) {
+      for (const equipment of this.equipments) {
+        for (const criteria of this.filterCriteriaItems) {
+          const filterValuesSet = filterCriteriaValues.get(criteria.property);
+          if (filterValuesSet) {
+            filterValuesSet.add(equipment[criteria.property]);
+          }
+        }
+      }
+    }
+
+    for (const criteria of this.filterCriteriaItems) {
+      const filterValuesArray = <Array<FilterCriteriaItemDataValueModel>>[];
+      const filterValuesSet = filterCriteriaValues.get(criteria.property);
+
+      if (filterValuesSet) {
+        filterValuesSet.forEach((value) => {
+          filterValuesArray.push(new FilterCriteriaItemDataValueModel(value, false, value));
+        });
+      }
+
+      criteria.values = filterValuesArray.sort((a, b) => a.text && a.text.localeCompare(b.text));
+    }
+  }
+}

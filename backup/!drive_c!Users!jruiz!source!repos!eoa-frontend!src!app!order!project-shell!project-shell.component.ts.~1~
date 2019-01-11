@@ -1,0 +1,232 @@
+import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { OrderInteractionService } from '@app/order/shared/order-interaction.service';
+import { FilterCriteriaItemModel } from '@app/shared/models/filter-criteria-item.model';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+import { FilterCriteriaItemDataValueModel } from '@app/shared/models/filter-criteria-item-data-value.model';
+import { OrderService } from '@app/order/shared/order.service';
+import { Department } from '@app/order/shared/contracts/department';
+import { NgForm, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { interval } from 'rxjs/internal/observable/interval';
+import { take } from 'rxjs/internal/operators/take';
+import { FilterCriteriaComponent } from '@app/shared-ui/filter-criteria/filter-criteria.component';
+import { EventBus } from '@app/shared/eventbus';
+import { Events } from '@app/shared/events';
+import { ProjectViewModel } from '@app/order/shared/viewmodels/project-viewmodel';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { ProjectSubType } from '@app/order/shared/enums/project-sub-type.enum';
+declare var $: any;
+
+@Component({
+  selector: 'app-project-shell',
+  templateUrl: './project-shell.component.html'
+})
+export class ProjectShellComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('projectForm') projectForm: NgForm;
+  @ViewChild('departmensFilterInput') departmensFilterInput: FilterCriteriaComponent;
+  submitButtonText: string;
+  departmentsFilterCriteriaItem = new FilterCriteriaItemModel();
+  selectedDepartmentsFilterCriteriaItems = new Array<SelectedFilterCriteriaItemModel>();
+  departmentsFilterCriteriaDataItems = new Array<FilterCriteriaItemDataValueModel>();
+  projectSubTypes = [
+    { displayText: '', dataValue: '' },
+    { displayText: 'Single Department', dataValue: ProjectSubType[ProjectSubType.SingleDepartment] },
+    { displayText: 'Multi Department', dataValue: ProjectSubType[ProjectSubType.MultiDepartment] }
+  ];
+  departments = new Array<Department>();
+  isSingleDepartmentSelectionInvalid = false;
+  isMultiDepartmentsSelectionInvalid = false;
+  duplicateProjectFound = false;
+  projectInEditMode = false;
+  subscription$ = new Subscription();
+
+  private _project: ProjectViewModel;
+
+  @Input() set project(value: ProjectViewModel) {
+    this._project = value;
+    if (this._project && this._project.isRemodel) {
+      this.orderService.getDepartments(false).subscribe(
+        (results) => {
+          this.departments = results;
+          results.forEach((department: Department, index: number) => {
+            let selectedDepartment = null;
+            if (this._project.departments) {
+              selectedDepartment = this._project.departments.some(x => x.id === department.id);
+              if (selectedDepartment) {
+                this.selectedDepartmentsFilterCriteriaItems.push(
+                  {
+                    text: department.description,
+                    type: 'Department',
+                    property: 'Department',
+                    value: department.id
+                  });
+              }
+            }
+            this.departmentsFilterCriteriaDataItems.push(
+              {
+                selected: selectedDepartment ? true : false,
+                text: department.description,
+                value: department.id
+              });
+            if (index === results.length - 1) {
+              this.departmentsFilterCriteriaItem = <FilterCriteriaItemModel>{
+                property: 'Department',
+                type: 'Department',
+                values: this.departmentsFilterCriteriaDataItems
+              };
+            }
+          });
+          this.onProjectSubTypeSelectionChanged(
+            {
+              displayText: this.project.projectSubType ?
+                this.projectSubTypes.find(x => x.dataValue === this._project.projectSubType).displayText : '',
+              dataValue: this._project.projectSubType
+            }
+          );
+        }
+      );
+    }
+    this.projectInEditMode = this._project.id ? true : false;
+    this.submitButtonText = this._project.id ? 'UPDATE PROJECT' : 'CREATE PROJECT';
+  }
+  get project() {
+    return this._project;
+  }
+
+  private static markAsTouched(group: FormGroup | FormArray) {
+    Object.keys(group.controls).map((field) => {
+      const control = group.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof FormGroup) {
+        this.markAsTouched(control);
+      }
+    });
+  }
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private orderService: OrderService,
+    private interactionService: OrderInteractionService,
+    private bus: EventBus) {
+    this.selectedDepartmentsFilterCriteriaItems = new Array<SelectedFilterCriteriaItemModel>();
+  }
+
+  ngOnInit() { }
+
+  ngAfterViewInit() {
+    this.subscription$.add(interval(0).pipe(take(1)).subscribe(() => $('#projectNameInput').focus()));
+  }
+
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+  }
+
+  onOpenDateSelectionTriggered(selectedOpenDate) {
+    this.project.openDate = selectedOpenDate;
+  }
+
+  onTurnoverDateSelectionTriggered(selectedTurnoverDate) {
+    this.project.turnoverDate = selectedTurnoverDate;
+  }
+
+  onBackToProjectSelectClicked() {
+    this.router.navigate([{ outlets: { primary: ['newproject'] } }],
+      { relativeTo: this.route.parent });
+  }
+
+  onSubmitFormClicked() {
+    ProjectShellComponent.markAsTouched(this.projectForm.form);
+    if (this.validateDepartmentSelection() && this.projectForm.valid) {
+      if (!this.projectInEditMode) {
+        this.project.isActive = true;
+        if (this.selectedDepartmentsFilterCriteriaItems.length > 0) {
+          this.project.departments = new Array<Department>();
+          this.selectedDepartmentsFilterCriteriaItems.forEach((selectedDepartment) => {
+            this.project.departments.push(this.departments.find(department => department.id === selectedDepartment.value));
+          });
+        }
+        this.orderService.createProject(this.project).subscribe(
+          () => {
+            this.bus.publish(
+              Events.SUCCESS_NOTIFICATION, 'Project is created successfully');
+            this.interactionService.notifyCreateProjectSuccess();
+          },
+          (errorResponse: any) => {
+            if (errorResponse.status === 400 && errorResponse.error['PROJECT_WITH_SAME_NAME_ALREADY_EXISTS']) {
+              this.duplicateProjectFound = true;
+            }
+          }
+        );
+      } else {
+        if (this.selectedDepartmentsFilterCriteriaItems.length > 0) {
+          this.project.departments = new Array<Department>();
+          this.selectedDepartmentsFilterCriteriaItems.forEach((selectedDepartment) => {
+            this.project.departments.push(this.departments.find(department => department.id === selectedDepartment.value));
+          });
+        }
+        this.orderService.updateProject(this.project).subscribe(
+          (updatedProjectResponse: ProjectViewModel) => {
+            this.project = updatedProjectResponse;
+            this.bus.publish(
+              Events.SUCCESS_NOTIFICATION, 'Project has been updated successfully');
+            this.interactionService.notifyUpdateProjectSuccess(this.project);
+          },
+          (errorResponse: any) => {
+            if (errorResponse.status === 400 && errorResponse.error['PROJECT_WITH_SAME_NAME_ALREADY_EXISTS']) {
+              this.duplicateProjectFound = true;
+            }
+          }
+        );
+      }
+    }
+  }
+
+  onCancelClicked() {
+    this.interactionService.notifyCreateProjectCancelled();
+  }
+
+  onFilterCriteriaItemDataValueSelectedTriggered(selectedFilterCriteriaItem: SelectedFilterCriteriaItemModel) {
+    this.selectedDepartmentsFilterCriteriaItems.push(selectedFilterCriteriaItem);
+    this.validateDepartmentSelection();
+  }
+
+  onSelectedFilterCriteriaRemoveTriggered(selectedFilterCriteriaItem: SelectedFilterCriteriaItemModel) {
+    this.selectedDepartmentsFilterCriteriaItems = this.selectedDepartmentsFilterCriteriaItems.
+      filter(item => item.text !== selectedFilterCriteriaItem.text
+        && item.text !== selectedFilterCriteriaItem.text && item.text !== selectedFilterCriteriaItem.text);
+    this.departmentsFilterCriteriaItem.values.find(item => item.text === selectedFilterCriteriaItem.text).selected = false;
+    this.validateDepartmentSelection();
+  }
+
+  onFilterCriteriaItemDataValueRemoved(selectedFilterCriteriaItem: SelectedFilterCriteriaItemModel) {
+    this.selectedDepartmentsFilterCriteriaItems = this.selectedDepartmentsFilterCriteriaItems.
+      filter(item => item.text !== selectedFilterCriteriaItem.text
+        && item.text !== selectedFilterCriteriaItem.text && item.text !== selectedFilterCriteriaItem.text);
+    this.validateDepartmentSelection();
+  }
+
+  onProjectSubTypeSelectionChanged(selectedProjectSubType: any) {
+    if (selectedProjectSubType.dataValue === ProjectSubType[ProjectSubType.SingleDepartment]
+      || selectedProjectSubType.dataValue === ProjectSubType[ProjectSubType.MultiDepartment]) {
+      this.departmensFilterInput.disabled = false;
+    } else {
+      this.departmentsFilterCriteriaDataItems.forEach(item => { item.selected = false; });
+      this.selectedDepartmentsFilterCriteriaItems = new Array<SelectedFilterCriteriaItemModel>();
+      this.departmensFilterInput.disabled = true;
+    }
+    this.validateDepartmentSelection();
+  }
+
+  private validateDepartmentSelection() {
+    this.isSingleDepartmentSelectionInvalid =
+      this.project.projectSubType === ProjectSubType[ProjectSubType.SingleDepartment]
+      && this.selectedDepartmentsFilterCriteriaItems.length !== 1;
+    this.isMultiDepartmentsSelectionInvalid =
+      this.project.projectSubType === ProjectSubType[ProjectSubType.MultiDepartment]
+      && this.selectedDepartmentsFilterCriteriaItems.length <= 1;
+    return !this.isSingleDepartmentSelectionInvalid && !this.isMultiDepartmentsSelectionInvalid;
+  }
+}

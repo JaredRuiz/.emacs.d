@@ -1,0 +1,33 @@
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild, TemplateRef } from '@angular/core';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { PurchaseHistoryViewModel } from '@app/procure/shared/viewmodels/purchase-history-viewmodel';
+declare var $: any;
+
+@Component({
+  selector: 'app-purchase-history-details',
+  templateUrl: './purchase-history.component.html'
+})
+export class EquipmentItemPurchaseHistoryComponent implements OnInit {
+
+    // TODO: globals
+
+    equipment = new EquipmentViewModel();
+    equipment.purchaseHistory = Array<PurchaseHistoryViewModel>;
+    newPurchaseHistory = new PurchaseHistoryViewModel();
+    newPurchaseHistory.purchaseOrderNumber = '1';
+
+    equipment.purchaseHistory.push(newPurchaseHistory);
+
+    
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+    onReadMoreClicked() {
+
+    }
+
+    
+
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+       <Name>GetElementData</Name>
+       <FullClassName>RevitPractice.ElementSelection</FullClassName>
+       <Text>GetElementData</Text> 
+       <Description>Gives data about selected elements</Description>
+       <VisibilityMode>AlwaysVisible</VisibilityMode>
+       <Assembly>C:\Users\jruiz\source/repos/RevitPractice/RevitPractice/bin/Debug/RevitPractice.dll</Assembly>
+       <AddInId>b3688539-4c27-43b0-8875-37a059accba3</AddInId>
+    <VendorId>ADSK</VendorId>
+    <VendorDescription>Autodesk, Inc, www.autodesk.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>

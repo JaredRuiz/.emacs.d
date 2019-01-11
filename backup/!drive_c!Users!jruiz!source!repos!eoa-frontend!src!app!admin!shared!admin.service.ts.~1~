@@ -1,0 +1,81 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { Constants } from '@app/app-constants';
+import { map } from 'rxjs/internal/operators/map';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { Observable } from 'rxjs/internal/Observable';
+import { Department } from '@app/order/shared/contracts/department';
+import { DepartmentAdd } from '@app/admin/shared/contracts/department';
+import { Project } from '@app/admin/shared/contracts/project';
+import { ConstructionGroup } from '@app/admin/shared/contracts/construction-group';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminService {
+
+  constructor(private http: HttpClient) { }
+
+  getDepartments(allInclusive: boolean): Observable<Array<Department>> {
+    const url = environment.adminAPIBaseUrl + Constants.getDepartmentsUrl;
+    const httpParams = new HttpParams().set('allInclusive', allInclusive ? 'true' : 'false');
+    return this.http.get<Array<Department>>(url, { params: httpParams }).pipe(map((r) => r));
+  }
+  getProjects(): Observable<Array<Project>> {
+    const url = environment.adminAPIBaseUrl + Constants.getAdminProjectList;
+    return this.http.get<Array<Project>>(url).pipe(map((r) => r));
+  }
+
+  getProjectById(projectId: string): Observable<Project> {
+    const url = environment.adminAPIBaseUrl + Constants.getAdminProjectList;
+    const httpParams = new HttpParams().set('projectId', projectId);
+    return this.http.get<Project>(url, { params: httpParams }).pipe(map((r) => r[0]));
+  }
+
+  createDepartment(department: DepartmentAdd): Observable<Department> {
+    const url = environment.adminAPIBaseUrl + Constants.createDepartmentUrl;
+    return this.http.post<Department>(url, department);
+  }
+
+  activateProject(project: Project): Observable<Project> {
+    const url = environment.adminAPIBaseUrl + Constants.activateProjectUrl.replace(Constants.projectIdParam, project.id);
+    return this.http.put(url, project, { observe: 'response' }).pipe(
+      map((r) => {
+        const activatedProject = r.body as Project;
+        return activatedProject;
+      }),
+      catchError((e: HttpErrorResponse) => {
+        throw (e);
+      })
+    );
+  }
+
+  deleteProject(project: Project): Observable<Project> {
+    const url = environment.adminAPIBaseUrl + Constants.deleteProjectUrl.replace(Constants.projectIdParam, project.id);
+    return this.http.put(url, project, { observe: 'response' }).pipe(
+      map((r) => {
+        const deletedProject = r.body as Project;
+        return deletedProject;
+      }),
+      catchError((e: HttpErrorResponse) => {
+        throw (e);
+      })
+    );
+  }
+
+  getConstructionGroups(): Observable<Array<ConstructionGroup>> {
+    const url = environment.adminAPIBaseUrl + Constants.getConstructionGroupsUrl;
+    return this.http.get<Array<ConstructionGroup>>(url);
+  }
+
+  createConstructionGroup(group: ConstructionGroup): Observable<ConstructionGroup> {
+    const url = environment.adminAPIBaseUrl + Constants.createConstructionGroupUrl;
+    return this.http.post<ConstructionGroup>(url, group);
+  }
+
+  updateConstructionGroup(group: ConstructionGroup): Observable<ConstructionGroup> {
+    const url = environment.adminAPIBaseUrl + Constants.updateConstructionGroupUrl.replace(Constants.constructionGroupId, group.id);
+    return this.http.put<ConstructionGroup>(url, group);
+  }
+}

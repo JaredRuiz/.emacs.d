@@ -1,0 +1,15 @@
+export const environment = {
+  production: false,
+  adminAPIBaseUrl: 'http://localhost:52710',
+  orderAPIBaseUrl: 'http://localhost:63101',
+  procureAPIUrl: 'http://localhost:55633',
+  reportAPIBaseUrl: 'http://localhost:44395',
+  security: {
+    clientID: 'e5672aca-fdc8-45ab-b936-89714473eef2',
+    cacheLocation: 'localStorage',
+    ecUserGroup: '81ae6fde-b68e-4025-bae0-f83a9dc947c6',
+    ipUserGroup: '46f8923e-644e-4ff6-aaa2-20c75d8ce4ce',
+    redirectUri: 'http://localhost:4200/login'
+
+  }
+};

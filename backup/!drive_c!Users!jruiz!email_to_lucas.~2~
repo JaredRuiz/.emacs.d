@@ -1,0 +1,11 @@
+Hey Wegmans Team,
+
+  Ok, here is a link to the tool I was using to upload data into CosmosDB: https://docs.microsoft.com/en-us/azure/cosmos-db/import-data#Install. I downloaded the Dtui tool (the GUI one), and it was pretty self-explanatory to use. This also has the nice feature that once you get it to work, it gives you the corresponding command for the terminal, in case in the future you need to have it as part of a build process.
+
+  Anyway, getting it to work can be a little tricky. Here are a few things you'll need to do:
+    - On the "Target Information" tab:
+       - The connection string should be something like: "AccountEndpoint=https://eoa-upload.documents.azure.com:443/;AccountKey=E7M6GsvWq9wdnEhwZF6YThYaLG98re3xITY3uUW6ncGfMYvTKaVBNGR4PrbqTDMMiiu3UPaIpsXfhyrnIp3wHA==;Database=eoa-upload;" note the extra key here "Database", which is just the name of the db. 
+       - Collection should just be the name of the Collection in the DB...so I think ____ TODO:
+      - be sure to click the "Advanced Options" button and change the Connection Mode to "Gateway." Otherwise you won't be able to connect using the connection string.
+     - Leave everything else on this tab the same...notice that leaving the "Disable Automatic ID Generation" box unchecked will generate unique ids for each entry.
+    - The only other hard part I encountered after this is massaging the data so that upon import nothing is corrupted. Specifically, for departments or construction groups with numbers like "001", etc. if you don't format it correctly, the 00s will get removed and it will just be "1". I have attached a .csv which will work correctly on import. This was tricky to get working in Excel. 

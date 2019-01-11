@@ -1,0 +1,15 @@
+- Ask Steve: want to be lead dev on a project, working underneath an architect, and two junior developers underneath me. Would like to be involved from beginning with infrastructure/architecture decisions, and laying out prototype code.
+
+- Side project: getting containerization (docker, etc.) set up for Wegmans and other projects
+  * launch cosmos
+  * launch different APIs as separate services/containers
+  * launch front-end
+  * should also handle downloading and managing all npm packages, etc.
+
+- Get emacs dev environment better set up locally for Windows stuff; put it on Github!!  
+  * steps to get emacs stuff in VS (would prefer not to have to do this though)
+  * command line command or file to specify nuget packages: https://ardalis.com/how-to-add-a-nuget-package-using-dotnet-add
+  * figure out grep in Windows: https://www.reddit.com/r/emacs/comments/9xdbdu/grepfind_for_windows_emacs/
+  * make separate branches in the emacs repo: Windows, Linux, Mac
+
+ - While waiting for more stories: do better testing!!

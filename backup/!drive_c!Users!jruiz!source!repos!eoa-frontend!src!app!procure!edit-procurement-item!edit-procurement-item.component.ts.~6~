@@ -1,0 +1,86 @@
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { PurchaseOrderViewModel } from '@app/procure/shared/viewmodels/purchase-order-viewmodel';
+import { FormGroup, FormArray, FormControl, NgForm } from '@angular/forms';
+declare var $: any;
+
+@Component({
+  selector: 'app-edit-equipment-purchase-order',
+  templateUrl: './edit-procurement-item.component.html'
+})
+
+// TODO: how should we be thinking of this procurement? We are adding purchase order
+// info to equipment, yet we are editing that equipment. To the end user it is as if we are
+// just attaching a purchase order to equipment, or rather adding equipment to PO. Perhaps
+// call it EditEquipmentPurchaseOrder
+// or AttachPurchaseOrderToEquipment
+export class EditEquipmentPurchaseOrderDetailsComponent implements OnInit {
+
+  @ViewChild('editEquipmentForm') editEquipmentForm: NgForm;
+
+  _equipmentToEdit = new EquipmentViewModel();
+    @Input() set equipmentToEdit(value: EquipmentViewModel) {
+    this._equipmentToEdit = value;
+    this.originalEquipmentToEdit = $.extend(true, {}, value);
+  }
+  get equipmentToEdit() {
+    return this._equipmentToEdit;
+  }    
+
+  selectedEquipmentItemOriginalQuantity = 0;
+  originalEquipmentToEdit: EquipmentViewModel;
+  addAlternateDeliveryLocation = false;
+  isSelectedCreationDateValid = true;
+  isSelectedDeliveryDateValid = true;
+
+  @Output() cancelEquipmentPurchaseOrderTriggered = new EventEmitter();
+  @Output() updateEquipmentPurchaseOrderDetailsTriggered = new EventEmitter<any>();
+
+  private static markAsTouched(group: FormGroup | FormArray) {
+    Object.keys(group.controls).map((field) => {
+      const control = group.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof FormGroup) {
+        this.markAsTouched(control);
+      }
+    });
+  }
+
+  constructor() { }
+
+    // TODO: we can remove if this isnt being used
+    ngOnInit() {}
+
+  onCreationDatePickerBackspaceKeyPressed() {
+    this.isSelectedCreationDateValid = this.editEquipmentForm.submitted;
+  }
+
+  onCreationDateSelectionTriggered(date) {
+    this.equipmentToEdit.purchaseOrder.creationDate = date;
+  }
+
+  onDeliveryDatePickerBackspaceKeyPressed() {
+    this.isSelectedDeliveryDateValid = this.editEquipmentForm.submitted;
+  }
+
+  onDeliveryDateSelectionTriggered(date) {
+    this.equipmentToEdit.purchaseOrder.deliveryDate = date;
+  }
+
+  onUpdateEquipmentPurchaseOrderDetailsClicked() {
+      // TODO: what is happening here? do we need to do this?
+      // EditProcurementItemComponent.markAsTouched(this.editEquipmentForm.form);
+      if (this.editEquipmentForm.valid) {
+          this.updateEquipmentPurchaseOrderDetailsTriggered.emit(this.equipmentToEdit);
+      }
+  }
+
+    onCancelEquipmentPurchaseOrderUpdatesClicked() {
+        let originalPO = this.originalEquipmentToEdit.purchaseOrder;
+        this.equipmentToEdit.purchaseOrder.number = originalPO.number;
+        this.equipmentToEdit.purchaseOrder.creationDate = originalPO.creationDate;
+        this.equipmentToEdit.purchaseOrder.deliveryDate = originalPO.deliveryDate;
+        this.cancelEquipmentPurchaseOrderTriggered.emit();
+    }
+}

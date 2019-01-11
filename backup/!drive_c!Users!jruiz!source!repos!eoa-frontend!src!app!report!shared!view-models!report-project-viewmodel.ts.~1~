@@ -1,0 +1,7 @@
+export class ReportProjectViewModel {
+    projectName: string;
+    isRemodel: boolean;
+    projectNotes: string;
+    storeNumber: string;
+    storeName: string;
+}

@@ -1,0 +1,26 @@
+import { Directive, TemplateRef } from '@angular/core';
+
+@Directive({ selector: '[appEquipmentGroupTitle]' })
+export class EquipmentGroupTitleTemplateDirective {
+  constructor(public template: TemplateRef<any>) { }
+}
+
+@Directive({ selector: '[appEquipmentGroupAction]' })
+export class EquipmentGroupActionTemplatesDirective {
+  constructor(public template: TemplateRef<any>) { }
+}
+
+@Directive({ selector: '[appEquipmentListHeader]' })
+export class EquipmentListHeaderTemplatesDirective {
+  constructor(public template: TemplateRef<any>) { }
+}
+
+@Directive({ selector: '[appEquipmentCardHeader]' })
+export class EquipmentCardHeaderTemplatesDirective {
+  constructor(public template: TemplateRef<any>) { }
+}
+
+@Directive({ selector: '[appEquipmentCardBody]' })
+export class EquipmentCardBodyTemplatesDirective {
+  constructor(public template: TemplateRef<any>) { }
+}

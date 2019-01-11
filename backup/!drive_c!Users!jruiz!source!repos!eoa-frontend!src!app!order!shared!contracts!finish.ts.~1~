@@ -1,0 +1,4 @@
+export interface Finish {
+  specification: object;
+  count: number;
+}

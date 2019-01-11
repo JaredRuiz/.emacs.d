@@ -1,0 +1,112 @@
+using System.Windows.Forms;
+using System.Collections.Generic;
+
+namespace Wegmans.EOA.Revit.AddIn
+{
+    partial class RevitPopup
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RevitPopup));
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label = new System.Windows.Forms.Label();
+            foreach (var button in buttons)
+            {
+                _internalButtons.Add(new System.Windows.Forms.Button());
+            }
+            this.SuspendLayout();
+
+            // 
+            // label
+            // 
+            this.label.Font = new System.Drawing.Font("Microsoft New Tai Lue", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.label.Location = new System.Drawing.Point(12, 30);
+            this.label.Name = "label";
+            this.label.Size = new System.Drawing.Size(518, 75);
+            this.label.TabIndex = 2;
+            this.label.Text = mainContent;
+            // TODO: what is this guy below???
+             this.label.Click += new System.EventHandler(this.cancel);
+
+            //
+            // buttons
+            //
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                var button = buttons[i];
+                this._internalButtons[i].BackColor = System.Drawing.SystemColors.Window;
+                this._internalButtons[i].BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+                this._internalButtons[i].DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                this._internalButtons[i].FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaption;
+                this._internalButtons[i].FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.Window;
+                this._internalButtons[i].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                this._internalButtons[i].Font = new System.Drawing.Font("Microsoft New Tai Lue", 12F,
+                    System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                this._internalButtons[i].ForeColor = System.Drawing.SystemColors.Highlight;
+                this._internalButtons[i].Image = ((System.Drawing.Image)(resources.GetObject(button.Icon)));
+                this._internalButtons[i].ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                this._internalButtons[i].Location = new System.Drawing.Point(12, 208);
+                this._internalButtons[i].Name = button.Name;
+                this._internalButtons[i].Padding = new System.Windows.Forms.Padding(5);
+                this._internalButtons[i].Size = new System.Drawing.Size(518, 46);
+                this._internalButtons[i].TabIndex = 3;
+                this._internalButtons[i].Text = "     " + button.Text; // TODO: add constant above for number of spaces
+                this._internalButtons[i].TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                this._internalButtons[i].UseVisualStyleBackColor = false;
+                this._internalButtons[i].Click += new System.EventHandler(this.cancel); // TODO: figure this out
+                this.Controls.Add(this._internalButtons[i]);
+            }
+
+            // 
+            // PushForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.CancelButton = this._internalButtons[0];
+            this.ClientSize = new System.Drawing.Size(542, 345);
+            this.Controls.Add(this.label);
+            this.Controls.Add(this.comboBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject(icon)));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = name;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "  " + title; // TODO: same comment here
+            this.Load += new System.EventHandler(this.Form1_Load); // TODO: this name is dumb
+            this.ResumeLayout(false);
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label;
+        private List<Button> _internalButtons;
+     }
+}

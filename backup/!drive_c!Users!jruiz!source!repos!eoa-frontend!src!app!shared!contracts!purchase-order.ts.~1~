@@ -1,0 +1,7 @@
+export interface PurchaseOrder {
+    number: string;
+    message: string;
+    creationDate: string;
+    deliveryDate: string;
+    eamLineNumbers: Array<number>;
+}

@@ -1,0 +1,732 @@
+[
+    {
+        "number": "000",
+        "description": "General",
+        "id": "8f1f1e2f-9dd7-4d04-946a-6b8c4ed4314d",
+        "_rid": "H5dCAKqlXSgBAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgBAAAAAAAAAA==/",
+        "_etag": "\"41010ccb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "010",
+        "description": "Cheese Shop",
+        "id": "04f39d4c-aca3-434a-92cd-6f5f3007644c",
+        "_rid": "H5dCAKqlXSgCAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgCAAAAAAAAAA==/",
+        "_etag": "\"41010dcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "005",
+        "description": "Meat",
+        "id": "fd5ed498-1095-412b-adc7-4f3df3a88fa9",
+        "_rid": "H5dCAKqlXSgDAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgDAAAAAAAAAA==/",
+        "_etag": "\"41010ecb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "009",
+        "description": "Photo Lab",
+        "id": "e08a3179-57ea-4fe5-b11a-1a85b537081c",
+        "_rid": "H5dCAKqlXSgEAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgEAAAAAAAAAA==/",
+        "_etag": "\"41010fcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "002",
+        "description": "Dairy",
+        "id": "5b0616d2-3c21-450e-bb60-ccdf377ed499",
+        "_rid": "H5dCAKqlXSgFAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgFAAAAAAAAAA==/",
+        "_etag": "\"410110cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "004",
+        "description": "Grocery",
+        "id": "156c7edd-4834-4c9d-ac8e-c4df4293ae3b",
+        "_rid": "H5dCAKqlXSgGAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgGAAAAAAAAAA==/",
+        "_etag": "\"410111cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "007",
+        "description": "Pharmacy",
+        "id": "53528140-a371-45c8-ad6a-9df8458ab234",
+        "_rid": "H5dCAKqlXSgHAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgHAAAAAAAAAA==/",
+        "_etag": "\"410112cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "011",
+        "description": "Health Beauty Care",
+        "id": "b48d2004-0d82-41ca-ba76-ed229b12d279",
+        "_rid": "H5dCAKqlXSgIAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgIAAAAAAAAAA==/",
+        "_etag": "\"410113cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "006",
+        "description": "Deli-Coldcuts",
+        "id": "9d03075b-6bde-4728-912a-e40d96c99e6b",
+        "_rid": "H5dCAKqlXSgJAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgJAAAAAAAAAA==/",
+        "_etag": "\"410114cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "001",
+        "description": "Bakery",
+        "id": "93825642-df26-4a4c-952a-b8b87f2ec337",
+        "_rid": "H5dCAKqlXSgKAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgKAAAAAAAAAA==/",
+        "_etag": "\"410115cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "003",
+        "description": "Produce",
+        "id": "820036b4-7d9f-4614-adad-9740cb8249de",
+        "_rid": "H5dCAKqlXSgLAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgLAAAAAAAAAA==/",
+        "_etag": "\"410116cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "013",
+        "description": "Floral",
+        "id": "2d662414-bf59-46fd-9b60-f5fd5707a297",
+        "_rid": "H5dCAKqlXSgMAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgMAAAAAAAAAA==/",
+        "_etag": "\"410117cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "012",
+        "description": "GM",
+        "id": "7e9358e7-887c-4b9c-96d4-17f84030b432",
+        "_rid": "H5dCAKqlXSgNAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgNAAAAAAAAAA==/",
+        "_etag": "\"410118cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "014",
+        "description": "Frozen Food",
+        "id": "24fdb341-d9c7-4d40-b961-03ceb5b00324",
+        "_rid": "H5dCAKqlXSgOAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgOAAAAAAAAAA==/",
+        "_etag": "\"410119cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "017",
+        "description": "Coffee",
+        "id": "ebdd999a-64b3-45bc-83ff-0f86355724a6",
+        "_rid": "H5dCAKqlXSgPAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgPAAAAAAAAAA==/",
+        "_etag": "\"41011acb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "015",
+        "description": "Dry Cleaning",
+        "id": "a5a39b29-289d-4acf-b3ef-3a7724d59075",
+        "_rid": "H5dCAKqlXSgQAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgQAAAAAAAAAA==/",
+        "_etag": "\"41011bcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "016",
+        "description": "Video",
+        "id": "be3520b2-781f-4d8c-83cb-684085e72c0d",
+        "_rid": "H5dCAKqlXSgRAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgRAAAAAAAAAA==/",
+        "_etag": "\"41011ccb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "018",
+        "description": "Fish",
+        "id": "ffaa435a-7d77-4f71-b766-f4b68d0c96d7",
+        "_rid": "H5dCAKqlXSgSAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgSAAAAAAAAAA==/",
+        "_etag": "\"41011dcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "019",
+        "description": "Country Grocer",
+        "id": "faa4a750-61bc-44dd-83de-9bc9699e860b",
+        "_rid": "H5dCAKqlXSgTAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgTAAAAAAAAAA==/",
+        "_etag": "\"41011ecb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "020",
+        "description": "Commercial Bakery",
+        "id": "d8e6f840-e5a1-42a1-a965-92b97eb3de39",
+        "_rid": "H5dCAKqlXSgUAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgUAAAAAAAAAA==/",
+        "_etag": "\"41011fcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "008",
+        "description": "Cosmetics",
+        "id": "87496c54-582d-4a9b-819e-6c8f55184f59",
+        "_rid": "H5dCAKqlXSgVAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgVAAAAAAAAAA==/",
+        "_etag": "\"410120cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "021",
+        "description": "Wokery",
+        "id": "aa2ea399-665e-4d56-bb86-9298b0e52785",
+        "_rid": "H5dCAKqlXSgWAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgWAAAAAAAAAA==/",
+        "_etag": "\"410121cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "022",
+        "description": "Pizza",
+        "id": "17b4b5ba-c615-479f-92e3-c463470072dd",
+        "_rid": "H5dCAKqlXSgXAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgXAAAAAAAAAA==/",
+        "_etag": "\"410122cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "023",
+        "description": "PFSS",
+        "id": "13e302c1-7e1a-41fb-811f-0308b58273a1",
+        "_rid": "H5dCAKqlXSgYAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgYAAAAAAAAAA==/",
+        "_etag": "\"410123cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "026",
+        "description": "Customer Service",
+        "id": "4adf2abd-4650-43ab-b66e-a12d4b989e13",
+        "_rid": "H5dCAKqlXSgZAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgZAAAAAAAAAA==/",
+        "_etag": "\"410124cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "024",
+        "description": "Market Cafe",
+        "id": "10eb44bb-8454-4ba9-9ae0-0f01af27f7d1",
+        "_rid": "H5dCAKqlXSgaAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgaAAAAAAAAAA==/",
+        "_etag": "\"410125cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "025",
+        "description": "Natures Market",
+        "id": "388bf522-e31d-441b-a7e5-c906516efcd4",
+        "_rid": "H5dCAKqlXSgbAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgbAAAAAAAAAA==/",
+        "_etag": "\"410126cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "027",
+        "description": "Checkouts",
+        "id": "5d295d95-cd54-4ac2-b0f0-fd907b4a20d2",
+        "_rid": "H5dCAKqlXSgcAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgcAAAAAAAAAA==/",
+        "_etag": "\"410127cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "028",
+        "description": "Sushi",
+        "id": "c63b2c06-af9a-435c-a328-5dba3a4f2857",
+        "_rid": "H5dCAKqlXSgdAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgdAAAAAAAAAA==/",
+        "_etag": "\"410128cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "030",
+        "description": "District Office",
+        "id": "f83be3c3-8878-4c13-92ed-1aad1198a1b2",
+        "_rid": "H5dCAKqlXSgeAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgeAAAAAAAAAA==/",
+        "_etag": "\"410129cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "031",
+        "description": "Bottle Return",
+        "id": "ea1f7f71-a0f0-46c5-bd34-756b55a98bed",
+        "_rid": "H5dCAKqlXSgfAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgfAAAAAAAAAA==/",
+        "_etag": "\"41012acb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "032",
+        "description": "Water Meter Room",
+        "id": "51e49336-fa7b-49bf-a2e6-4154d0d14d87",
+        "_rid": "H5dCAKqlXSggAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSggAAAAAAAAAA==/",
+        "_etag": "\"41012bcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "033",
+        "description": "Receiving-Store supplies",
+        "id": "08cbdd18-6aa6-4331-bf11-5a8fb48b1612",
+        "_rid": "H5dCAKqlXSghAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSghAAAAAAAAAA==/",
+        "_etag": "\"41012ccb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "034",
+        "description": "Front Offices",
+        "id": "8ac56467-bcdb-4a42-b0c3-d248c50782b6",
+        "_rid": "H5dCAKqlXSgiAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgiAAAAAAAAAA==/",
+        "_etag": "\"41012dcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "035",
+        "description": "Employee Services",
+        "id": "14fa147e-ba46-447f-b287-b890d86f0cd7",
+        "_rid": "H5dCAKqlXSgjAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgjAAAAAAAAAA==/",
+        "_etag": "\"41012ecb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "036",
+        "description": "Air Door",
+        "id": "c92c279b-9ff1-463f-a2df-4c29bf60cf2b",
+        "_rid": "H5dCAKqlXSgkAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgkAAAAAAAAAA==/",
+        "_etag": "\"41012fcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "037",
+        "description": "Electric Room",
+        "id": "db2505a6-d6a9-4fce-87b7-f378b7b5a90b",
+        "_rid": "H5dCAKqlXSglAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSglAAAAAAAAAA==/",
+        "_etag": "\"410130cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "038",
+        "description": "Central Prod.",
+        "id": "f83c8708-1561-4de0-a5d6-26a29b6d2537",
+        "_rid": "H5dCAKqlXSgmAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgmAAAAAAAAAA==/",
+        "_etag": "\"410131cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "050",
+        "description": "Computer Room",
+        "id": "5ea37c19-0eb4-459a-9400-ace3e49099d8",
+        "_rid": "H5dCAKqlXSgnAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgnAAAAAAAAAA==/",
+        "_etag": "\"410132cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "039",
+        "description": "WKids",
+        "id": "8cfe95ea-40d6-4777-8c72-478c6f7a85cd",
+        "_rid": "H5dCAKqlXSgoAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgoAAAAAAAAAA==/",
+        "_etag": "\"410133cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "055",
+        "description": "Enclosed Windscreen",
+        "id": "0f3c9806-b9a3-4fbb-bd4e-288351ed6771",
+        "_rid": "H5dCAKqlXSgpAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgpAAAAAAAAAA==/",
+        "_etag": "\"410134cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "052",
+        "description": "Mechanical Room",
+        "id": "a687bcdb-9f74-4a55-a9fd-24b6340f3d75",
+        "_rid": "H5dCAKqlXSgqAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgqAAAAAAAAAA==/",
+        "_etag": "\"410135cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "051",
+        "description": "Telephone Room",
+        "id": "eed431cf-fec3-4d33-ad60-7025e79db8c2",
+        "_rid": "H5dCAKqlXSgrAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgrAAAAAAAAAA==/",
+        "_etag": "\"410136cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "056",
+        "description": "Tenant Space",
+        "id": "89dde69c-a0ce-46ea-892a-c1c8859940f7",
+        "_rid": "H5dCAKqlXSgsAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgsAAAAAAAAAA==/",
+        "_etag": "\"410137cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "057",
+        "description": "Outdoor Storage",
+        "id": "521db5e8-d816-479f-992e-30a213790e9c",
+        "_rid": "H5dCAKqlXSgtAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgtAAAAAAAAAA==/",
+        "_etag": "\"410138cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "060",
+        "description": "Exterior Walls",
+        "id": "37ccc16b-bd81-47a1-8801-02b8b8f3a77e",
+        "_rid": "H5dCAKqlXSguAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSguAAAAAAAAAA==/",
+        "_etag": "\"410139cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "061",
+        "description": "Vendor Dock(s)",
+        "id": "b09766a6-d49c-41e8-9e22-86ef4e766b94",
+        "_rid": "H5dCAKqlXSgvAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgvAAAAAAAAAA==/",
+        "_etag": "\"41013acb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "063",
+        "description": "Under Canopy",
+        "id": "94bbb876-68a0-4a65-9814-c9e31ae56825",
+        "_rid": "H5dCAKqlXSgwAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgwAAAAAAAAAA==/",
+        "_etag": "\"41013bcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "064",
+        "description": "Planters",
+        "id": "37f9a332-5e55-471e-be3e-2665121b41cd",
+        "_rid": "H5dCAKqlXSgxAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgxAAAAAAAAAA==/",
+        "_etag": "\"41013ccb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "062",
+        "description": "Open Windscreen",
+        "id": "6d64fc61-3271-4a17-85ef-2103fe2f8cad",
+        "_rid": "H5dCAKqlXSgyAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgyAAAAAAAAAA==/",
+        "_etag": "\"41013dcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "078",
+        "description": "Catering",
+        "id": "48d4bca3-9990-40bb-a26e-df2434373284",
+        "_rid": "H5dCAKqlXSgzAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSgzAAAAAAAAAA==/",
+        "_etag": "\"41013ecb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "077",
+        "description": "Kosher",
+        "id": "671f369d-da3e-487a-8a4b-c095df85f99e",
+        "_rid": "H5dCAKqlXSg0AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg0AAAAAAAAAA==/",
+        "_etag": "\"41013fcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "079",
+        "description": "Cooking School",
+        "id": "5daf337b-80ba-4f3f-8c7b-08225a85525d",
+        "_rid": "H5dCAKqlXSg1AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg1AAAAAAAAAA==/",
+        "_etag": "\"410140cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "080",
+        "description": "Pasta Station",
+        "id": "bc0699ca-f85c-48ef-a9f5-25c3ebcd05b6",
+        "_rid": "H5dCAKqlXSg2AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg2AAAAAAAAAA==/",
+        "_etag": "\"410141cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "081",
+        "description": "Grill Station",
+        "id": "3157aebd-b4b8-4d7b-9806-7382258e4cea",
+        "_rid": "H5dCAKqlXSg3AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg3AAAAAAAAAA==/",
+        "_etag": "\"410142cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "082",
+        "description": "Ceasar Salad Station",
+        "id": "c964086d-9053-458b-8b00-c031c16e4fe3",
+        "_rid": "H5dCAKqlXSg4AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg4AAAAAAAAAA==/",
+        "_etag": "\"410143cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "083",
+        "description": "Fountain Beverage",
+        "id": "d7155d22-9e00-4070-aadd-a86f70afc3ed",
+        "_rid": "H5dCAKqlXSg5AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg5AAAAAAAAAA==/",
+        "_etag": "\"410144cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "085",
+        "description": "Meal Center",
+        "id": "eafa66c8-3378-4f4c-88f1-dd28d00a0355",
+        "_rid": "H5dCAKqlXSg6AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg6AAAAAAAAAA==/",
+        "_etag": "\"410145cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "084",
+        "description": "Chicken",
+        "id": "eba3e6a2-cfb4-401b-bcfc-235a0095a439",
+        "_rid": "H5dCAKqlXSg7AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg7AAAAAAAAAA==/",
+        "_etag": "\"410146cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "086",
+        "description": "Sandwich Shop",
+        "id": "c0569b7a-d15b-4871-a4bc-3a6d53f980b1",
+        "_rid": "H5dCAKqlXSg8AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg8AAAAAAAAAA==/",
+        "_etag": "\"410147cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "089",
+        "description": "Self Srv Salad-Fruit-Grain Bar",
+        "id": "1810774a-84cc-4a64-ad70-97a4c30822b2",
+        "_rid": "H5dCAKqlXSg9AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg9AAAAAAAAAA==/",
+        "_etag": "\"410148cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "088",
+        "description": "Soup",
+        "id": "cc374cf4-ec48-4514-b2cd-c0faed418cc0",
+        "_rid": "H5dCAKqlXSg+AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg+AAAAAAAAAA==/",
+        "_etag": "\"410149cb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "087",
+        "description": "Srv-Salad-HeatnServ",
+        "id": "7598285a-d745-45e8-b7f0-0dce94491f15",
+        "_rid": "H5dCAKqlXSg-AAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXSg-AAAAAAAAAA==/",
+        "_etag": "\"41014acb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "090",
+        "description": "Ala Carte/Hot Line",
+        "id": "509053a9-3e6e-4944-98cf-cbeb5eb52984",
+        "_rid": "H5dCAKqlXShAAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShAAAAAAAAAAA==/",
+        "_etag": "\"41014bcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "091",
+        "description": "Wine Shop",
+        "id": "e0b97370-0c0e-465f-98e0-9e1f5b1a37d3",
+        "_rid": "H5dCAKqlXShBAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShBAAAAAAAAAA==/",
+        "_etag": "\"41014ccb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "092",
+        "description": "Restaurant",
+        "id": "9ab61756-4af3-423d-8a06-14b6771a9f4e",
+        "_rid": "H5dCAKqlXShCAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShCAAAAAAAAAA==/",
+        "_etag": "\"41014dcb-0000-0000-0000-5c1bd1080000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326856
+    },
+    {
+        "number": "097",
+        "description": "Common Groc. & GM",
+        "id": "cd3b3a68-a998-4522-b35a-362f0b2de75e",
+        "_rid": "H5dCAKqlXShDAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShDAAAAAAAAAA==/",
+        "_etag": "\"41014ecb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "099",
+        "description": "Common Aisle Space",
+        "id": "d332eb9b-5913-4908-b18f-c0306b1c71aa",
+        "_rid": "H5dCAKqlXShEAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShEAAAAAAAAAA==/",
+        "_etag": "\"41014fcb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "098",
+        "description": "Common Perishable",
+        "id": "e5b8e2f8-f464-4e19-8875-f01373d54d89",
+        "_rid": "H5dCAKqlXShFAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShFAAAAAAAAAA==/",
+        "_etag": "\"410150cb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "096",
+        "description": "Tenant Restaurant 2",
+        "id": "758beece-527f-402d-94d2-fffe06ee7b15",
+        "_rid": "H5dCAKqlXShGAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShGAAAAAAAAAA==/",
+        "_etag": "\"410151cb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "094",
+        "description": "Restaurant 2",
+        "id": "042c814d-4d78-4e17-b62c-04a570262c37",
+        "_rid": "H5dCAKqlXShHAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShHAAAAAAAAAA==/",
+        "_etag": "\"410152cb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "093",
+        "description": "Restaurant 2",
+        "id": "3bab4876-0c76-4598-8a21-6592b37fb24d",
+        "_rid": "H5dCAKqlXShIAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShIAAAAAAAAAA==/",
+        "_etag": "\"410153cb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    },
+    {
+        "number": "095",
+        "description": "Tenant Restaurant 1",
+        "id": "5835c7e1-851d-470a-911e-bcc0a6e75415",
+        "_rid": "H5dCAKqlXShJAAAAAAAAAA==",
+        "_self": "dbs/H5dCAA==/colls/H5dCAKqlXSg=/docs/H5dCAKqlXShJAAAAAAAAAA==/",
+        "_etag": "\"410154cb-0000-0000-0000-5c1bd1090000\"",
+        "_attachments": "attachments/",
+        "_ts": 1545326857
+    }
+]

@@ -1,0 +1,68 @@
+import { Injectable } from '@angular/core';
+import { Constants } from '@app/app-constants';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { Observable, Subject } from 'rxjs';
+import { ReportProjectViewModel } from '@app/report/shared/view-models/report-project-viewmodel';
+import { ReportEquipmentViewModel } from '@app/report/shared/view-models/report-equipment-viewmodel';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ReportService {
+
+  constructor(private http: HttpClient) { }
+
+  getProjects(): Observable<Array<ReportProjectViewModel>> {
+    const url = environment.reportAPIBaseUrl + Constants.getReportProjectsList;
+    return this.http.get<Array<ReportProjectViewModel>>(url);
+  }
+
+  getDrawingCount(projectId: string): Observable<Array<ReportEquipmentViewModel>> {
+    const url = environment.reportAPIBaseUrl +
+      Constants.getDrawingCountReport.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+
+  getEquipmentCounts(): Observable<Array<ReportEquipmentViewModel>> {
+    const url = environment.reportAPIBaseUrl + Constants.getEquipmentcountsReport;
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+
+  getFinishesReport(projectId: string): Observable<Array<ReportEquipmentViewModel>> {
+    const url = environment.reportAPIBaseUrl +
+      Constants.getFinishesReport.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+
+  getConstructionDelivery(projectId: string): Observable<Array<ReportEquipmentViewModel>>{
+    const url = environment.reportAPIBaseUrl +
+      Constants.getConstructionDelivery.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+  
+  getConstructionGroups(): Observable<Array<ReportEquipmentViewModel>>{
+    const url = environment.reportAPIBaseUrl + Constants.getConstructionGroups;
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+  CreateCSV:Subject<string> = new Subject<string>();
+  PrintPDF:Subject<any> = new Subject<any>();
+  
+  getPurchasingReport(projectId: string): Observable<Array<ReportEquipmentViewModel>>{
+    const url = environment.reportAPIBaseUrl +
+      Constants.getPurchasingReport.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+
+  getEquipmentBudget(projectId: string): Observable<Array<ReportEquipmentViewModel>>{
+    const url = environment.reportAPIBaseUrl +
+      Constants.getEquipmentBudget.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+
+  getFixtureEstimate(projectId: string): Observable<Array<ReportEquipmentViewModel>>{
+    const url = environment.reportAPIBaseUrl +
+      Constants.getFixtureEstimate.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Array<ReportEquipmentViewModel>>(url);
+  }
+}

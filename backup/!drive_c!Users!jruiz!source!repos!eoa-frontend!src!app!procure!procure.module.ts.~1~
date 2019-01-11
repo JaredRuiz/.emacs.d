@@ -1,0 +1,19 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { EquipmentlistComponent } from '@app/procure/equipmentlist/equipment-list.component';
+import { SharedUiModule } from '@app/shared-ui/shared-ui.module';
+import { ProcureRoutingModule } from '@app/procure/procure-routing.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    NgSelectModule,
+    FormsModule,
+    ProcureRoutingModule,
+    SharedUiModule
+  ],
+  declarations: [EquipmentlistComponent]
+})
+export class ProcureModule { }

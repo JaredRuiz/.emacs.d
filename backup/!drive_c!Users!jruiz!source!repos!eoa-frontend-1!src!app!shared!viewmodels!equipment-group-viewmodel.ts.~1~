@@ -1,0 +1,15 @@
+import { EquipmentGroupCardModel } from '@app/shared-ui/equipment-group-card-model';
+import { EquipmentCardModel } from '@app/shared-ui/equipment-card-model';
+
+export interface EquipmentGroupViewModel implements EquipmentGroupCardModel {
+    groupKey: string;
+    items: Array<EquipmentCardModel>;
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+
+    finishesCount: number;
+    newItemsCount: number;
+    discrepanciesCount: number;
+    deletedCount: number;
+}

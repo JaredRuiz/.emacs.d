@@ -1,0 +1,64 @@
+import { Component, OnInit, Input, Output, EventEmitter, Renderer2, ElementRef } from '@angular/core';
+import { FilterCriteriaItemModel } from '@app/shared/models/filter-criteria-item.model';
+import { FilterCriteriaItemDataValueModel } from '@app/shared/models/filter-criteria-item-data-value.model';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+
+@Component({
+  selector: 'app-filter-criteria',
+  templateUrl: './filter-criteria.component.html'
+})
+export class FilterCriteriaComponent implements OnInit {
+
+  _filterCriteriaItem: FilterCriteriaItemModel = new FilterCriteriaItemModel();
+  model: any;
+
+  @Input() disabled: boolean;
+
+  @Input() get filterCriteriaItem() {
+    return this._filterCriteriaItem;
+  }
+  set filterCriteriaItem(value: FilterCriteriaItemModel) {
+    this._filterCriteriaItem = value;
+  }
+
+  @Input() hideShowAll: boolean;
+
+  @Output() filterCriteriaItemDataValueSelectedTriggered = new EventEmitter<SelectedFilterCriteriaItemModel>();
+  @Output() filterCriteriaItemDataValueRemovedTriggered = new EventEmitter<SelectedFilterCriteriaItemModel>();
+
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef) { }
+
+  ngOnInit() { }
+
+  onFilterCriteriaSelectorOpened() {
+    const filterCriteriaDiv = this.el.nativeElement.querySelector('.Filter-Criteria-Container');
+    this.renderer.addClass(filterCriteriaDiv, 'Filter-Criteria-Selector-Opened');
+  }
+
+  onFilterCriteriaSelectorClosed() {
+    const filterCriteriaDiv = this.el.nativeElement.querySelector('.Filter-Criteria-Container');
+    this.renderer.removeClass(filterCriteriaDiv, 'Filter-Criteria-Selector-Opened');
+  }
+
+  onFilterCriteriaItemClicked(selectedFilterCriteriaItemDataValue: FilterCriteriaItemDataValueModel) {
+    const matchedFilterCriteriaItemDataValue = this.filterCriteriaItem.values.
+      find(item => item.selected === selectedFilterCriteriaItemDataValue.selected
+        && item.text === selectedFilterCriteriaItemDataValue.text && item.value === selectedFilterCriteriaItemDataValue.value);
+    matchedFilterCriteriaItemDataValue.selected = !selectedFilterCriteriaItemDataValue.selected;
+    const selectedFilterCriteriaItem = new SelectedFilterCriteriaItemModel(
+      selectedFilterCriteriaItemDataValue.text,
+      this.filterCriteriaItem.type,
+      this.filterCriteriaItem.property,
+      selectedFilterCriteriaItemDataValue.value
+      );
+    if (selectedFilterCriteriaItemDataValue.selected) {
+      this.filterCriteriaItemDataValueSelectedTriggered.emit(selectedFilterCriteriaItem);
+    } else {
+      this.filterCriteriaItemDataValueRemovedTriggered.emit(selectedFilterCriteriaItem);
+    }
+  }
+
+  onShowAllClicked() { }
+}

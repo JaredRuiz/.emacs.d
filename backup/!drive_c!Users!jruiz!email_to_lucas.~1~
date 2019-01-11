@@ -1,0 +1,8 @@
+Hey Wegmans Team,
+
+  Ok, here is a link to the tool I was using to upload data into CosmosDB: https://docs.microsoft.com/en-us/azure/cosmos-db/import-data#Install. I downloaded the Dtui tool (the GUI one), and it was pretty self-explanatory. This also has the nice feature that once you get it to work, it gives you the corresponding command for the terminal, in case in the future you need to have it as part of a build process.
+
+  Anyway, getting it to work can be a little tricky. Here are a few things you need to do:
+    - On the "Target Information" tab, be sure to click the "Advanced Options" button and change the Connection Mode to "Gateway." Otherwise you won't be able to connect using the connection string.
+     - The connection string should be something like: "AccountEndpoint=https://eoa-upload.documents.azure.com:443/;AccountKey=E7M6GsvWq9wdnEhwZF6YThYaLG98re3xITY3uUW6ncGfMYvTKaVBNGR4PrbqTDMMiiu3UPaIpsXfhyrnIp3wHA==;Database=eoa-upload;" note the extra key here "Database", which is just the name of the db. 
+     - 

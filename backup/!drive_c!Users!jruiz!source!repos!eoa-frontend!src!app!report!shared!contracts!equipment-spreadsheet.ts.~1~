@@ -1,0 +1,20 @@
+export interface EquipmentSpreadsheet {
+    id: string;
+    deliveryDate: string;
+    departmentDescription: string;
+    departmentNumber: string;
+    equipmentCode: string;
+    currentTotalQuantity: number;
+    manufacturer: string;
+    manufacturerDescription: string;
+    purchaseOrderNo: string;
+    orderingStatus: string;
+    vendor: string;
+    category: string;
+    constructionGroupName: string;
+    height: string;
+    width: string;
+    depth: string;
+    model: string;
+    description: string;
+}

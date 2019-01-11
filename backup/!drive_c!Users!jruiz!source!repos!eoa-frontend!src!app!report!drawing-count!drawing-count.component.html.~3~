@@ -1,0 +1,84 @@
+<<<<<<< HEAD
+<div class="Secondary-Banner">
+
+  <div class="Banner-Left-Content">
+    <ng-select [items]="projectListItems" #projectListDropdown [(ngModel)]="selectedProject" bindLabel="projectName"
+      (change)="onSelectedProjectListItemChanged()" notFoundText="No projects found" placeholder="Select project" name="projectListItemInput"
+      [virtualScroll]="true" [searchFn]="projectListItemSearchFn">
+      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div>
+          {{item.projectName}}
+        </div>
+      </ng-template>
+    </ng-select>
+  </div>
+</div>
+=======
+<app-report-shell [budgetingReport]="false" [reportFeed]="reportFeed" [groupBy]="selectedGroupByCriteria?.value"
+  [orderBy]="selectedOrderByCriteria?.value" (selectionChanged)="onSelectionChanged()">
+
+  <ng-template appReportBodyGroupItemRow let-group="group" let-groupedItem="groupedItem">
+
+    <div class="Quantity">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.currentTotalQuantity }}
+      </span>
+    </div>
+
+    <div class="Department">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.departmentNumber + ' ' + groupedItem.departmentDescription }}
+      </span>
+    </div>
+
+    <div class="Equipment-Code">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.equipmentCode }}
+      </span>
+    </div>
+
+    <div class="Model">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.model }}
+      </span>
+    </div>
+
+    <div class="Manufacturer">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.manfacturer }}
+      </span>
+    </div>
+
+    <div class="Vendor">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.vendor }}
+      </span>
+    </div>
+
+    <div class="Equipment-Description">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.equipmentDescription }}
+      </span>
+    </div>
+
+    <div class="Width">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.width }}
+      </span>
+    </div>
+
+    <div class="Depth">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.depth }}
+      </span>
+    </div>
+
+    <div class="Height">
+      <span class="Report-Body-Group-Item-Text">
+        {{ groupedItem.height }}
+      </span>
+    </div>
+
+  </ng-template>
+</app-report-shell>
+>>>>>>> feature/reports-ui

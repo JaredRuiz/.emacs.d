@@ -1,0 +1,16 @@
+<div [class]="Id + '-Form-Control-Container'">
+  <input type="text" [class]="Id + '-Form-Control'" [(ngModel)]="selectedDateValueTracked" [name]="Id" [id]="Id" 
+         [pattern]="stringDateFormat" (change)="onInputDateChanged($event.target.value)" #dateInput="ngModel">
+  <span [class]="Id + '-Form-Control-Calendar-Container'">
+    <button type="button" [class.active]="isCalendarOpened" class="Calendar-Button" (click)="onCalendarButtonClicked()">
+      <span class="Calendar-Icon"></span>
+    </button>
+     <air-datepicker #airDatePicker [airOptions]="airDatePickerOptions" *ngIf="isCalendarOpened" [(airDate)]="selectedDate"
+      (airChange)="onDateSelected()">
+    </air-datepicker>
+  </span>
+  
+  <div class="Bad-Date-Format-Text" *ngIf="dateInput.errors?.pattern">
+    {{ invalidDateMessage }}
+  </div>
+</div>

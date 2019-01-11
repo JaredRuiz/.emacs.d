@@ -1,0 +1,83 @@
+<div class="Scroll-Content">
+
+  <div class="Project-List-Container">
+
+    <div class="Project-List-Header-Row">
+      <span class="Search-Icon"></span>
+      <input (keyup)="onSearch()" class="Search-Input" type="text" autocomplete="off" placeholder="Search Projects" [(ngModel)]="searchTerm">
+      <!-- <ng-select name="viewProjectTypeInput" #viewProjectTypeInput [items]="projectTypes" bindLabel="ProjectTypeText" [(ngModel)]="selectedProjectType"
+        notFoundText="No project type found" placeholder="Select Project Type" (change)="onViewProjectTypeChanged($event)">
+      </ng-select> -->
+    </div>
+
+    <div class="Border">
+    </div>
+
+    <div class="Project-Card-Container">
+      <ng-container *ngFor="let project of filteredProjects; let i = index; trackBy: trackProject">
+        <div class="Project-Card" *ngIf="!project.isDeleted&&!project.isActive&&!project.hasConcurrencyError">
+          <div *ngIf="!project.isDeleted&&!project.isActive" class="Project-Card-Flex-Item-Name">
+            {{ project.projectName }}
+          </div>
+          <div *ngIf="!project.isDeleted&&!project.isActive" class="Project-Card-Flex-Item-Slider">
+            <label class="switch" disabled="true">
+              <input type="checkbox" [checked]="project.isActive" (change)="onProjectActivateClicked(project)" [(ngModel)]="project.isActive">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div *ngIf="!project.isDeleted&&!project.isActive" class="Project-Card-Flex-Item-Status-Text" [ngClass]="{'active':project.isActive}">
+            <label>{{project.isActive ? 'ACTIVE PROJECT':'DEACTIVATED'}}</label>
+          </div>
+          <div *ngIf="!project.isDeleted&&!project.isActive" class="Project-Card-Flex-Item-Delete-Icon">
+            <span class="Delete-Icon" (click)="onProjectDeleteClicked(project)"></span>
+          </div>
+        </div>
+        <div class="Project-Card" *ngIf="project.isDeleted&&!project.hasConcurrencyError" [ngClass]="{'deleted':project.isDeleted}">
+          <div class="Project-Card-Flex-Item-Name deleted">
+            Deleted: {{ project.projectName }}
+          </div>
+          <div (click)="onProjectUndoDeleteClicked(project)" class="Project-Card-Flex-Item-Undo-Button">
+            UNDO DELETE
+          </div>
+        </div>
+        <div class="Project-Card" *ngIf="project.isActive&&!project.hasConcurrencyError" [ngClass]="{'activated':project.isActive}">
+          <div *ngIf="project.isActive" class="Project-Card-Flex-Item-Name activated">
+            Activated: {{ project.projectName }}
+          </div>
+          <div *ngIf="project.isActive" (click)="onProjectUndoActivateClicked(project)" class="Project-Card-Flex-Item-Undo-Button">
+            UNDO ACTIVATE
+          </div>
+        </div>
+        <div class="Project-Card reload" *ngIf="project.hasConcurrencyError">
+          <div class="Project-Card-Flex-Item-Reload">
+            Project is already updated by another user.
+          </div>
+          <div (click)="onReloadProjectClick(project)" class="Project-Card-Flex-Item-Reload-Button">
+            CLICK HERE TO REFRESH
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div>
+    <app-modal-dialog [modelId]="'deleteConfirmationModal'" [width]="'700px'" [colorStyle]="'danger'" #deleteConfirmationModal>
+    <div class="Delete-Project-Confirmation" modal-section="header">
+      <span>Delete Project Confirmation</span>
+    </div>
+    <div modal-section="body">
+      <div class="Delete-Project-Wrapper">
+        <label class="Really-Delete-Label">REALLY DELETE {{ projectToDelete.projectName }}?</label>
+      </div>
+      <div class="Delete-Button-Wrapper">
+        <button class="Secondary-Default-Button" id="cancelDeleteProjectBtn" type="button" (click)="deleteConfirmationModal.hide()">
+          <span class="ButtonText">Cancel</span>
+        </button>
+        <button class="Delete-Project-Button" id="deleteProjectBtn"
+          type="submit" (click)="deleteProject()">
+          <span>CONFIRM DELETION</span>
+        </button>
+      </div>
+    </div>
+  </app-modal-dialog>
+  </div>

@@ -1,0 +1,21 @@
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { BadgePillDataItemModel } from '@app/shared/models/badge-pill-data-item.model';
+
+@Component({
+  selector: 'app-badge-pill',
+  templateUrl: './badge-pill.component.html'
+})
+export class BadgePillComponent implements OnInit {
+
+  @Input() badgePillDataItem: BadgePillDataItemModel;
+
+  @Output() badgePillRemoveTriggered = new EventEmitter<BadgePillDataItemModel>();
+
+  constructor() { }
+
+  ngOnInit() { }
+
+  onBadgePillRemoveClicked() {
+    this.badgePillRemoveTriggered.emit(this.badgePillDataItem);
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "DbConnectionSettings": {
+    "DocumentDbConnectionString": "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+    "DatabaseName": "EOA"
+  },
+  "EOAServiceBusConnection": "Endpoint=sb://eoa-servicebus-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=yOIZt5YPqBVh8kvbxHiYbD8GIAdb1KSIstGpv0H6vEk=",
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "wfmeoa.onmicrosoft.com", // for instance contoso.onmicrosoft.com
+    "TenantId": "e762425f-d31b-4ea9-9259-ed6d3e077594",
+    "ClientId": "e5672aca-fdc8-45ab-b936-89714473eef2",
+    "ECUserGroup": "EC",
+    "IPUserGroup": "IP"
+  }
+}

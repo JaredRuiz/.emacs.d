@@ -1,0 +1,136 @@
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { AdminService } from '@app/admin/shared/admin.service';
+import { ProjectViewModel } from '@app/admin/shared/viewmodels/project.viewmodel.';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { EventBus } from '@app/shared/eventbus';
+import { Events } from '@app/shared/events';
+declare var $: any;
+
+@Component({
+  selector: 'app-project-list',
+  templateUrl: './project-list.component.html'
+})
+export class ProjectListComponent implements OnInit, OnDestroy {
+
+  @ViewChild('deleteConfirmationModal') deleteConfirmationModal: ModalDialogComponent;
+    
+  projects: Array<ProjectViewModel>;
+  filteredProjects = new Array<ProjectViewModel>();
+  selectedProject: ProjectViewModel = new ProjectViewModel();
+  selectedProjectType: any;
+  searchTerm = '';
+
+  constructor(
+    private adminService: AdminService,
+    private bus: EventBus
+  ) { }
+
+  ngOnInit() {
+    this.loadProjects();
+  }
+
+  ngOnDestroy() { }
+
+  onSearch() {
+    this.filterProjects();
+  }
+
+  onProjectDeleteClicked(project: ProjectViewModel) {
+    this.deleteConfirmationModal.show();
+  }
+
+  // TODO: change to deleteProject
+  deleteProject(project: ProjectViewModel) {
+    const projectToDelete = $.extend(true, {}, project);
+    projectToDelete.isDeleted = true;
+
+    this.adminService.deleteProject(projectToDelete).subscribe(
+      x => {
+        this.filteredProjects[this.filteredProjects.indexOf(project)] = <ProjectViewModel>x;
+        setTimeout(() => {
+          project = this.filteredProjects.find(i => i.id === x.id);
+          if (project.isDeleted && x.lastUpdatedOn === project.lastUpdatedOn) {
+            this.filteredProjects = this.filteredProjects.filter(p => p.id !== project.id);
+          }
+        }, 10000);
+      },
+      (errorResponse: HttpErrorResponse) => {
+        if (errorResponse.status === 400 && errorResponse.error.errorCode['PROJECT_HAS_ALREADY_BEEN_UPDATED_IN_ANOTHER_USER_SESSION']) {
+          this.filteredProjects = this.filteredProjects.filter(p => p.id !== project.id);
+          this.bus.publish(Events.WARNING_NOTIFICATION,
+            'Project: ' + project.projectName + ' has already been updated in another user session');
+        }
+      }
+    );
+  }
+
+  onProjectUndoDeleteClicked(project: ProjectViewModel) {
+    const projectDeleted = $.extend(true, {}, project);
+    projectDeleted.isDeleted = false;
+    this.adminService.deleteProject(projectDeleted).subscribe(x => {
+      this.filteredProjects[this.filteredProjects.indexOf(project)] = <ProjectViewModel>x;
+    });
+  }
+
+  onProjectActivateClicked(project: ProjectViewModel) {
+    const projectToActivate = $.extend(true, {}, project);
+    projectToActivate.isActive = true;
+
+    this.adminService.activateProject(projectToActivate).subscribe(
+      x => {
+        this.filteredProjects[this.filteredProjects.indexOf(project)] = <ProjectViewModel>x;
+        setTimeout(() => {
+          project = this.filteredProjects.find(i => i.id === x.id);
+          if (project.isActive && x.lastUpdatedOn === project.lastUpdatedOn) {
+            this.filteredProjects = this.filteredProjects.filter(p => p.id !== project.id);
+          }
+        }, 10000);
+      },
+      (errorResponse: HttpErrorResponse) => {
+        if (errorResponse.status === 400 && errorResponse.error.errorCode['PROJECT_HAS_ALREADY_BEEN_UPDATED_IN_ANOTHER_USER_SESSION']) {
+          this.filteredProjects = this.filteredProjects.filter(p => p.id !== project.id);
+          this.bus.publish(Events.WARNING_NOTIFICATION,
+            'Project: ' + project.projectName + ' has already been updated in another user session');
+        }
+      }
+    );
+  }
+
+  onProjectUndoActivateClicked(project: ProjectViewModel) {
+    const projectActivated = $.extend(true, {}, project);
+    projectActivated.isActive = false;
+    this.adminService.activateProject(projectActivated).subscribe(x => {
+      this.filteredProjects[this.filteredProjects.indexOf(project)] = <ProjectViewModel>x;
+    });
+  }
+
+  onReloadProjectClick(project: ProjectViewModel) {
+    this.adminService.getProjectById(project.id).subscribe(x => {
+      this.filteredProjects[this.filteredProjects.indexOf(project)] = <ProjectViewModel>x;
+      this.filteredProjects = this.filteredProjects.filter(p => !p.isActive && !p.isDeleted);
+    });
+  }
+
+  trackProject(index, project: ProjectViewModel) {
+    return project ? project.id : index;
+  }
+
+  private loadProjects() {
+    this.adminService.getProjects().subscribe(x => {
+      this.filteredProjects = <ProjectViewModel[]>x;
+      this.projects = <ProjectViewModel[]>x;
+      this.filterProjects();
+    });
+  }
+
+  private filterProjects() {
+    if (!this.searchTerm) {
+      this.filteredProjects = this.projects;
+      return;
+    }
+    this.filteredProjects = this.projects.filter(x =>
+      (x.projectName && x.projectName.toLowerCase().includes(this.searchTerm.toLowerCase()))
+    );
+  }
+}

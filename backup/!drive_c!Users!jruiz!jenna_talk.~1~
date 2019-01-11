@@ -1,0 +1,35 @@
+Jenna,
+
+  Here are some ideas to talk about programming and stuff:
+   - introduction to my background - math and CS, plus English (2 minutes)
+
+   - show them the Wegmans project (3 minutes)
+    * show Revit
+    * data being pushed up from Revit
+    * it showing up in EOA
+
+  - this illustrates some big ideas: (3 minutes)
+    * modern front-end web frameworks (Angular/frontend)
+    * APIs (we use different APIs to get data to be displayed)
+    * cloud technology (data pushed to cloud and stored in cloud)
+    * 3 tier-architecture (front end, backend, and middle pieces connecting them);
+    * Revit plugins/API: software is collaborative and always growing!
+
+  - Show them code (5 minutes)
+    NOTE: focus on code being clean: descriptive names, short functions, easy to follow top to bottom; logical separation of files; prefer eto use comments to explain tricky logic or introduce concepts, but not all over the place
+    * front-end html stuff in one repo and looks really different
+    * angular components
+    * API code looks much different (show some for loops and if statements)
+    * show them Revit code, and how even though that is using front-end stuff, we have to do it completely differently. The customer and the projects oftentimes force language requirements!
+
+ - Talk about team (2 minutes)
+   * 4 developers
+   * 1 person doing QA
+   * 1 designer
+   * Product Manager
+   * Wegmans team (customers)
+
+  - Questions? (however long)
+
+  So this plan touches on a lot of topics, and if I stick to the schedule above I can be done with my presentation in 
+  

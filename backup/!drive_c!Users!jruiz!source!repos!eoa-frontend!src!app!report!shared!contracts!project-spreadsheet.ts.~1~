@@ -1,0 +1,10 @@
+import { EquipmentSpreadsheet } from 'app/report/shared/contracts/equipment-spreadsheet';
+
+export interface ProjectSpreadsheet {
+    id: string;
+    projectName: string;
+    notes: string;
+    storeName: string;
+    storeNumber: string;
+    equipments: Array<EquipmentSpreadsheet>
+}

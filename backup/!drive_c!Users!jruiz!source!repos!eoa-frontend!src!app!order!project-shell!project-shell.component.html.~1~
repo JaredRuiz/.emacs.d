@@ -1,0 +1,149 @@
+<div class="Project-Details-Container">
+  <div class="Project-Details-Back-Button-Container" [class.hide]="projectInEditMode">
+    <a class="Project-Details-Back-Button" (click)="onBackToProjectSelectClicked()">
+      <span *ngIf="!projectInEditMode" class="Back-Arrow-Icon New-Project-Back-Arrow"></span>
+      <span *ngIf="!projectInEditMode"> BACK TO PROJECT SELECT</span>
+    </a>
+  </div>
+  <form #projectForm="ngForm" autocomplete="off" novalidate>
+    <div class="Project-Details-Body-Content-Section">
+      <div *ngIf="projectInEditMode" class="Project-Status-Header-Row" [ngClass]="{'Deactivate':!project.isActive}">
+        <div class="Project-Status-Header-Left">
+          <div *ngIf="project.isActive" class="Project-Status-Text">
+            ACTIVE PROJECT
+          </div>
+          <div *ngIf="!project.isActive" class="Project-Status-Text" [ngClass]="{'Deactivate':!project.isActive}">
+            <b>DEACTIVATE PROJECT:</b> By deactivating this project it will no longer be viewable in the <b>Orders</b> screen.
+          </div>
+        </div>
+        <div class="Project-Status-Header-Right">
+          <label class="switch" disabled="true">
+            <input type="checkbox" name="projectStatusInput" [(ngModel)]="project.isActive" [checked]="project.isActive">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <div class="Row">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="projectNameInput">Project Name</label>
+          <input type="text" required #projectName="ngModel" name="projectNameInput" [(ngModel)]="project.projectName"
+            class="Project-Name-Form-Control" id="projectNameInput">
+          <div *ngIf="projectForm.submitted&&projectName.invalid&&(projectName.dirty||projectName.touched)" class="Invalid-Message-Container">
+            Project Name is required.
+          </div>
+          <div *ngIf="duplicateProjectFound" class="Invalid-Message-Container">
+            The project name is already in use.
+          </div>
+        </div>
+        <div class="Project-Form-Control-Group-Right">
+          <label for="projectRequestNumberInput">Project Request Number</label>
+          <input type="text" [required]="project.isRemodel" name="projectRequestNumberInput" #projectRequestNumber="ngModel"
+            [(ngModel)]="project.projectRequestNumber" class="Project-Request-Number-Form-Control" id="projectRequestNumberInput">
+          <div *ngIf="projectForm.submitted&&projectRequestNumber.invalid &&(projectRequestNumber.dirty || projectRequestNumber.touched)"
+            class="Invalid-Message-Container">
+            Project Request Number is required.
+          </div>
+        </div>
+      </div>
+      <div class="Row" *ngIf="project.isRemodel">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="projectSubTypeInput">Project Sub-Type</label>
+          <ng-select name="projectSubTypeInput" id="projectSubTypeInput" [items]="projectSubTypes" [(ngModel)]="project.projectSubType"
+            notFoundText="No project subtype found" placeholder="Select Project SubType" bindLabel="displayText"
+            bindValue="dataValue" (change)="onProjectSubTypeSelectionChanged($event)">
+          </ng-select>
+        </div>
+        <div class="Project-Departments-Form-Control-Container">
+          <div>
+            <app-filter-criteria #departmensFilterInput [disabled]="true" [filterCriteriaItem]="departmentsFilterCriteriaItem"
+              [hideShowAll]="true" (filterCriteriaItemDataValueSelectedTriggered)="onFilterCriteriaItemDataValueSelectedTriggered($event)"
+              (filterCriteriaItemDataValueRemovedTriggered)="onFilterCriteriaItemDataValueRemoved($event)"></app-filter-criteria>
+          </div>
+          <div class="Invalid-Message-Container">
+            <span *ngIf="projectForm.submitted&&isSingleDepartmentSelectionInvalid">Single department should be
+              selected.</span>
+            <span *ngIf="projectForm.submitted&&isMultiDepartmentsSelectionInvalid">Two or more departments should be
+              selected.</span>
+          </div>
+        </div>
+      </div>
+      <div class="Project-Selected-Departments-Row-Container" *ngIf="(project.isRemodel)&&selectedDepartmentsFilterCriteriaItems.length>0">
+        <app-selected-filter-criteria [selectedFilterCriteriaItems]="selectedDepartmentsFilterCriteriaItems"
+          (selectedFilterCriteriaRemoveTriggered)="onSelectedFilterCriteriaRemoveTriggered($event)"></app-selected-filter-criteria>
+      </div>
+      <div *ngIf="project.isRemodel">
+        <hr class="Section-Seperator-Line">
+      </div>
+      <div class="Row">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="storeNameInput">Store Name</label>
+          <input type="text" name="storeNameInput" [(ngModel)]="project.storeName" class="Store-Name-Form-Control" id="storeNameInput">
+        </div>
+        <div class="Project-Form-Control-Group-Right">
+          <label for="storeNumberInput">Store Number</label>
+          <input type="text" required name="storeNumberInput" #storeNumber="ngModel" [(ngModel)]="project.storeNumber"
+            class="Store-Number-Form-Control" id="storeNumberInput">
+          <div *ngIf="projectForm.submitted&&storeNumber.invalid&&(storeNumber.dirty||storeNumber.touched)" class="Invalid-Message-Container">
+            Store Number is required.
+          </div>
+        </div>
+      </div>
+      <div class="Row Store-Dates-Container">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="openDateInput">Open Date</label>
+          <app-date-picker [Id]="'Open-Date'" [selectedDateValue]="project.openDate" (dateSelectionTriggered)="onOpenDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+        <div class="Project-Form-Control-Group-Right">
+          <label for=" turnoverDateInput ">Turnover Date</label>
+          <app-date-picker [Id]="'Turnover-Date'" [selectedDateValue]="project.turnoverDate" (dateSelectionTriggered)="onTurnoverDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+      </div>
+      <div>
+        <hr class="Section-Seperator-Line">
+      </div>
+      <div class="Row">
+        <span>A Project Number
+          <b>OR</b> a Construction number is required </span>
+      </div>
+      <div class="Row">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="arNumberInput">AR Number</label>
+          <input type="text" [(ngModel)]="project.arNumber" class="AR-Number-Form-Control" name="arNumberInput" id="arNumberInput">
+        </div>
+        <div class="Project-Form-Control-Group-Right">
+          <label for="constructionJobNumberInput">Construction Job Number</label>
+          <input type="text" [(ngModel)]="project.constructionJobNumber" class="Construction-Job-Number-Form-Control"
+            name="constructionJobNumberInput" id="constructionJobNumberInput">
+        </div>
+      </div>
+      <div class="Row" *ngIf="project.isRemodel">
+        <div class="Project-Form-Control-Group-Left">
+          <label for="maintenanceWONumberInput">Maintenance Work Order Number</label>
+          <input type="text" [(ngModel)]="project.maintenanceWorkOrderNumber" class="Maintenance-WO-Number-Form-Control"
+            name="maintenanceWONumberInput" id="maintenanceWONumberInput">
+        </div>
+      </div>
+      <div>
+        <hr class="Section-Seperator-Line">
+      </div>
+      <div class="Row" *ngIf="project.isRemodel">
+        <div class="Alternate-Delivery-Location-Form-Control-Group">
+          <label for="alternateDeliveryLocationInput">Alternate Delivery Location</label>
+          <textarea [(ngModel)]="project.AlternateDeliveryLocation" class="Alternate-Delivery-Location-Form-Control"
+            name="alternateDeliveryLocationInput" id="alternateDeliveryLocationInput"></textarea>
+        </div>
+      </div>
+      <div class="Row">
+        <div class="Notes-Form-Control-Group">
+          <label for="notesInput">Notes</label>
+          <textarea [(ngModel)]="project.projectNotes" class="Notes-Form-Control" id="notesInput" name="notesInput"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="Project-Details-Buttons-Container">
+      <a class="Project-Details-Cancel-Button" (click)="onCancelClicked()">Cancel</a>
+      <button id="projectDetailsOkButton" type="submit" [ngClass]="project.isActive ? 'Project-Details-Ok-Button' : 'Project-Details-Deactivate-Button'"
+        (click)="onSubmitFormClicked()">{{submitButtonText}}</button>
+    </div>
+  </form>
+</div>

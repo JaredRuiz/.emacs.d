@@ -1,0 +1,15 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-confirm-component',
+  templateUrl: './confirm-component.component.html',
+  styleUrls: ['./confirm-component.component.scss']
+})
+export class ConfirmComponentComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}

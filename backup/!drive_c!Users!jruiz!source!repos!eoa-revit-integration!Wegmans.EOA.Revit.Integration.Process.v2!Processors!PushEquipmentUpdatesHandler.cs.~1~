@@ -1,0 +1,208 @@
+﻿using AutoMapper;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wegmans.EOA.Common.Contracts.Entities;
+using Wegmans.EOA.Common.Contracts.Services;
+using Wegmans.EOA.Revit.Integration.Process.Models;
+using Wegmans.EOA.Revit.Integration.Process.Processors;
+
+namespace Wegmans.EOA.Revit.Integration.Process
+{
+    public class PushEquipmentUpdatesHandler : IPushEquipmentUpdatesHandler
+    {
+        private readonly IStorageService<ProjectEntity> _projectRepository;
+        private readonly IStorageService<DepartmentEntity> _departmentRepository;
+        private readonly IAddEquipmentItemProcessor _addEquipmentItemProcessor;
+        private readonly IUpdateEquipmentItemProcessor _updateEquipmentItemProcessor;
+        private readonly IDeleteEquipmentItemProcessor _deleteEquipmentItemProcessor;
+        private readonly UpdateEquipmentHelper _updateHelper;
+
+        public PushEquipmentUpdatesHandler(
+            IStorageService<ProjectEntity> projectRepository,
+            IStorageService<DepartmentEntity> departmentRepository,
+            IAddEquipmentItemProcessor addEquipmentItemProcessor,
+            IUpdateEquipmentItemProcessor updateEquipmentItemProcessor,
+            IDeleteEquipmentItemProcessor deleteEquipmentItemProcessor)
+        {
+            _projectRepository = projectRepository;
+            _departmentRepository = departmentRepository;
+            _addEquipmentItemProcessor = addEquipmentItemProcessor;
+            _updateEquipmentItemProcessor = updateEquipmentItemProcessor;
+            _deleteEquipmentItemProcessor = deleteEquipmentItemProcessor;
+            _updateHelper = new UpdateEquipmentHelper();
+        }
+
+        public async void Execute(ProjectEquipmentListDto revitData)
+        {
+            // Fetch matching project
+            var matchedProject = await _projectRepository.Get(revitData.ProjectId);
+            if (matchedProject == null)
+            {
+                throw new Exception("Project is not found!!!");
+            }
+
+            if (matchedProject.Equipments == null)
+            {
+                matchedProject.Equipments = new List<EquipmentItemEntity>();
+            }
+
+            // update items already in saved to DB before processing the rest
+            if (!isProjectNewStoreWithNoEquipments(matchedProject))
+            {
+                matchedProject = updateProjectEquipmentWithRevitData(matchedProject, revitData);
+            }
+
+            matchedProject = addNewRevitEquipmentToProject(matchedProject, revitData);
+            await _projectRepository.Update(matchedProject);
+        }
+ 
+        private ProjectEntity updateProjectEquipmentWithRevitData(ProjectEntity matchedProject, ProjectEquipmentListDto revitData)
+        {
+            IEnumerable<EquipmentDto> matchedRevitEquipmentItemGroup;
+            var processedSplitItems = new List<ProcessedSplitItem>();
+            var newSplitItemsToAdd = new List<EquipmentItemEntity>();
+
+            matchedProject.Equipments.ToList().ForEach(equipmentItem =>
+            {
+                var matchedSplitEquipment = matchedProject.Equipments
+                    .Where(item => partOfSameEquipmentGroup(equipmentItem, item));
+
+                // find all revit elements in matching this piece of equipment
+                matchedRevitEquipmentItemGroup = revitData.EquipmentList
+                    .Where(revitItem => partOfSameEquipmentGroup(revitItem, equipmentItem));
+
+                // remove any equipment from project that has been completely removed from Revit
+                if (matchedRevitEquipmentItemGroup.Count() == 0)
+                {
+                    matchedSplitEquipment.ToList().ForEach(splitEquipment =>
+                    {
+                        _deleteEquipmentItemProcessor.Invoke(equipmentItem);
+                    });
+                    return;
+                }
+                else if (matchedSplitEquipment.Count() == 1)
+                {
+                    _updateEquipmentItemProcessor
+                        .Invoke(matchedRevitEquipmentItemGroup, matchedSplitEquipment.First());
+                } 
+                else // TODO: do we need an else if ( > 1)
+                {
+                    equipmentItem.FloorQuantity = _updateHelper.RewriteFloorHistory(matchedRevitEquipmentItemGroup, equipmentItem);
+
+                    // if this is the first time we are processing one of the split items, add a
+                    // new item with the quantity difference
+                    if (!processedSplitItems.Exists(item =>
+                        {
+                            return item.DepartmentNumber == equipmentItem.DepartmentNumber &&
+                                   item.ECode == equipmentItem.EquipmentCode;
+                        }))
+                    {
+                        var splitItemsQuantity = matchedSplitEquipment.Sum(x => x.CurrentTotalQuantity);
+                        var revitItemsQuantity = matchedRevitEquipmentItemGroup.Sum(x => x.Quantity);
+                        var newQuantity = revitItemsQuantity - splitItemsQuantity;
+
+                        // add onto processed split items so that we don't accidentally track this more than once
+                        processedSplitItems.Add(new ProcessedSplitItem
+                        {
+                            DepartmentNumber = equipmentItem.DepartmentNumber,
+                            ECode = equipmentItem.EquipmentCode
+                        });
+
+                        var newEquipmentItem = _addEquipmentItemProcessor
+                            .Invoke(matchedRevitEquipmentItemGroup, isProjectNewStoreWithNoEquipments(matchedProject));
+                        newEquipmentItem.FloorQuantity =
+                            _updateHelper.RewriteFloorHistory(matchedRevitEquipmentItemGroup, newEquipmentItem);
+                        newEquipmentItem.CurrentTotalQuantity = newQuantity;
+                        newEquipmentItem.DepartmentDescription = matchedSplitEquipment.FirstOrDefault().DepartmentDescription;
+                        newSplitItemsToAdd.Add(newEquipmentItem);
+                    }
+<<<<<<< HEAD
+=======
+                    _updateEquipmentItemProcessor.Invoke(matchedRevitEquipmentItemGroup, equipmentItem);
+                });
+
+                // remove items which should be removed from db
+                matchedProject.Equipments = matchedProject.Equipments
+                    .Where(item => item.RemoveFromDatabase == false).ToList();
+            }
+>>>>>>> develop
+
+
+                }
+            });
+
+            newSplitItemsToAdd.ToList().ForEach(newItem => { matchedProject.Equipments.Add(newItem); });
+
+            return matchedProject;
+        }
+
+        private ProjectEntity addNewRevitEquipmentToProject(ProjectEntity matchedProject,
+            ProjectEquipmentListDto revitData)
+        {
+            IEnumerable<EquipmentDto> matchedRevitEquipmentItemGroup; // TODO: matchedRevitEquipmentList
+            // grab all the revit items that are *not* currently part of DB/project's equipment;
+            // in particular this will also skip items which were added for splits (TODO: weird wording)
+            var groupedProjectEquipmentList = revitData.EquipmentList
+                .Where(revitItem => !matchedProject.Equipments
+                    .Any(equipmentItem => partOfSameEquipmentGroup(revitItem, equipmentItem)))
+                .GroupBy(item => new { item.DepartmentNumber, item.EquipmentCode })
+                .Select(item => new { item.Key.EquipmentCode, item.Key.DepartmentNumber });
+
+            IEnumerable<DepartmentEntity> departments = null;
+
+            // Add new equipment items from Revit to DB; set status to "Counted" for new projects
+            // If new project all added equipments will have counted status
+            groupedProjectEquipmentList.ToList().ForEach(groupedRevitItem =>
+            {
+                // cast matching revit items as a single EOA Item: notice in Revit we have individual
+                // pieces of equipment; in EOA we group items and display a single quantity; so this is
+                // just doing that switch ie. each item in EOA is a list of revit items!
+                // TODO: figure out how to do this anonymous stuff...
+                matchedRevitEquipmentItemGroup = revitData.EquipmentList
+                    .Where(x => x.EquipmentCode == groupedRevitItem.EquipmentCode &&
+                                x.DepartmentNumber == groupedRevitItem.DepartmentNumber);
+
+                departments = departments ?? _departmentRepository.Get().Result;
+
+                var newEquipmentItem = _addEquipmentItemProcessor
+                    .Invoke(matchedRevitEquipmentItemGroup, isProjectNewStoreWithNoEquipments(matchedProject));
+
+                // lookup and set department description
+                var matchedDepartment = departments.FirstOrDefault(x => x.Number == newEquipmentItem.DepartmentNumber);
+                newEquipmentItem.DepartmentDescription = matchedDepartment != null ? matchedDepartment.Description : string.Empty;
+                matchedProject.Equipments.Add(newEquipmentItem);
+            });
+
+            return matchedProject;
+        }
+
+        private bool partOfSameEquipmentGroup(EquipmentDto dto, EquipmentItemEntity entity)
+        {
+            return dto.DepartmentNumber == entity.DepartmentNumber &&
+                   dto.EquipmentCode == entity.EquipmentCode;
+        }
+
+        private bool partOfSameEquipmentGroup(EquipmentItemEntity firstEntity, EquipmentItemEntity secondEntity)
+        {
+            return firstEntity.DepartmentNumber == secondEntity.DepartmentNumber &&
+                   firstEntity.EquipmentCode == secondEntity.EquipmentCode;
+        }
+
+        private bool isProjectNewStoreWithNoEquipments(ProjectEntity project)
+        {
+            return !project.IsRemodel && project.Equipments.Count() == 0;
+        }
+    }
+
+    class ProcessedSplitItem
+    {
+        public string DepartmentNumber { get; set; }
+        public string ECode { get; set; }
+    }
+}

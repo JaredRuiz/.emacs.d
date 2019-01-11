@@ -1,0 +1,263 @@
+import { Component, OnInit, Input, ContentChild, TemplateRef, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { EquipmentGroupCardModel } from '@app/shared-ui/equipment-group-card-model';
+import { EquipmentCardModel } from '@app/shared-ui/equipment-card-model';
+import {
+  EquipmentGroupTitleTemplateDirective,
+  EquipmentGroupActionTemplatesDirective,
+  EquipmentListHeaderTemplatesDirective,
+  EquipmentCardBodyTemplatesDirective,
+  EquipmentCardHeaderTemplatesDirective
+} from '@app/shared-ui/equipment-templates.directive';
+import { from, Subscription } from 'rxjs';
+import { toArray, groupBy, map } from 'rxjs/operators';
+import { SortService, SortCriteria } from '@app/shared-ui/sorting/sort.service';
+import SortHelper from '@app/shared/utils/SortHelper';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+import { OrderingStatus } from '@app/shared/enums/ordering-status.enum';
+import { ItemAction } from '@app/shared/enums/item-action.enum';
+
+export type GroupByFn = (g: EquipmentCardModel) => any;
+
+export function isFunction(value: any) {
+  return value instanceof Function;
+}
+
+@Component({
+  selector: 'app-grouped-equipment-list',
+  templateUrl: './grouped-equipment-list.component.html'
+})
+export class GroupedEquipmentListComponent implements OnInit, OnDestroy {
+
+  @Output() equipmentItemSelectionChanged = new EventEmitter<any>();
+  @Output() equipmentItemsGroupSelectionChanged = new EventEmitter<EquipmentGroupCardModel>();
+  @Output() equipmentItemsGroupByCompleted = new EventEmitter<any>();
+  @Output() equipmentItemsViewTypeFilterCompleted = new EventEmitter<any>();
+
+  subscription$: Subscription = new Subscription();
+  equipmentGroups: Array<EquipmentGroupCardModel> = [];
+
+  private _groupBy: GroupByFn;
+  private _sortCriteria: SortCriteria;
+  private _filterCriteria: Array<SelectedFilterCriteriaItemModel>;
+  private _fullEquipments: Array<EquipmentCardModel>;
+  private _equipments: Array<EquipmentCardModel>;
+  private _selectedViewType: any;
+
+  @Input() set viewType(selectedViewType: any) {
+    this._selectedViewType = selectedViewType;
+    this.filterEquipments();
+    this.equipmentItemsViewTypeFilterCompleted.emit(this.equipmentGroups);
+  }
+
+  @Input()
+  set equipments(eq: Array<EquipmentCardModel>) {
+    if (JSON.stringify(eq) === JSON.stringify(this._equipments)) {
+    } else {
+      this._fullEquipments = eq;
+      this.filterEquipments();
+    }
+  }
+
+  @Input()
+  set groupBy(fn: GroupByFn) {
+    if (!isFunction(fn)) {
+      throw Error('`groupBy` must be a function.');
+    }
+    if (this._groupBy && fn && this._groupBy.toString() === fn.toString()) {
+    } else {
+      this._groupBy = fn;
+      this.groupEquipments();
+      this.equipmentItemsGroupByCompleted.emit(this.equipmentGroups);
+    }
+    this._groupBy = fn;
+  }
+
+  @Input()
+  set orderBy(expression: string) {
+    this._sortCriteria = <SortCriteria>{ sortExpression: expression, sortDirection: 'asc' };
+    this.sortService.columnSorted(this._sortCriteria);
+  }
+
+  @Input()
+  set filterBy(filterCriteria: Array<SelectedFilterCriteriaItemModel>) {
+    if (JSON.stringify(filterCriteria) === JSON.stringify(this._filterCriteria)) {
+    } else {
+      this._filterCriteria = filterCriteria;
+      this.filterEquipments();
+    }
+  }
+
+  @ContentChild(EquipmentGroupTitleTemplateDirective, { read: TemplateRef }) groupTitleTemplate: TemplateRef<any>;
+  @ContentChild(EquipmentGroupActionTemplatesDirective, { read: TemplateRef }) groupActionTemplate: TemplateRef<any>;
+  @ContentChild(EquipmentListHeaderTemplatesDirective, { read: TemplateRef }) listHeaderTemplate: TemplateRef<any>;
+  @ContentChild(EquipmentCardHeaderTemplatesDirective, { read: TemplateRef }) cardHeaderTemplate: TemplateRef<any>;
+  @ContentChild(EquipmentCardBodyTemplatesDirective, { read: TemplateRef }) cardBodyTemplate: TemplateRef<any>;
+
+  constructor(private sortService: SortService) { }
+
+  ngOnInit() {
+    this.subscription$ = this.sortService.sorting$.subscribe(event => {
+      this._sortCriteria = event;
+      this.orderEquipments();
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+  }
+
+  toggleGroupCardExpansion(group: EquipmentGroupCardModel) {
+    group.expanded = !group.expanded;
+  }
+
+  toggleEquipmentItemSelection(event: Event, item: EquipmentCardModel, group: EquipmentGroupCardModel) {
+    event.stopPropagation();
+    this.equipmentItemSelectionChanged.emit({ item: item, group: group });
+  }
+
+  toggleEquipmentItemsGroupSelection(event: Event, group: EquipmentGroupCardModel) {
+    event.stopPropagation();
+    group.selected = !group.selected;
+    this.equipmentItemsGroupSelectionChanged.emit(group);
+  }
+
+  toggleCardExpansion(event: Event, card: EquipmentCardModel) {
+    event.stopPropagation();
+  }
+
+  trackGroup(index, group) {
+    return group ? group.groupKey : index;
+  }
+
+  trackEquipment(index, equipment) {
+    return equipment ? equipment.id : index;
+  }
+
+  private filterEquipments() {
+    if (this._fullEquipments) {
+      if (this._selectedViewType) {
+        // TODO: Verify user story 127297 is fully captured
+        this._equipments = this._fullEquipments.filter(equipment => this._selectedViewType.value === '1' ||
+          (this._selectedViewType.value === '2' && equipment['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.Removed]) ||
+          (this._selectedViewType.value === '3' && equipment['orderingDiscrepancies']) ||
+          (this._selectedViewType.value === '4' && equipment['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.Added]) ||
+          // tslint:disable-next-line:max-line-length
+          (this._selectedViewType.value === '5' && equipment['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.PendingRelease]) ||
+          (this._selectedViewType.value === '6' && equipment['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.FailedRelease]));
+      } else {
+        this._equipments = this._fullEquipments;
+      }
+
+      const filters = this._filterCriteria;
+
+      if (!filters || !Array.isArray(filters) || filters.length === 0) {
+        this.groupEquipments();
+        return;
+      }
+
+      this.subscription$.add(from(filters).pipe(
+        groupBy((e) => e.property),
+        map(arr => ({ 'key': arr.key, 'items': arr.pipe(toArray()) })),
+      ).subscribe(
+        next => {
+          next.items.subscribe(items => {
+            this._equipments = this._equipments.filter(x => items.some(y => y.text === x[next.key]));
+          });
+        },
+        (error: any) => { },
+        () => { this.groupEquipments(); }
+      ));
+    }
+  }
+
+  private groupEquipments() {
+
+    if (!this._groupBy) { return; }
+
+    if (!this._equipments) { return; }
+
+    if (Array.isArray(this.equipmentGroups)
+      && this.equipmentGroups.length) {
+      this.equipmentGroups.length = 0;
+    } else {
+      this.equipmentGroups = <Array<EquipmentGroupCardModel>>[];
+    }
+
+    this.subscription$.add(from(this._equipments).pipe(
+      groupBy(this._groupBy),
+      map(arr => ({ 'key': arr.key, 'items': arr.pipe(toArray()) })),
+    ).subscribe(next => {
+
+      const grp = <EquipmentGroupCardModel>{};
+      next.items.subscribe(equipments => {
+        grp.items = equipments;
+      });
+      grp.groupKey = next.key + '';
+
+      this.equipmentGroups.push(grp);
+    }, error => {
+
+    }, () => {
+      this.equipmentGroups.sort((a, b) => a.groupKey.localeCompare(b.groupKey));
+      this.equipmentGroups.forEach(group => group.expanded = true);
+      this.orderEquipments();
+    }));
+  }
+
+  private orderEquipments() {
+    if (!this._sortCriteria) {
+      return;
+    }
+    if (!this.groupEquipments) {
+      return;
+    }
+    const criteria = this._sortCriteria;
+    this.equipmentGroups.forEach(element => {
+      element.items.sort(function (a, b) {
+
+        if ((Number.isFinite(a['newTotalQuantity'])
+          && Number(a['newTotalQuantity']) !== Number(a['currentTotalQuantity']) && a['quantityChangeECVerified'] === false)
+          && (!Number(b['newTotalQuantity']) || (Number(b['newTotalQuantity']) && b['quantityChangeECVerified'] === true))) {
+          return -1;
+        }
+
+        if ((Number.isFinite(b['newTotalQuantity'])
+          && Number(b['newTotalQuantity']) !== Number(b['currentTotalQuantity']) && b['quantityChangeECVerified'] === false)
+          && (!Number(a['newTotalQuantity']) || Number(a['newTotalQuantity']) && a['quantityChangeECVerified'] === true)) {
+          return 1;
+        }
+
+        if (a['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.Added]
+          && b['orderingStatus'].trimAll() !== OrderingStatus[OrderingStatus.Added]) {
+          return -1;
+        }
+
+        if (b['orderingStatus'].trimAll() === OrderingStatus[OrderingStatus.Added]
+          && a['orderingStatus'].trimAll() !== OrderingStatus[OrderingStatus.Added]) {
+          return 1;
+        }
+
+        return SortHelper.sortBy(SortHelper.toAny(a[criteria.sortExpression]),
+          SortHelper.toAny(b[criteria.sortExpression]), criteria.sortDirection);
+      });
+    });
+
+    this.addCountsToEquipmentGroup(this.equipmentGroups);
+  }
+
+  private addCountsToEquipmentGroup(equipmentGroups: Array<any>) {
+    equipmentGroups.forEach(group => {
+      group.discrepanciesCount = group.items
+        .filter(item => item.itemAction === ItemAction.Discrepancies).length;
+
+      group.newItemsCount = group.items
+        .filter(item => item.itemAction === ItemAction.New).length;
+
+      group.deletedCount = group.items
+        .filter(item => item.itemAction === ItemAction.Deleted).length;
+
+      group.finishesCount = group.items
+        .filter(item => item.itemAction === ItemAction.MissingFinishes).length;
+    });
+  }
+}

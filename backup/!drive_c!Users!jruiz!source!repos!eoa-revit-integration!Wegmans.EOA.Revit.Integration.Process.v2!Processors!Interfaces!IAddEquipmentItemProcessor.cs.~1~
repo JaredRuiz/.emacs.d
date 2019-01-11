@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wegmans.EOA.Common.Contracts.Entities;
+using Wegmans.EOA.Revit.Integration.Process.Models;
+
+namespace Wegmans.EOA.Revit.Integration.Process.Processors
+{
+    public interface IAddEquipmentItemProcessor
+    {
+        EquipmentItemEntity Invoke(IEnumerable<EquipmentDto> matchedRevitEquipmentItemGroup, bool isProjectNewStoreWithZeroEquipments);
+    }
+}

@@ -1,0 +1,73 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { BadgePillComponent } from '@app/shared-ui/badge-pill/badge-pill.component';
+import { FilterListComponent } from '@app/shared-ui/filter-list/filter-list.component';
+import { FilterCriteriaComponent } from '@app/shared-ui/filter-criteria/filter-criteria.component';
+import { SelectedFilterCriteriaComponent } from '@app/shared-ui/selected-filter-criteria/selected-filter-criteria.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { GroupedEquipmentListComponent } from '@app/shared-ui/grouped-equipment-list/grouped-equipment-list.component';
+import {
+  EquipmentGroupTitleTemplateDirective,
+  EquipmentGroupActionTemplatesDirective,
+  EquipmentCardBodyTemplatesDirective,
+  EquipmentListHeaderTemplatesDirective,
+  EquipmentCardHeaderTemplatesDirective
+} from '@app/shared-ui/equipment-templates.directive';
+import { DatePickerComponent } from '@app/shared-ui/date-picker/date-picker.component';
+import { FormsModule } from '@angular/forms';
+import { Angular2AirDatepickerModule } from 'angular2-air-datepicker';
+import { SortService } from '@app/shared-ui/sorting/sort.service';
+import { SortableDirective } from '@app/shared-ui/sorting/sortable.directive';
+import { EquipmentCommentComponent } from '@app/shared-ui/equipment-comment/equipment-comment.component';
+import { ShoppingCartComponent } from '@app/shared-ui/shopping-cart/shopping-cart.component';
+import { EquipmentAltDeliveryLocComponent } from './equipment-alt-delivery-loc/equipment-alt-delivery-loc.component';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgSelectModule,
+    Angular2AirDatepickerModule,
+  ],
+  declarations: [
+    BadgePillComponent,
+    SelectedFilterCriteriaComponent,
+    FilterCriteriaComponent,
+    FilterListComponent,
+    ModalDialogComponent,
+    GroupedEquipmentListComponent,
+    EquipmentGroupTitleTemplateDirective,
+    EquipmentGroupActionTemplatesDirective,
+    EquipmentListHeaderTemplatesDirective,
+    EquipmentCardHeaderTemplatesDirective,
+    EquipmentCardBodyTemplatesDirective,
+    SortableDirective,
+    DatePickerComponent,
+    EquipmentCommentComponent,
+    ShoppingCartComponent,
+    EquipmentAltDeliveryLocComponent
+  ],
+  providers: [
+    SortService
+  ],
+  exports: [
+    ModalDialogComponent,
+    BadgePillComponent,
+    FilterListComponent,
+    FilterCriteriaComponent,
+    SelectedFilterCriteriaComponent,
+    GroupedEquipmentListComponent,
+    EquipmentGroupTitleTemplateDirective,
+    EquipmentGroupActionTemplatesDirective,
+    EquipmentListHeaderTemplatesDirective,
+    EquipmentCardHeaderTemplatesDirective,
+    EquipmentCardBodyTemplatesDirective,
+    SortableDirective,
+    DatePickerComponent,
+    EquipmentCommentComponent,
+    ShoppingCartComponent,
+    EquipmentAltDeliveryLocComponent
+  ]
+})
+export class SharedUiModule { }

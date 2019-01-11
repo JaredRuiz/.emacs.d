@@ -1,0 +1,10 @@
+export enum OrderingStatus {
+    Added,
+    Counted,
+    Requested,
+    Released,
+    Ordered,
+    Delivered,
+    Removed,
+    ProcuredViaOtherMethod
+}

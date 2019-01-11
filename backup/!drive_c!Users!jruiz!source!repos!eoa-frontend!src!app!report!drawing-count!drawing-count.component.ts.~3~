@@ -1,0 +1,178 @@
+<<<<<<< HEAD
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ReportService } from '@app/report/shared/report.service';
+import { ProjectDropdownViewModel } from '@app/report/shared/viewmodels/project-dropdown-viewmodel';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { ProjectSpreadsheetViewModel } from '@app/report/shared/viewmodels/project-spreadsheet-viewmodel';
+import { HttpErrorResponse } from '@angular/common/http'
+=======
+import { Component, OnInit } from '@angular/core';
+import { FilterCriteriaItemModel } from '@app/shared/models/filter-criteria-item.model';
+import { SortService } from '@app/shared-ui/sorting/sort.service';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { ReportProjectViewModel } from '@app/report/shared/view-models/report-project-viewmodel';
+import { ReportViewModel } from '@app/report/shared/view-models/report-viewmodel';
+>>>>>>> feature/reports-ui
+
+@Component({
+  selector: 'app-drawing-count-report',
+  templateUrl: './drawing-count.component.html'
+})
+<<<<<<< HEAD
+export class DrawingCountComponent implements OnInit, OnDestroy {
+  @ViewChild('projectListDropdown') projectListDropdown: NgSelectComponent;
+
+  projectListItems: Array<ProjectDropdownViewModel>;
+  selectedProject: ProjectDropdownViewModel;
+  drawingCount: Array<EquipmentSpreadsheetViewModel>;
+
+  constructor(private reportService: ReportService) {}
+
+  ngOnInit() {
+    this.loadProjects();
+  }
+
+  onSelectedProjectListItemChanged() {
+    if (this.selectedProject) {
+      this.reportService.getDrawingCountForProject(this.selectedProject.id)
+        .subscribe(projectCountDetails => { this.drawingCount = projectCountDetails; },
+          (errorResponse: HttpErrorResponse) => {
+              if (errorResponse.status === 404) {
+                  this.bus.publish(Events.WARNING_NOTIFICATION,
+                                   'Unable to find a project with ' +
+                                   'the requested id. Try refreshing page for an updated list of projects.');
+              } else {
+                  this.bus.publish(Events.WARNING_NOTIFICATION, errorResponse.message);
+              }
+          });
+    }
+  }
+
+  private loadProjects() {
+    this.reportService.getProjects().subscribe(projects => {
+      this.projectListItems = projects;
+      setTimeout(() => {
+        if (this.projectListItems && this.projectListItems.length > 0) {
+          this.selectedProject = this.projectListItems[0];
+          this.onSelectedProjectListItemChanged();
+        }
+      }, 0);
+    }, (errorResponse: HttpErrorResponse) => {
+        this.bus.publish(Events.WARNING_NOTIFICATION, errorResponse.message);
+=======
+export class DrawingCountReportComponent implements OnInit {
+
+  subscription$: Subscription;
+
+  groupByCriteria: Array<any>;
+  selectedGroupByCriteria: any;
+
+  orderByCriteria: Array<any>;
+  selectedOrderByCriteria: any;
+
+  reportFeed: ReportViewModel;
+
+  filterCriteriaItems: FilterCriteriaItemModel[];
+
+  selectedProject: ReportProjectViewModel;
+
+  constructor(
+    private sortService: SortService) { }
+
+  ngOnInit() {
+
+    const equipments = [{
+      currentTotalQuantity: 4, departmentNumber: '000', departmentDescription: 'Bakery',
+      equipmentCode: 'GRD0004', model: 'WEG-CH-18', manufacturer: 'Boston Retail',
+      vendor: 'General Supplier', equipmentDescription: 'Corner Guard 18-in', width: '',
+      depth: '', height: '18'
+    },
+    {
+      currentTotalQuantity: 1, departmentNumber: '002', departmentDescription: 'Bathroom',
+      equipmentCode: 'CAS0104', model: 'ON5DM8', manufacturer: 'Hill Phoenix',
+      vendor: 'General Supplier', equipmentDescription: '8ft Narrow Multi Deck Case', width: '96',
+      depth: '34 1/2', height: '81 9/16'
+    },
+    {
+      currentTotalQuantity: 1, departmentNumber: '013', departmentDescription: 'Laundry',
+      equipmentCode: 'SNK0062', model: '1498', manufacturer: 'MKE',
+      vendor: 'General Supplier', equipmentDescription: '1 Bay w/ 14in Basin', width: '24',
+      depth: '24', height: '30'
+    },
+    {
+      currentTotalQuantity: 1, departmentNumber: '000', departmentDescription: 'Bakery',
+      equipmentCode: 'SNK0037', model: '1400', manufacturer: 'MKE',
+      vendor: 'General Supplier', equipmentDescription: 'Mop Sink', width: '21',
+      depth: '33', height: '10'
+    }];
+
+    this.selectedProject =
+      <ReportProjectViewModel>{
+        projectName: 'Project #100',
+        projectNotes: 'Remodel entire Bakery deparment and rennovate dining area with updated furniture',
+        isRemodel: true,
+        storeName: 'Pittsford Wegmans',
+        storeNumber: '200'
+      };
+
+    this.reportFeed = <ReportViewModel>{
+      projects: [this.selectedProject],
+      reportHeaders: [
+        { name: 'Quantity', text: 'QTY', allowSort: true },
+        { name: 'Department', text: 'DEPARTMENT', allowSort: true },
+        { name: 'Equipment-Code', text: 'E.CODE', allowSort: true },
+        { name: 'Model', text: 'MODEL', allowSort: true },
+        { name: 'Manufacturer', text: 'MANUFACTURER', allowSort: true },
+        { name: 'Vendor', text: 'VENDOR', allowSort: true },
+        { name: 'Equipment-Description', text: 'DESCRIPTION', allowSort: true },
+        { name: 'Width', text: 'W', allowSort: true },
+        { name: 'Depth', text: 'D', allowSort: true },
+        { name: 'Height', text: 'H', allowSort: true },
+      ],
+      reportData: equipments
+    };
+
+    this.filterCriteriaItems = [
+      {
+        type: 'Department',
+        property: 'departmentDescription',
+        values: [],
+      },
+      {
+        type: 'Vendor',
+        property: 'vendor',
+        values: [],
+      }
+    ];
+
+    this.groupByCriteria = [
+      { 'label': 'Department', 'value': (e: any) => e.departmentNumber + ' ' + e.departmentDescription }
+    ];
+
+    this.selectedGroupByCriteria = this.groupByCriteria[0];
+
+    this.orderByCriteria = [
+      { 'label': 'Quantity', 'value': 'currentTotalQuantity' },
+      { 'label': 'Department', 'value': 'departmentDescription' },
+      { 'label': 'EquipmentCode', 'value': 'equipmentCode' },
+      { 'label': 'Model', 'value': 'model' },
+      { 'label': 'Manufacturer', 'value': 'manufacturer' },
+      { 'label': 'Vendor', 'value': 'vendor' },
+      { 'label': 'EquipmentDescription', 'value': 'equipmentDescription' },
+      { 'label': 'Width', 'value': 'width' },
+      { 'label': 'Depth', 'value': 'depth' },
+      { 'label': 'Height', 'value': 'height' }
+    ];
+
+    this.selectedOrderByCriteria = this.orderByCriteria[0];
+
+    this.subscription$ = this.sortService.sorting$.subscribe(event => {
+      if (event && event.sortDirection) {
+        this.selectedOrderByCriteria = this.orderByCriteria.find(x => x.value === event.sortExpression);
+      } else {
+        this.selectedOrderByCriteria = this.orderByCriteria[0];
+      }
+>>>>>>> feature/reports-ui
+    });
+  }
+}

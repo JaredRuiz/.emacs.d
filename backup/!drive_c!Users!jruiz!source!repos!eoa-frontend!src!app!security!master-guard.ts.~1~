@@ -1,0 +1,19 @@
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { MsalGuard } from '@azure/msal-angular';
+import { Injectable } from '@angular/core';
+import { RoleGuard } from '@app/security/role-guard';
+
+@Injectable()
+export class MasterGuard implements CanActivate {
+    constructor(private msalGuard: MsalGuard, private roleGuard: RoleGuard) {
+    }
+
+    public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+        let response = await this.msalGuard.canActivate(route, state);
+        if (response) {
+            response = await this.roleGuard.canActivate(route, state);
+        }
+        console.log('guard: ' + response);
+        return new Promise<boolean>((res, rej) => res(response));
+    }
+}

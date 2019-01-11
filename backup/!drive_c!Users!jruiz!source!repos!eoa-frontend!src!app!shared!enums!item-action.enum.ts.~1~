@@ -1,0 +1,7 @@
+export enum ItemAction {
+  Ok,
+  New,
+  Discrepancies,
+  Deleted,
+  MissingFinishes
+}

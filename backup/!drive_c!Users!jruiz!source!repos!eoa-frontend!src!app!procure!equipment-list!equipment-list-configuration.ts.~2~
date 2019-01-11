@@ -1,0 +1,89 @@
+import { EquipmentViewModel } from '../shared/viewmodels/equipment-viewmodel';
+
+export const EquipmentListConfiguration = {
+    filterSettings: [
+        {
+            type: 'Department',
+            property: 'departmentDescription',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Vendor',
+            property: 'vendor',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Manufacture',
+            property: 'manufacturer',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Sec Commodity',
+            property: 'partSecondaryCommodityCode',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Store',
+            property: 'storeNumber',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'Procure Method',
+            property: 'procurementMethod',
+            values: [],
+            hide: false
+        },
+        {
+            type: 'HiddenOrderingStatus',
+            property: 'orderingStatus',
+            values: [],
+            hide: true
+        }
+    ],
+    viewTypeFilterCriteriaSettings: [
+        {
+            label: 'Active Items (Default)',
+            value: '1' // all items returned from API
+        },
+        {
+            label: 'Pending Items',
+            value: '5' // PendingRelease
+        },
+        {
+            label: 'Failed Items',
+            value: '6' // FailedRelease
+        }
+    ],
+    groupByCriteriaSettings: [
+        { 'label': 'Department (Default)', 'value': (e: EquipmentViewModel) => e.departmentNumber + ' ' + e.departmentDescription },
+        {
+            'label': 'Secondary Commodity', 'value': (e: EquipmentViewModel) => e.partSecondaryCommodityCode
+        },
+        { 'label': 'Store', 'value': (e: EquipmentViewModel) => e.storeNumber },
+        {
+            'label': 'Delivery Date', 'value': (e: EquipmentViewModel) => {
+                if (!e.deliveryDate) { return ''; }
+                const date = new Date(e.deliveryDate);
+                return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+            }
+        },
+    ],
+    orderByCriteriaSettings: [
+        { 'label': 'Store (Default)', 'value': 'storeNumber' },
+        { 'label': 'Secondary Commodity', 'value': 'partSecondaryCommodityCode' },
+        { 'label': 'Quantity', 'value': 'currentTotalQuantity' },
+        { 'label': 'Department', 'value': 'departmentNumber' },
+        { 'label': 'E. Code', 'value': 'equipmentCode' },
+        { 'label': 'EAM #', 'value': 'partNumber' },
+        { 'label': 'Description', 'value': 'equipmentDescription' },
+        { 'label': 'Manufacturer', 'value': 'manufacturer' },
+        { 'label': 'Model #', 'value': 'modelNumber' },
+        { 'label': 'Vendor', 'value': 'vendor' },
+        { 'label': 'Delivery Date', 'value': 'deliveryDate' }
+    ]
+};

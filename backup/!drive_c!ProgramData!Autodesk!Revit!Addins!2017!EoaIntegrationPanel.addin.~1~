@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+       <Name>GetNewElementData</Name>
+       <FullClassName>Wegmans.EOA.Revit.AddIn.GetAllElementParams</FullClassName>
+       <Text>Get New Element Info</Text> 
+       <Description>Gives data about all new elements</Description>
+       <VisibilityMode>AlwaysVisible</VisibilityMode>
+       <Assembly>C:\Users\jruiz\source/repos/Wegmans.EOA.Revit\Wegmans.EOA.Revit.AddIn\bin\Debug\Wegmans.EOA.Revit.AddIn.dll</Assembly>
+       <AddInId>ebec689b-2dc3-42d2-982f-7280f874fa94</AddInId>
+    <VendorId>ADSK</VendorId>
+    <VendorDescription>Autodesk, Inc, www.autodesk.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>

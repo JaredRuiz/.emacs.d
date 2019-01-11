@@ -1,0 +1,55 @@
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { ReportService } from '@app/report/shared/report.service';
+import { ProjectDropdownViewModel } from '@app/report/shared/viewmodels/project-dropdown-viewmodel';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { ProjectSpreadsheetViewModel } from '@app/report/shared/viewmodels/project-spreadsheet-viewmodel';
+import { HttpErrorResponse } from '@angular/common/http'
+
+@Component({
+  selector: 'app-drawing-count',
+  templateUrl: './drawing-count.component.html',
+  styleUrls: ['./drawing-count.component.scss']
+})
+export class DrawingCountComponent implements OnInit, OnDestroy {
+  @ViewChild('projectListDropdown') projectListDropdown: NgSelectComponent;
+
+  projectListItems: Array<ProjectDropdownViewModel>;
+  selectedProject: ProjectDropdownViewModel;
+  drawingCount: Array<EquipmentSpreadsheetViewModel>;
+
+  constructor(private reportService: ReportService) {}
+
+  ngOnInit() {
+    this.loadProjects();
+  }
+
+  ngOnDestroy(): void {
+    // TODO: we may not have to do this...
+    // this.subscription$.unsubscribe();
+  }
+
+  onSelectedProjectListItemChanged() {
+    if (this.selectedProject) {
+      this.reportService.getDrawingCountForProject(this.selectedProject.id)
+        .subscribe(projectCountDetails => {
+          this.drawingCount = projectCountDetails;
+      }, (errorResponse: HttpErrorResponse) => {
+      // TODO: error handling
+    });
+    }
+  }
+
+  private loadProjects() {
+    this.reportService.getProjects().subscribe(projects => {
+      this.projectListItems = projects;
+      setTimeout(() => {
+        if (this.projectListItems && this.projectListItems.length > 0) {
+          this.selectedProject = this.projectListItems[0];
+          this.onSelectedProjectListItemChanged();
+        }
+      }, 0);
+    }, (errorResponse: HttpErrorResponse) => {
+      // TODO: error handling
+    });
+  }
+}

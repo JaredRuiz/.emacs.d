@@ -1,0 +1,238 @@
+<div [id]="reportId" class="Report-Container">
+
+  <div class="Report-Header">
+
+
+    <div class="Report-Header-Project-Details-Row">
+
+      <ng-container *ngFor="let project of reportFeed?.projects; trackBy: trackProject">
+
+        <ng-template [ngTemplateOutlet]="appReportHeaderProjectDetails" [ngTemplateOutletContext]="{project: project}">
+        </ng-template>
+
+      </ng-container>
+
+      <ng-template #appReportHeaderProjectDetails let-project="project">
+
+        <div class="Report-Header-Project-Details-Row-Left">
+
+          <span class="Report-Header-Title-Text">{{project.projectName}}
+            <span class="Report-Header-Remodel-Indicator-Text">{{project.isRemodel ? ' (Remodel)' : '' }}</span></span>
+
+          <span class="Report-Header-Secondary-Text">
+            {{project.projectNotes}}
+          </span>
+
+        </div>
+
+        <!-- <ng-template [ngTemplateOutlet]="reportHeaderProjectAdditionDetails">
+        </ng-template> -->
+
+        <div class="Report-Header-Project-Budget-Details" *ngIf="displayGroupFooter">
+
+          <div class="Total-Cost">
+            <div>Total Cost:&nbsp;</div>
+            <div><b>{{ project.projectTotalCost | currency }}</b></div>
+          </div>
+
+        </div>
+
+        <div class="Report-Header-Project-Details-Row-Right">
+
+          <span class="Report-Header-Secondary-Italic-Text">
+            Store #{{project.storeNumber}}
+          </span>
+
+          <span class="Report-Header-Secondary-Italic-Text">
+            {{project.storeName}}
+          </span>
+
+        </div>
+
+      </ng-template>
+
+    </div>
+
+    <div class="Report-Header-Columns-Row">
+
+      <ng-template #appReportColumnHeader let-columnHeaderName="columnHeaderName" let-columnHeaderText="columnHeaderText"
+        let-columnHeaderAllowSort="columnHeaderAllowSort">
+
+        <div [appSortExpression]="columnHeaderAllowSort?columnHeaderName:''" [class]="columnHeaderName | lowercase">
+          <span class="Report-Header-Column-Name-Text">
+            {{columnHeaderText}}
+          </span>
+        </div>
+
+      </ng-template>
+
+      <ng-container *ngFor="let columnHeader of reportFeed?.reportHeaders; trackBy: trackColumnHeader">
+        <ng-template [ngTemplateOutlet]="appReportColumnHeader" [ngTemplateOutletContext]="{ columnHeaderName: columnHeader.sortExpression, columnHeaderText: columnHeader.text, columnHeaderAllowSort: columnHeader.allowSort }"></ng-template>
+      </ng-container>
+
+    </div>
+
+  </div>
+
+  <div class="viewport" *ngIf="reportItemGroups?.length > 0">
+
+    <ng-container *uiScroll="let group of groupedItemsVirtualScrollDatasource; let groupIndex=index;">
+
+      <div class="Report-Body-Group-Items">
+
+        <ng-container *ngFor="let groupItem of group.items; let itemIndex=index; trackBy: trackReportItem">
+
+          <div class="Report-Body-Group-Item-Row" [class.odd]="(cumulativeLength(groupIndex) + itemIndex)%2">
+
+            <ng-template [ngTemplateOutlet]="reportBodyGroupItemRowTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, groupItem: groupItem }">
+            </ng-template>
+
+          </div>
+          <div *ngIf="groupItem?.showDetails&&groupItem?.details?.length>0" class="Report-Body-Group-Item-Row-Content-Separator"></div>
+          <div *ngIf="groupItem?.showDetails&& groupItem?.details?.length>0" class="Report-Body-Group-Item-Row-Detail"
+            [class.odd]="(cumulativeLength(groupIndex) + itemIndex)%2">
+
+            <ng-container *ngFor="let groupItemDetail of groupItem.details;">
+
+              <ng-template [ngTemplateOutlet]="reportBodyGroupItemRowDetailTemplate" [ngTemplateOutletContext]="{ groupItemDetail: groupItemDetail }">
+              </ng-template>
+
+            </ng-container>
+
+          </div>
+
+        </ng-container>
+
+      </div>
+
+      <div class="Report-Body-Group-Footer">
+
+        <ng-template [ngTemplateOutlet]="reportBodyGroupFooterTemplate" [ngTemplateOutletContext]="{ groupTotalCost: group.groupTotalCost }">
+        </ng-template>
+
+      </div>
+
+    </ng-container>
+
+  </div>
+
+</div>
+
+<!-- Below for print -->
+<div id="Report-Print-Content" class="Report-Container" >
+
+  <div class="Report-Header">
+
+    <div class="Report-Header-Project-Details-Row">
+
+      <ng-container *ngFor="let project of reportFeed?.projects; trackBy: trackProject">
+
+        <ng-template [ngTemplateOutlet]="appReportHeaderProjectDetails" [ngTemplateOutletContext]="{project: project}">
+        </ng-template>
+
+      </ng-container>
+
+      <ng-template #appReportHeaderProjectDetails let-project="project">
+
+        <div class="Report-Header-Project-Details-Row-Left">
+
+          <span class="Report-Header-Title-Text">{{project.projectName}}
+            <span class="Report-Header-Remodel-Indicator-Text">{{project.isRemodel ? ' (Remodel)' : '' }}</span></span>
+
+          <span class="Report-Header-Secondary-Text">
+            {{project.projectNotes}}
+          </span>
+
+        </div>
+
+        <!-- <ng-template [ngTemplateOutlet]="reportHeaderProjectAdditionDetails">
+          </ng-template> -->
+
+        <div class="Report-Header-Project-Budget-Details" *ngIf="displayGroupFooter">
+
+          <div class="Total-Cost">
+              <div>Total Cost:&nbsp;</div>
+              <div><b>{{ project.projectTotalCost | currency }}</b></div>
+          </div>
+
+        </div>
+
+        <div class="Report-Header-Project-Details-Row-Right">
+
+          <span class="Report-Header-Secondary-Italic-Text">
+            Store #{{project.storeNumber}}
+          </span>
+
+          <span class="Report-Header-Secondary-Italic-Text">
+            {{project.storeName}}
+          </span>
+
+        </div>
+
+      </ng-template>
+
+    </div>
+
+    <div class="Report-Header-Columns-Row">
+
+      <ng-template #appReportColumnHeader let-columnHeaderName="columnHeaderName" let-columnHeaderText="columnHeaderText"
+        let-columnHeaderAllowSort="columnHeaderAllowSort">
+
+        <div [appSortExpression]="''" [class]="columnHeaderName | lowercase">
+          <span class="Report-Header-Column-Name-Text">
+            {{columnHeaderText}}
+          </span>
+        </div>
+
+      </ng-template>
+
+      <ng-container *ngFor="let columnHeader of reportFeed?.reportHeaders; trackBy: trackColumnHeader">
+        <ng-template [ngTemplateOutlet]="appReportColumnHeader" [ngTemplateOutletContext]="{ columnHeaderName: columnHeader.sortExpression, columnHeaderText: columnHeader.text, columnHeaderAllowSort: columnHeader.allowSort }"></ng-template>
+      </ng-container>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="reportItemGroups?.length > 0">
+
+    <ng-container *ngFor="let group of reportItemGroups; let groupIndex=index;">
+
+      <div class="Report-Body-Group-Items">
+
+        <ng-container *ngFor="let groupItem of group.items; let itemIndex=index; trackBy: trackReportItem">
+
+          <div class="Report-Body-Group-Item-Row" [class.odd]="(cumulativeLength(groupIndex) + itemIndex)%2">
+
+            <ng-template [ngTemplateOutlet]="reportBodyGroupItemRowTemplate" [ngTemplateOutletContext]="{ groupItem: groupItem }">
+            </ng-template>
+
+          </div>
+
+          <ng-container *ngFor="let groupItemDetail of groupItem.details">
+
+            <div class="Report-Body-Group-Item-Row-Detail">
+
+              <ng-template [ngTemplateOutlet]="reportBodyGroupItemRowDetailTemplate" [ngTemplateOutletContext]="{ groupItemDetail: groupItemDetail }">
+              </ng-template>
+
+            </div>
+
+          </ng-container>
+
+        </ng-container>
+
+      </div>
+
+      <div class="Report-Body-Group-Footer">
+
+        <ng-template [ngTemplateOutlet]="reportBodyGroupFooterTemplate" [ngTemplateOutletContext]="{ groupTotalCost: group.groupTotalCost }">
+        </ng-template>
+
+      </div>
+
+    </ng-container>
+
+  </div>
+
+</div>

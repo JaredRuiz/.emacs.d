@@ -1,0 +1,13 @@
+
+import { EquipmentGroupCardModel } from '@app/shared-ui/equipment-group-card-model';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+
+export class EquipmentGroupViewModel implements EquipmentGroupCardModel {
+
+    groupKey: string;
+    items: EquipmentViewModel[];
+
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+}

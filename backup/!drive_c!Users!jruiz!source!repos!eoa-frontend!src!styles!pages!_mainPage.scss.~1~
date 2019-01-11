@@ -1,0 +1,72 @@
+#MainPageDiv {
+  background-color: $body-background-color;
+  min-height: 100vh;
+}
+
+.Primary-Banner {
+  height: 45px;
+  background-color: $off-blue;
+}
+
+.Wegmans-Logo {
+  height: 33px;
+  width: 96px;
+  background: url(/assets/icons/wegmans_logo_white.svg) center center no-repeat;
+  margin: 6px 23px;
+}
+
+.Equipment-Ordering-Application-Title {
+  width: 199px;
+  height: 18px;
+  margin: 9px 0;
+
+  @supports (-ms-ime-align: auto) {
+    margin: 11px 0;
+  }
+}
+
+.Content-Wrapper {
+  overflow: scroll;
+}
+
+.Filter-Buttons-Container {
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.Main-Navigation-Control {
+  margin-left: auto;
+  height: 45px;
+
+  a {
+    color: $white;
+    padding: 11px;
+    display: block;
+    width: 150px;
+    text-align: center;
+
+    span {
+      padding: 0 5px;
+      font-family: $default-font-family;
+      font-size: $default-font-size;
+      text-align: left;
+    }
+  }
+
+  a:hover {
+    text-decoration: none;
+    background-color: $grey-17;
+  }
+
+  a.active {
+    background-color: white;
+    background-color: $grey-17;
+  }
+
+  a.disabled {
+    color: $faded-blue;
+  }
+  a.disabled:hover {
+    color: $faded-blue;
+  }
+}

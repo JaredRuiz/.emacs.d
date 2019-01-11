@@ -1,0 +1,116 @@
+<div [id]="reportId" class="Report-Container">
+  <div class="Report-Header">
+    <div class="Report-Header-Project-Details-Row">
+        <div class="Report-Header-Project-Details-Row-Left">
+          <span class="Report-Header-Title-Text">{{project.projectName}}
+            <span class="Report-Header-Remodel-Indicator-Text">{{project.isRemodel ? ' (Remodel)' : '' }}</span></span>
+          <span class="Report-Header-Secondary-Text">
+            {{project.projectNotes}}
+          </span>
+        </div>
+        <div class="Report-Header-Project-Details-Row-Right">
+          <span class="Report-Header-Secondary-Italic-Text">
+            Store #{{project.storeNumber}}
+          </span>
+          <span class="Report-Header-Secondary-Italic-Text">
+            {{project.storeName}}
+          </span>
+        </div>
+    </div>
+
+  <!-- TODO: this should probably be a table, table header, etc. -->
+    <div class="Report-Header-Columns-Row">
+
+  <div>QTY</div>
+  <div>DEPARTMENT</div>
+    <div>E.CODE</div>
+    <div>MODEL</div>
+    <div>MANUFACTURER</div>
+    <div>VENDOR</div>
+    <div>DESCRIPTION</div>
+    <div>W</div>
+    <div>D</div>
+    <div>H</div>
+
+    </div>
+
+  </div>
+
+  <div class="viewport" *ngIf="reportItemGroups?.length > 0">
+      <div class="Report-Body-Group-Items">
+
+        <ng-container *ngFor="let groupItem of group.items; let itemIndex=index; trackBy: trackReportItem">
+
+          <div class="Report-Body-Group-Item-Row" [class.odd]="(cumulativeLength(groupIndex) + itemIndex)%2">
+
+      <div class="currenttotalquantity">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.currentTotalQuantity">
+          {{ groupItem.currentTotalQuantity }}
+        </span>
+        <label *ngIf="groupItem.discontinued" class="Discontinued-Icon">
+          <span></span>
+        </label>
+      </div>
+
+      <div class="departmentnumber">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.departmentNumber + ' ' + groupItem.departmentDescription">
+          {{ groupItem.departmentNumber + ' ' + groupItem.departmentDescription }}
+        </span>
+      </div>
+
+      <div class="equipmentcode">
+          <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.equipmentCode">
+              <div *ngIf="groupItem.cutSheets; then equipmentCodeLink else equipmentCode"></div>
+              <ng-template #equipmentCodeLink>
+                <a [href]="groupItem.cutSheets" target="_blank">{{ groupItem.equipmentCode }}</a>
+              </ng-template>
+              <ng-template #equipmentCode>
+                    {{ groupItem.equipmentCode }}
+              </ng-template>
+          </span>
+        </div>
+
+      <div class="model">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.model">
+          {{ groupItem.model }}
+        </span>
+      </div>
+
+      <div class="manufacturer">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.manufacturer">
+          {{ groupItem.manufacturer }}
+        </span>
+      </div>
+
+      <div class="vendor">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.vendor">
+          {{ groupItem.vendor }}
+        </span>
+      </div>
+
+      <div class="equipmentdescription">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.equipmentDescription">
+          {{ groupItem.equipmentDescription }}
+        </span>
+      </div>
+
+      <div class="width">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.width">
+          {{ groupItem.width }}
+        </span>
+      </div>
+
+      <div class="depth">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.depth">
+          {{ groupItem.depth }}
+        </span>
+      </div>
+
+      <div class="height">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.height">
+          {{ groupItem.height }}
+        </span>
+      </div>
+
+  </div>
+

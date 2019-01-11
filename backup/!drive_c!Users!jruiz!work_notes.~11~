@@ -1,0 +1,129 @@
+  Part 1: Why we should care about Russian hacking in the Rust Belt
+<a href="https://theintercept.com/2017/06/05/top-secret-nsa-report-details-russian-hacking-effort-days-before-2016-election/">Supposedley the Russians hacked into some voting booths</a> and may have influcenced the 2016 presidential election. In fact Reality Winner, the woman from the NSA who supposedley leaked this information to the Intercept back in http://www.foxnews.com/us/2018/06/21/reality-winner-to-plead-guilty-in-national-security-leak-case-report.html, just pleaded guilty and was sentenced to 5 years in prison*.
+
+I know what you're thinking: "OMG if I have to hear the word 'Russian' one more time I am going to drop-kick my computer." But this is not speculative smear journalism nor is it political...it's real and could happen right here in the Rust Belt! It's true. Pay attention, and I promise I will not use the "R" word one more time in this entire post. Control-F that shit if you don't believe me!
+
+Apparently it's really easy to hack into voting booths: SITE. Probably even more alarming is that it's really easy to hack into satellites as well (SITE). You think you're getting directions to go to TGIF...but really you end up at Red Lobster. Oh those sneaky satellite hackers!
+
+I know basically nothing about satellites so let's stick with voting. The Rust Belt is one of the most highly contested regions (SITE) in presidential elections. Ohio, Pennsylvania, and Michigan are huge swing states and the red vs blue line is as thin as ever, which means the Rust Belt could be a target for vote-hackers in the future. Let's be honest, nobody's gonna try to hack a booth in Alabama and convince everyone that they're now full of liberals.
+
+So let's break down this voting-booth hacking story and give a clearer picture of what they describe. Then we'll talk about how we can use technology to have more secure voting systems. Finally I'll even use my soapbox to talk about how flawed our voting system is (with or without voting booths and software). It's time to take the power back!
+
+* this is slightly off topic, but here is a really interesting post (which is a little dated) talking about Reality Winner and the irony of her whistleblowing. 
+
+--------------------------------
+--------------------------------
+  
+Part 2: Htf does somebody hack into a voting booth (or anything for that matter)?
+  So how does someone "hack" into a voting booth? A better question, how does someone hack into any computer or software system? There are generally two ways: 1) steal or guess a user's username and password which grants access to the importer, or 2) exploit a security flaw in the software that just allows access. #2 is a bit easier to understand, there are all sorts of examples of this (SITE). All those big stories you see usually involve security issues. One of the craziest I saw was someone hitting the delete button 14 times on a Linux machine which then gave them sudo access https://www.lifehacker.com.au/2015/12/you-can-break-into-a-linux-system-by-pressing-backspace-28-times-heres-how-to-fix-it/. How the hell did they figure that out? I just imagine a room full of monkeys banging on keyboards until they get into the system...or Hamlet is written. (Potential business idea: create computer security company which hires people to press buttons on computers all day in the hopes they will discover security flaws)
+
+  Let's talk about #1: getting a user's credentials and just accessing the system as if you were them. This sounds like something from Misison Impossible, yet it happens all the time. This usually involves some kind of social engineering - someone being tricked into giving up their credentials. Like getting a call from a bank claiming there is an issue with your account and they need your name/SSN/address/account numbers. Don't give them that info! If it's the bank then call them back.
+
+Or someone can simply guess your password, or even pretend to be you to gain access. Sarah Palin had her Yahoo! account https://en.wikipedia.org/wiki/Sarah_Palin_email_hack hacked years ago because someone reset her password. You read that right. They got her email address, tried to login, hit the "I forgot my password" button, and then successfully answered her security questions...the answers to which they guessed just from listening to her speeches. For example: "where did you meet your husband?" "In college." Yeah right...they met on Alaskan's Only (SITE: find Alaskan dating website)
+
+  Another common way hackers gain access are by "phishing attacks." You've probably seen this term come up before...and possibly been confused by it like I usually am, cause the name doesn't make much sense. A phishing attack usually involves spam email, like one that says "send me your password" or "You need to click THIS LINK to update your password." Everyone at a company, like one of the ones who make voting booth software, all get a spam email saying they need to reset their Gmail passwords. But its not from Gmail, its from a hacker. Sometimes these are easy to spot, and you've probably received emails from people like "ALLCAPSNAME@zimbabe.com". Yet these can oftentimes be much more sophisticated. Now you know why your company makes you take those corporate compliant tests which teach you NOT to respond to emails which sound a bit shady.
+
+  The really sophisticated ones involve using multiple types of social engineering and trying to get up to a big prize. Suppose everyone at a voting software company received an email like what's described above. While it's a long shot, all they would need is a single person to fall into their trap and give up their credentials. And then...the hackers do nothing. The person continues logging in with their new password, and doesn't even realize they
+  ve been hacked. But then months later they could send *another* coworker an email from the now-hacked email, asking them to open a program in Microsoft Word...but actually this releases opens a program that infects the new user's computer with a virus and maybe gets deeper into their security. Then come voting day they have access to the company's system and can hopefully change votes. This sounds far-fetched but in fact <a href="https://www.miaminewtimes.com/news/russian-hackers-broke-into-vr-systems-elections-company-used-by-miami-broward-9397965">this is exactly what happened in 2016</a> during the presidential election.
+
+One of the problems is there should be way more failsafes in place than just usernames or passwords. So take a lesson from Sarah Palin...come up with harder (or fake) answers to security questions, and strong passwords. Use LastPass or something similar. It's been said multiple times, but seriously, DON'T OPEN LINKS sent in email unless you know or trust who the message is from. Also, while we're on the topic, don't think that fingerprints or facial recognition is any more secure...a digital photo or ink on some tape is good enough to get past these systems. What ever happened to two-factor authentication?!? Let's look at some ways to make these voting systems more secure.
+
+  ------------------------------------------------------
+    ------------------------------------------------------
+  Part 3: Making voting booths unhackable.
+So what can be done? First off let's take the social-engineering aspect from before and apply them to the people actually working at voting stations on election day. While I appreciate the old ladies volunteering their time at my local school on election day, the two of them alone are not enough. We probably need more alert volunteers, and some tech-saavy folks working at the voting booths. Some shady stuff can go down at voting booths with a bunch of people in line and all the mayhem (SITE/PIC).
+
+There are only (SITE) XX number of companies who make the software for voting booths. I don't like the federal govt being in charge of too much (or really anything besides education standards and regulations), and similarly I don't think a one-size-fits-all model is a good idea for the software running on voting systems. It's a honeypot for hackers. Instead let's have 50 different companies each in charge of the security in each state. That way instead of hacking into one system/company, you have to hack 50. Also, different states have different kinds of elections, hold them at different times, etc. More power to the states! For instance, in Iowa they do caucuses, but in Michigan they do primaries. Sticky. Plus it allows the feds to shell out money for others to work...more jobs! Having lots of different companies which are overseen by a federal committee helps get around most of the social engineering stuff,, so how do we make the software running on the booths more secure in the first place?
+
+Also online voting. It seems that the mainstream politicians don't want to talk about this...even though Democrats are for the people and their rights to vote. Give me a break. The only ones I heard talking about online voting and/or online registration was Jill Stein and Bernie Sanders...SITE? But unfortunately the age-old adage by politicians is that its not "secure." I invite you to read the first part of this blog...our current system is not secure. And in fact they are wrong. We all bank online, why can't we vote online?
+
+   TALK ABOUT THE SECURITY OF THAT!!!
+
+  The major concern with online voting is to ensure somebody is who they claim to be. There are all sorts of ways to do this. SSN numbers; IP address checking to make sure the person who is voting for a candidate in State A is in State A. When we register to vote we are usually mailed a card with a certain identifier on it; that used in conjunction with a person's SSN, burthdate, driver's license, or other form of ID should be enough to verify a person's identity. Voters could be given a window in which to verify they can log into the system.
+
+  Here's how I see it going down. One month before the elections in a certain state, all registered voters are sent mail saying if they want to vote online they can, and here is a unique key for each voter plus a url. The user navigates to the page, and the page checks their IP or location, verifying they are in fact in the town or county. So you can't vote online if you're out of state...you still have to go through the old absentee voter way. Once they are verified to be in a good location, they enter the key and a page comes up showing their name and address. "Is this correct?" the system asks. After that, the user can choose a form of PID to prove they are themselves: entering their SSN, Driver's License Number, etc. After this is verified, the usre can choose a PIN to login within 24 hours of election day to vote. Once again when logging in on election day, they will only need to provide their PIN and email. Notice that for someone to hack or fake a person's credentials, you would have to a) intercept their snail mail, b) access 
+
+   If not, there is then the absentee approach. Then once someone votes they're locked out...someone can then log a complaint if they cant get into the system. There are definitely kinks to work out so we should start this on a small scale in local or state elections and then build up to federal ones. Going along with what I mentioned above, f there was more voting online then the federal overnment could contract different companies in each state to design secure websites and apps...again now there are over 50 systems to hack into as opposed to just one or two.
+
+   This involves better crypto on the machines themselves (ie. more jobs for crypto geeks), and better workers monitoring booths (more jobs). 
+   Also it means better security audits on the companies that make the voting machines in the first place...more jobs!
+
+Blockchain technology can also be used SITE...I don't want to get into this right now but suffice it to say that the same underlying tech used for Bitcoin and other crypto-currencies can also be used to ensure fair voting systems.
+
+We've now spent billions of dollars on better voting software, educating voters, and getting more workers at the poll. Unfortunately all this does is get us back to square one: we have now ensured that only the people who voted get their votes counted and they were not changed. But this does nothing to actually fix our voting system!. Read on (the next section is neither about tech nor the Rust Belt, its just my opinions and facts about voting, so feel free to skip).
+  
+
+
+  --------------------------------------------------
+  --------------------------------------------------
+
+Part 4/Bonus: A better system of voting
+In both the last election and the 2000 election between Buch and Gore, the Democrat candidate won the popular vote, yet the Republican won the Electoral College, granting them the presidency. Not surprisingly, this caused many voters to complain and say we should move to having a popular vote. Surprising to some, this is a very bad idea, and in fact the electoral college is vastly superior to this. Unfortunately the electoral college still isn't that great either.
+
+  There are a few reasons why a straight popular vote is ill-advised. If we give the candidate with just the highest percentage of votes. then in a proper two-party system someone would have to get 51% of the votes to win. But we have more than two parties...in the last election there were Green and Libertarian candidates. Suppose Gary Johnson were to get more votes...you coucld end up in a situation where a candidate wins with only 34% of the country voting for them...ie. 66% of the country DID NOT vote for them.
+  
+  Another issue comes down to how populations are distributed. While we have a big country, the majority of the population lives in a handful of city centers: LA, NY, Houston, etc. Moving to a popular vote would effectively mean that a candidate could campaign in about 10 cities across the US, the only one in the Rust Belt being Chicago. Ouch.
+
+  If you think this is unlikely, just suppose a candidate ran on a platform of "everyone within city 15 miles of a city center whose population is greater than 3 million people will get free wi-fi, but everyone outside of that will get a tax increase to pay for the city-dwellers wifi." We've had candidates who ran on crazier ideas than that. In fact, an idea like this would almost guarantee somebody victory...even though roughly 50% of the population would get screwed. SITE: here are some other sources which break down these points better.
+
+So the electoral college, while flawed, at least ensures that candidates have to campaign in smaller regions and address those voters' issues to secure a victory. SITE: Hilary Clinton did not campaign once in the state of Wisconsin, lost the perennially blue state, and ultimately the election. One of the most hotly contested regions in the last 3 elections were surrounding Youngstown, Ohio...who ever talks about Youngstown unless it's a conversation about "regions outputting the best college football coaches" or "cities in the country which may be worse than Flint, MI?"
+
+A better system to either is preferential voting. You get a list of candidates A through E, and then have to rank them from 1 to 5. Each number is assigned a point, and the candidate with the most points wins. So all those people who say "well I would prefer THIS candidate...but they're not gonna win so I guess I'll instead vote for THAT candidate" wouldn't have to do that. Not surprisingly, doing this would get more third-party candidates elected...also not surprisingly neither the Republicans nor Democrats (SITE) want this kind of system.
+
+So do yourself a favor and call up your representative/governor/senator/council-person and say "Hey, can we start voting online cause having to deal with those old ladies at the voting booths sucks, plus it's way more secure than how we currently do things. Oh and my niece is a software engineer with a minor in policy so you should hire her to build a secure voting site for you. Also you would never have won if we did preferential voting. K thanks bye."
+----------------------------------------------------------
+
+  The Beauty of the Rust Belt
+  Recently I was in Lake Erie wine country in New York and Pennsylvania. Now the wine there is not as good as what you would find in California or Oregon for instance, as the climate can't support what theirs can. But having been to Napa, Sonoma, and different vineyards around Portland, I can say that the vineyards up around Lake Erie are just as beautiful as their west coast counterparts.
+
+How could they not be? You have beautiful grape trees (bushes? vines? I don't really know how those things grow) plus cherry and apple trees, with the Appalachian Mountains on one side, and Lake Erie on the other. I think that most people who have not been to the Great Lakes assume they are nothing special, just really big lakes, since the name kind of implies that and looking at them on a map they don't seem like much. In actuality they are HUGE, and when you see them the word "ocean" seems more appropriate. Standing on the banks of any of them is more reminiscent of standing on the Mediterranean or Gulf of Mexico. I will write a much longer post about the Great Lakes in the future.
+
+Oh and to top it all off, its Fall and the leaves are changing and had some nice color in them! Where would you rather be on a fall afternoon than this picturesque location in the Rust Belt? Other than watching football, obvi. Plus 
+
+  I bring this all up because
+  a) I need to get in a quick post cause my ass has been slacking
+  b) I am back to the real world and sad about how much I am missing wine country
+  c) to talk about how beautiful the Rust Belt is.
+
+People who haven't been here don't know what they're missing. The Great Lakes. The Appalachian Mountains. Huge forests, fields of green, wildflowers, rivers (the Ohio, Mississippi, and countless others). The climate is great - in the summer where I live it usually stays just below 90, and in the winter it can hover between the high teens and low 30s.
+
+TODO: get rid of regulation part...
+I love the beauty of this region. Which is why its sad that people pollute it. Wait what RBD, you're going all environmental on me?!?! Yes I am. I wanna talk about pollution, government regulation, coal and natural gas and jobs and the environment and argue why regulations *are* a viable option and I won't even mention climate change or global warming.
+
+A note on global warming/climate change: don't even bring it up. People are so divided on the issue, its pointless. Instead let's just talk about what we can all agree on, and if the changes we make just so happen to stop or reverse the effects of climate change then all the better! 
+
+---------------------------
+New jobs from new technologies
+Solar, wind, nuclear...these are all much better energy options for the future in my opinion. I view the newest generation entering the work force today, folks from about 22 to 40 (millenials? generation Z? who cares) as the transitional generation. It is our responsibility to transition to a world where all energy comes from renewable sources.
+
+Whether you're a republican or democrat or green or libertarian or tori or anything else, whether you work in natural gas or solar, moving to 100% clean energy should be everyone's goal. Using fossil fuels like coal, oil, or natural gas may make sense now, but it's ultimately a dead end, since there is a limited supply of it. The Marcellus Shale may contain a billion cajillion cubic tons of natural gas, but when we run out of that stuff then we're back at square one. We need an exit strategy, and here is mine.
+
+In the short term continue with fossil fuels (which currently make up about ___ of our energy production), but plan on phasing them out within 10 years. We notify coal and natural gas workers that your jobs are going to disappear in 10 years...so you've got 10 years to find a new career. Workers over 45 are fine - their jobs are guaranteed for the remaining 10 years and at the end of it they get a nice retirement...the money coming from taxing the shit out of consumers of gas and coal. 44 or younger? Read on!
+
+During those 10 years we start heavily ramping up solar, wind, geothermal, and other alternative fuel sources. TODO: link to best renewable technologies. Fossil fuel workers below 45 get trained in these new technologies - installing/creating/fixing solar panels/windmills/geothermal units. There are ___ homes in the US and ___ commercial buildings - getting them all onto renewable energy will take a massive effort, which means jobs!
+
+Unfortunately it will take a while to ramp this up, probably something like 50 years until we have enough renewable energy, so in the mid term the best solution in my opinion is nuclear. I have a lot of mixed opinions about nuclear and don't think its great in hte long-term, but it is the perfect transition technology. We already have ___ nuclear plants in the US, and plans to build ____ more. Nuclear plants also employ way more people! It takes about ___ to build a new nuclear plant, so doubling or tripling the amount we have in the next 10 years means we can almost completely replace fossil fuels with nuclear. 
+
+
+
+----------------------------------------------
+
+TODO: this may need to be its own post...above you're talking about the environment, and here you're talking about regulations. Split this up!
+Regulations vs Tax Breaks:
+As a mostly libertarian minded person, saying I am in favor of environmental regulations seems a little dirty. But in fact I am. While I think the free market is a good answer to a lot of problems, I don't see how it can stop corporations from polluting.
+
+  In fact, I would argue that from a philosophical perspective, regulations are pretty libertarian leaning. The age old adage "you should be able to do whatever you want as long as it doesn't harm others" which libertarians preach contradicts a corporation's pollution...cause that *is* harming others. When Lake Erie catches on fire because ___, drinking water is undrinkable because of gas pipelines, and air quality is low because of coke plants or slag heaps, these corporations are profiting by poisoning others. FRACKING!!!
+
+This is not a tongue in cheek comment: profits = revenue - costs, so by dumping waste in a river or not correctly sealing pipes to prevent gas leaks, they are in fact cutting costs, and hence raising their profits.
+
+If you talk to someone who defends corporations like these, they usually completely ignore my point and instead argue about jobs. Ok, let's talk about jobs. I am not advocating for laying off factory workers; rather, I am advocating for corporations paying a bit extra to pass inspections. And in many cases, some of the biggest polluters don't even employ that many people. TODO: more on this...
+
+Let's go back to regulations. People hear "regulations" and think "higher taxes." But let's go back to tax breaks. The auto, gas, and coal industries are hugely subsidized. In WI, the tax breaks recently promised to Viacom are ___, the highest ever given. And what are they doing? Pumping water out of the Great Lakes watershed - something which is very very bad. And how many jobs will it create? ____ What about fracking, natural gas, or coal? ____
+
+Tech companies aren't exempt from this either. Just a quick side note, since Amazon is looking at multiple locations in the Rust Belt, cities are basically prostituing themselves out with tax money for HQ2. I think this is a terrible idea - you are paying a premium in taxes to *hopefully* get more jobs in an area. But there are plenty of jobs! President Trump talks about how low unemployment is; there is a shortage of workers all over. We don't need to cripple state or city budgets by cutting taxes for corporations - this is a bailout at best. And its the opposite of spending conservatively. 
+  
+I am all for cutting government spending, but when the government cuts its own revenue stream off, this is just stupid. Giving a FOREIGN company __ billion dollars in tax cuts makes no sense. Compared to the number of permanent jobs that will be there, it doesn't make sense.
+
+Anectodal evidence is the worst, but I have personal experience with this so I am gonna tell my story anyway. I have family who lives in fracking country. A new steel mill was built to be used in fracking drilling. While it was being constructed the town was booming - lots of jobs for people there, engineers and scientists from all over the US were living there to help plan and build, and the local economy was doing awesome. And then a few years later once the construction ended and the real work began...the town is dead. You drive through it now and you see boarded up gas stations and grocery stores - the only places in town are a few bars, restaurants, and Dollar General. TODO: how many people are employed there? Another poster city of the Rust Belt.
+
+So why do we scoff at regulations (TODO: do we? this might be incorrect) and welcome tax breaks for corporations that over-promise on everything and under-perform on jobs?

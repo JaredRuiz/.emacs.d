@@ -1,0 +1,112 @@
+<app-report-header [reportDisplayNameText]="'Purchasing Report'" [advancedFilterCriteriaItems]="advancedFilterCriteriaItems"
+  [reportFeed]="reportFeed" [hideProjectList]="false" [displayShowHideAllDetailsSlider]="true"
+  [showHideAllDetailsDisplayText]="'COMMENTS'" (selectedProjectChangeTriggered)="onSelectedProjectChangeTriggered($event)"
+  (selectedSpecialFiltersChangeTriggered)="onSelectedSpecialFiltersChangeTriggered($event)"
+  (showAllDetailsToggleChangeTriggered)="onShowAllDetailsToggleChangeTriggered($event)"
+  (selectedAdvancedFiltersChangeTriggered)="onSelectedAdvancedFiltersChangeTriggered($event)">
+</app-report-header>
+
+<ng-container *ngIf="reportFeed?.reportData?.length>0">
+
+  <app-report-body [id]="'PurchasingReport'" [selectedFilterCriteriaItems]="selectedAdvancedFilterCriteriaItems"
+    [displayGroupFooter]="false" [reportFeed]="reportFeed" [groupBy]="selectedGroupByCriteria">
+
+    <ng-template appReportBodyGroupItemRow let-groupItem="groupItem">
+
+      <div class="currenttotalquantity">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.currentTotalQuantity">
+          {{ groupItem.currentTotalQuantity }}
+        </span>
+      </div>
+
+      <div class="departmentnumber">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.departmentNumber + ' ' + groupItem.departmentDescription">
+          {{ groupItem.departmentNumber + ' ' + groupItem.departmentDescription }}
+        </span>
+      </div>
+
+      <div class="equipmentcode">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.equipmentCode">
+          <div *ngIf="groupItem.cutSheets; then equipmentCodeLink else equipmentCode"></div>
+          <ng-template #equipmentCodeLink>
+            <a [href]="groupItem.cutSheets" target="_blank">{{ groupItem.equipmentCode }}</a>
+          </ng-template>
+          <ng-template #equipmentCode>
+            {{ groupItem.equipmentCode }}
+          </ng-template>
+        </span>
+      </div>
+
+      <div class="equipmentdescription">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.equipmentDescription">
+          {{ groupItem.equipmentDescription }}
+        </span>
+      </div>
+
+      <div class="model">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.model">
+          {{ groupItem.model }}
+        </span>
+      </div>
+
+      <div class="manufacturer">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.manufacturer">
+          {{ groupItem.manufacturer }}
+        </span>
+      </div>
+
+      <div class="vendor">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.vendor">
+          {{ groupItem.vendor }}
+        </span>
+      </div>
+
+      <div class="orderingstatus">
+        <span class="Report-Body-Group-Item-Text" [title]="groupItem.orderingStatus">
+          {{ groupItem.orderingStatus }}
+        </span>
+      </div>
+
+      <div class="deliverydate">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.deliveryDate">
+          {{ groupItem.deliveryDate | date:'MM/dd/yyyy' }}
+        </span>
+      </div>
+
+      <div class="purchaseorderno">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.purchaseOrder.number">
+          {{ groupItem.purchaseOrder.number }}
+        </span>
+      </div>
+
+      <div class="revisionbulletinno">
+        <span class="Report-Body-Group-Item-Text" [class.greyed]="groupItem.discontinued" [title]="groupItem.revisionBulletinNo">
+          {{ groupItem.revisionBulletinNo }}
+        </span>
+      </div>
+
+      <div class="showhidedetails" (click)="groupItem.showDetails=!groupItem.showDetails">
+        <span *ngIf="groupItem.details?.length>0" class="Report-Body-Group-Item-Text">
+          {{ groupItem.showDetails ? 'HIDE COMMENTS' : 'SHOW COMMENTS' }}
+        </span>
+      </div>
+
+    </ng-template>
+
+    <ng-template appReportBodyGroupItemRowDetail let-groupItemDetail="groupItemDetail">
+
+      <div class="Report-Body-Group-Item-Row-Detail-Content Purchasing-Report">
+        <span class="Report-Body-Group-Item-Text">
+          <b>
+            {{ groupItemDetail?.type }}
+          </b>
+          <br />
+          {{ groupItemDetail?.comment }}
+        </span>
+      </div>
+
+    </ng-template>
+
+  </app-report-body>
+
+</ng-container>

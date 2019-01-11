@@ -1,0 +1,72 @@
+<div class="Purchase-History-Container">
+  <label>Purchase history</label>
+
+  <!-- TODO header -->
+  <div class="Purchase-History-Header">
+    <div class="Row">
+      <div class="History-Item-Data-Name">
+        <span>PO#</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>STATUS</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>QTY</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>CHANGE DATE</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>RB#</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>DELV DATE</span>
+      </div>
+
+      <div class="History-Item-Data-Name">
+        <span>COMMENTS</span>
+      </div>
+    </div>
+  </div>
+  
+  <ng-container *ngFor="let historyItem of equipment.purchaseHistory">
+    <div class="Purchase-History-Row">
+      <div class="History-Item-Data">
+        <span>{{ historyItem.purchaseOrderNumber }}</span>
+      </div>
+
+      <div class="History-Item-Data">
+        <span>{{ historyItem.status }}</span>
+      </div>
+      
+      <div class="History-Quantity-Update">
+        <span>{{ historyItem.previousQuantity }}</span>
+        <span>{{ historyItem.currentQuantity }}</span>
+      </div>
+
+      <div class="History-Item-Data">
+        <span>{{ historyItem.changeDate | date }}</span>
+      </div>
+
+      <div class="History-Item-Data">
+        <span>{{ historyItem.revisionBulletinNumber }}</span>
+      </div>
+
+      <div class="History-Item-Data">
+        <span>{{ historyItem.deliveryDate | date }}</span>
+      </div>
+      
+      <div class="History-Item-Comments">
+        <span>{{ historyItem.comments }}</span>
+        <button class="History-Item-Comments-Read-More">
+          <span>READ MORE</span>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,171 @@
+<div class="Scroll-Content">
+
+  <div class="Group-List-Container">
+
+    <div class="Row">
+      <span class="Search-Icon"></span>
+      <input (keyup)="onSearch()" class="Group-Search-Input" type="text" autocomplete="off" placeholder="Search Construction Groups"
+        [(ngModel)]="searchTerm" #searchDeptInput>
+      <button class="Create-Department-Button" type="submit" (click)="onCreateNew()">+ CREATE CONSTRUCTION GROUP</button>
+    </div>
+
+    <div class="Border">
+    </div>
+
+    <div class="Group-Card-Container">
+
+      <ng-template *ngFor="let constructionGroup of constructionGroups; trackBy: trackConstructionGroup"
+        [ngTemplateOutlet]="getTemplate(constructionGroup)" [ngTemplateOutletContext]="{ $implicit: constructionGroup }">
+      </ng-template>
+
+      <ng-template #standard let-constructionGroup>
+        <div class="Group-Card">
+          <div class="Row">
+            <div class="Group-Header-Wrapper">
+              <span class="Group-Header-Text">
+                {{ constructionGroup.name }}
+              </span>
+            </div>
+            <div class="Card-Buttons-Wrapper">
+              <button class="Edit-Construction-Button" type="submit" (click)="onEdit(constructionGroup)">
+                <span class="Edit-Icon"></span>
+                <span>EDIT GROUP</span>
+              </button>
+              <button #deleteBtn class="Delete-Construction-Button" type="submit" (click)="onDelete(constructionGroup)">
+                <span class="Delete-Icon">
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #deleted let-constructionGroup>
+        <div class="Deleted-Card-Container">
+          <div class="Row">
+            <span class="Group-Header-Deleted-Text">
+              Deleted: {{ constructionGroup.name }}
+            </span>
+            <div class="Card-Buttons-Wrapper">
+              <a href="#" class="Delete" (click)="$event.preventDefault();onUndoDelete(constructionGroup)">
+                <span>UNDO DELETE</span>
+              </a>
+
+            </div>
+          </div>
+
+        </div>
+      </ng-template>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<app-modal-dialog [modelId]="'createNewConstrucionGroupModal'" [width]="'900px'" #createNewModal>
+
+  <div modal-section="header">
+    <span *ngIf="!selectedConstructionGroup.id">Create New Construction Group</span>
+    <span *ngIf="selectedConstructionGroup.id">Editing Construction Group</span>
+  </div>
+
+  <div modal-section="body">
+
+    <form #createNewForm="ngForm" autocomplete="off" novalidate>
+
+      <div class="Create-Group-Body-Wrapper">
+
+        <div class="Create-Group-Body-Header">
+
+          <div class="Row">
+
+            <div class="Form-Control-Group">
+              <label for="constructionGroupNameInput">Construction Group Name</label>
+              <input id="constructionGroupNameInput" name="constructionGroupNameInput" type="text" autocomplete="off"
+                class="Construction-Group-Name-Input" [(ngModel)]="selectedConstructionGroup.name" required
+                #groupNameInput="ngModel">
+              <span *ngIf="groupNameInput.invalid && (groupNameInput.dirty || groupNameInput.touched) && groupNameInput.errors?.required"
+                class="Invalid-Message-Container">
+                Construction Group Name is required.
+              </span>
+              <span *ngIf="groupNameInput.errors?.duplicate" class="Invalid-Message-Container">
+                Construction Group Name already exists.
+              </span>
+            </div>
+
+            <div class="Form-Control-Group">
+              <div class="Reference-Date-Type-Radio">
+                <label>
+                  <input type="radio" value="Open Date" [(ngModel)]="selectedConstructionGroup.referenceDateType" id="openDateReferenceDateTypeInput"
+                    name="referenceDateTypeInput" (change)="onReferenceDateTypeChange()" #refDateTypeInput="ngModel">
+                  <span>Open Date</span>
+                </label>
+                <label>
+                  <input type="radio" value="Turnover Date" [(ngModel)]="selectedConstructionGroup.referenceDateType"
+                    id="turnoverDateReferenceDateTypeInput" name="referenceDateTypeInput" (change)="onReferenceDateTypeChange()"
+                    #refDateTypeInput="ngModel">
+                  <span>Turnover Date</span>
+                </label>
+              </div>
+              <span *ngIf="refDateTypeInput.invalid && (refDateTypeInput.dirty || refDateTypeInput.touched) && refDateTypeInput.errors?.required"
+                class="Invalid-Message-Container">
+                Reference Date Type is required.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="Create-Group-Body">
+          <div class="Delivery-Lead-Item" *ngFor="let item of selectedConstructionGroup.deliveryLeadDuration; let i = index; trackBy: trackConstructionGroup">
+            <div class="Row">
+              <div class="Delivery-Lead-Department-Desc">
+                <span [class.active]="item.deliveryLeadWeeks">{{ item.departmentNumber }} {{ item.departmentName }}</span>
+              </div>
+              <div class="Delivery-Lead-Time">
+
+                <input type="text" class="Lead-Time-Input" pattern="\d{1,9}" maxlength="2" placeholder="--" [name]="'deliveryLeadWeeksInput'+i"
+                  [(ngModel)]="item.deliveryLeadWeeks">
+
+              </div>
+              <div class="Delivery-Lead-Unit">
+                <span class="Delivery-Lead-Unit-Text">
+                  WEEK(S) FOR DELIVERY LEAD TIME
+                </span>
+              </div>
+
+              <div class="Card-Buttons-Wrapper">
+                <button id="Apply-All-Button" type="button" *ngIf="item.showApplyAll" class="Apply-All-Button" (click)="onApplyAllClicked(item.deliveryLeadWeeks)">
+                  APPLY TO ALL
+                </button>
+                <button id="Copy-Button" type="button" class="Copy-Button" (click)="item.showApplyAll=!item.showApplyAll" [ngStyle]="{'color': copyActive(item.showApplyAll)}">
+                  <span class="Copy-Icon">
+                  </span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="Create-Button-Wrapper">
+        <button class="Secondary-Default-Button" id="cancelCreateDepartmentBtn" type="button" (click)="createNewModal.hide()">
+          <span class="ButtonText"> Cancel</span>
+        </button>
+        <button [disabled]="createNewForm.invalid||!isValidData()" class="Create-Department-Button" id="createDepartmentBtn"
+          type="submit" (click)="onSaveGroupConfirmed()">
+          <span *ngIf="!selectedConstructionGroup.id">CREATE GROUP</span>
+          <span *ngIf="selectedConstructionGroup.id">UPDATE GROUP</span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+
+</app-modal-dialog>

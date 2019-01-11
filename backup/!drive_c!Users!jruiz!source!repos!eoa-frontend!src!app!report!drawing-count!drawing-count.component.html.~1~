@@ -1,0 +1,22 @@
+<div class="Secondary-Banner">
+
+  <div class="Banner-Left-Content">
+    <ng-select [items]="projectListItems" #projectListDropdown [(ngModel)]="selectedProject" bindLabel="projectName"
+      (change)="onSelectedProjectListItemChanged()" notFoundText="No projects found" placeholder="Select project" name="projectListItemInput"
+      [virtualScroll]="true" [searchFn]="projectListItemSearchFn">
+      <!-- <ng-template ng-header-tmp>
+        <div (click)="onNewProjectIconClicked()">
+          <span class="Create-Project-Plus-Icon">
+          </span>
+          <span class="Create-Project-Text">CREATE A PROJECT</span>
+        </div>
+      </ng-template> -->
+      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div>
+          {{item.projectName}}
+        </div>
+      </ng-template>
+    </ng-select>
+  </div>
+</div>
+

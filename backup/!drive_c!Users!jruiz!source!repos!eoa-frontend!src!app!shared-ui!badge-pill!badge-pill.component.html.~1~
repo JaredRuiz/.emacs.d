@@ -1,0 +1,5 @@
+<div class="Badge-Pill-Container">
+  <span [ngClass]="'Badge-Pill-'+badgePillDataItem.type + '-Icon'"></span>
+  <span class="Badge-Pill-Text">{{ badgePillDataItem.text }}</span>
+  <span class="Badge-Pill-Remove-Icon" (click)="onBadgePillRemoveClicked()"></span>
+</div>

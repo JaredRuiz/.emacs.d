@@ -1,0 +1,296 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+namespace Wegmans.EOA.Common.Contracts.Entities
+{
+    [Serializable]
+    public class EquipmentItemEntity : BaseEntity
+    {
+        [JsonProperty(PropertyName = "deliveryDate")]
+        public DateTime? DeliveryDate { get; set; }
+
+        [JsonProperty(PropertyName = "departmentDescription")]
+        public string DepartmentDescription { get; set; } = "";
+
+        [JsonProperty(PropertyName = "departmentNumber")]
+        public string DepartmentNumber { get; set; } = "";
+
+        [JsonProperty(PropertyName = "cutSheets")]
+        public string CutSheets { get; set; } = "";
+
+        [JsonProperty(PropertyName = "equipmentCode")]
+        public string EquipmentCode { get; set; } = "";
+
+        [JsonProperty(PropertyName = "equipmentDescription")]
+        public string EquipmentDescription { get; set; }
+
+        [JsonProperty(PropertyName = "initialTotalQuantity")]
+        public int InitialTotalQuantity { get; set; }
+
+        [JsonProperty(PropertyName = "previousTotalQuantity")]
+        public int PreviousTotalQuantity { get; set; }
+
+        [JsonProperty(PropertyName = "currentTotalQuantity")]
+        public int CurrentTotalQuantity { get; set; }
+
+        [JsonProperty(PropertyName = "newTotalQuantity")]
+        public int? NewTotalQuantity { get; set; } = null;
+
+        [JsonProperty(PropertyName = "floorQuantity")]
+        public IList<FloorQuantity> FloorQuantity { get; set; } = new List<FloorQuantity>();
+
+        [JsonProperty(PropertyName = "manufacturer")]
+        public string Manufacturer { get; set; } = "";
+
+        [JsonProperty(PropertyName = "manufacturerDescription")]
+        public string ManufacturerDescription { get; set; } = "";
+
+        [JsonProperty(PropertyName = "purchaseOrder")]
+        public PurchaseOrder PurchaseOrder { get; set; } = new PurchaseOrder();
+
+        [JsonProperty(PropertyName = "orderingStatus")]
+        public OrderingStatus OrderingStatus { get; set; } = OrderingStatus.None;
+
+        [JsonProperty(PropertyName = "revisionBulletinNo")]
+        public string RevisionBulletinNo { get; set; } = "";
+
+        [JsonProperty(PropertyName = "vendor")]
+        public string Vendor { get; set; } = "";
+
+        [JsonProperty(PropertyName = "storeNumber")]
+        public string StoreNumber { get; set; } = "";
+
+        [JsonProperty(PropertyName = "partNumber")]
+        public string PartNumber { get; set; } = "";
+
+        [JsonProperty(PropertyName = "category")]
+        public string Category { get; set; } = "";
+
+        [JsonProperty(PropertyName = "constructionGroup")]
+        public string ConstructionGroup { get; set; } = "";
+
+        [JsonProperty(PropertyName = "model")]
+        public string Model { get; set; } = "";
+
+        [JsonProperty(PropertyName = "height")]
+        public string Height { get; set; } = "";
+
+        [JsonProperty(PropertyName = "width")]
+        public string Width { get; set; } = "";
+
+        [JsonProperty(PropertyName = "depth")]
+        public string Depth { get; set; } = "";
+
+        [JsonProperty(PropertyName = "partSecondaryCommodityCode")]
+        public string PartSecondaryCommodityCode { get; set; }
+
+        [JsonProperty(PropertyName = "partSecondaryCommodityDescription")]
+        public string PartSecondaryCommodityDescription { get; set; }
+
+        [JsonProperty(PropertyName = "requestedBy")]
+        public string RequestedBy { get; set; }
+
+        [JsonProperty(PropertyName = "comments")]
+        public IList<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
+
+        [JsonProperty(PropertyName = "alternateDeliveryLocation")]
+        public string AlternateDeliveryLocation { get; set; }
+
+        [JsonProperty(PropertyName = "procurementMethod")]
+        public ProcurementMethod ProcurementMethod { get; set; }
+
+        [JsonProperty(PropertyName = "quantityChangeECVerified")]
+        public bool QuantityChangeECVerified { get; set; }
+
+        [JsonProperty(PropertyName = "quantityChangeIPVerified")]
+        public bool QuantityChangeIPVerified { get; set; }
+
+        [JsonProperty(PropertyName = "discontinued")]
+        public bool Discontinued { get; set; }
+
+        [JsonProperty(PropertyName = "unitCost")]
+        public float UnitCost { get; set; }
+
+        [JsonProperty(PropertyName = "requestId")]
+        public Guid RequestId { get; set; }
+
+        [JsonProperty(PropertyName = "finishesSpecificationRequired")]
+        public bool FinishesSpecificationRequired { get; set; } = false;
+
+        [JsonProperty(PropertyName = "finishes")]
+        public List<Finish> Finishes { get; set; }
+
+        [JsonProperty(PropertyName = "finishesMissing")]
+        public bool FinishesMissing { get; set; } = false;
+
+        [JsonProperty(PropertyName = "orderDiscrepancies")]
+        public List<OrderDiscrepancy> OrderDiscrepancies { get; set; } = new List<OrderDiscrepancy>();
+
+<<<<<<< HEAD
+=======
+        [JsonProperty(PropertyName = "purchaseHistory")]
+        public List<PurchaseHistoryEntity> PurchaseHistory { get; set; } = new List<PurchaseHistoryEntity>();
+
+        [JsonProperty(PropertyName = "totalCost")]
+        public float TotalCost { get { return UnitCost * CurrentTotalQuantity; } }
+
+>>>>>>> develop
+        //[JsonProperty(PropertyName = "accessoriesRequiredIndicator")]
+        //public bool AccessoriesRequiredIndicator { get; set; }
+
+        //[JsonProperty(PropertyName = "actualDeliveryDate")]
+        //public DateTime ActualDeliveryDate { get; set; }
+
+        //[JsonProperty(PropertyName = "constructionGroup")]
+        //public ConstructionGroupEntity ConstructionGroup { get; set; }
+
+        //[JsonProperty(PropertyName = "currentCost")]
+        //public float CurrentCost { get; set; }
+
+        //[JsonProperty(PropertyName = "department")]
+        //public DepartmentEntity Department { get; set; }
+
+        //[JsonProperty(PropertyName = "discontinuedIndicator")]
+        //public bool DiscontinuedIndicator { get; set; }
+
+        //[JsonProperty(PropertyName = "drawingTotal")]
+        //public int DrawingTotal { get; set; }
+
+        //[JsonProperty(PropertyName = "id")]
+        //public string Id { get; set; }
+
+        //[JsonProperty(PropertyName = "leadTime")]
+        //public DateTime LeadTime { get; set; }
+
+        //[JsonProperty(PropertyName = "modelNo")]
+        //public string ModelNo { get; set; }
+
+        //[JsonProperty(PropertyName = "orderingComments")]
+        //public string OrderingComments { get; set; }
+
+        //TODO: can be enum
+        //[JsonProperty(PropertyName = "orderingStatus")]
+        //public string OrderingStatus { get; set; }
+
+        //[JsonProperty(PropertyName = "procurementComments")]
+        //public string ProcurementComments { get; set; }
+
+        //[JsonProperty(PropertyName = "purchasingComments")]
+        //public string PurchasingComments { get; set; }
+
+        //[JsonProperty(PropertyName = "requestedQuantity")]
+        //public int RequestedQuantity { get; set; }
+
+        //TODO: can be enum
+        //[JsonProperty(PropertyName = "specificationGroup")]
+        //public string SpecificationGroup { get; set; }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum OrderingStatus
+    {
+        None,
+        Added,
+        Counted,
+        Requested,
+        Released,
+        Ordered,
+        Delivered,
+        Removed,
+        [EnumMember(Value = "Procured Via Other Method")]
+        ProcuredViaOtherMethod,
+        PendingRelease,
+        FailedRelease
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum ProcurementMethod
+    {
+        [EnumMember(Value = "Equipment Ordering")]
+        EquipmentOrdering,
+        [EnumMember(Value = "IP Direct Order")]
+        IPDirectOrder,
+        [EnumMember(Value = "IT Ordered")]
+        ITOrdered,
+        [EnumMember(Value = "Vendor Supplied")]
+        VendorSupplied,
+        [EnumMember(Value = "Already Purchased")]
+        AlreadyPurchased,
+        [EnumMember(Value = "Contractor Supplied")]
+        ContractorSupplied,
+        [EnumMember(Value = "Corporate Space Planning")]
+        CorporateSpacePlanning
+    }
+
+    [Serializable]
+    public class PurchaseOrder
+    {
+        [JsonProperty(PropertyName = "number")]
+        public string Number { get; set; }
+
+        [JsonProperty(PropertyName = "deliveryDate")]
+        public DateTime? DeliveryDate { get; set; }
+
+        [JsonProperty(PropertyName = "creationDate")]
+        public DateTime? CreationDate { get; set; }
+
+        [JsonProperty(PropertyName = "message")]
+        public string Message { get; set; } = "";
+
+        [JsonProperty(PropertyName = "eamLineNumbers")]
+        public List<int> EAMLineNumbers { get; set; } = new List<int>();
+    }
+
+    [Serializable]
+    public class Finish
+    {
+        [JsonProperty(PropertyName = "specifications")]
+        public SortedDictionary<string, string> Specifications { get; set; }
+        [JsonProperty(PropertyName = "count")]
+        public int Count { get; set; }
+    }
+
+    [Serializable]
+    public class OrderDiscrepancy
+    {
+        [JsonProperty(PropertyName = "field")]
+        public string Field { get; set; }
+
+        [JsonProperty(PropertyName = "eamValue")]
+        public string EAMValue { get; set; }
+
+        [JsonProperty(PropertyName = "eoaValue")]
+        public string EOAValue { get; set; }
+    }
+<<<<<<< HEAD
+}
+=======
+
+    public class PurchaseHistoryEntity
+    {
+        [JsonProperty(PropertyName = "currentTotalQuantity")]
+        public int CurrentTotalQuantity { get; set; }
+
+        [JsonProperty(PropertyName = "newTotalQuantity")]
+        public int NewTotalQuantity { get; set; }
+
+        [JsonProperty(PropertyName = "historyCreatedDate")]
+        public DateTime HistoryCreatedDate { get; set; }
+
+        [JsonProperty(PropertyName = "revisionBulletinNo")]
+        public string RevisionBulletinNo { get; set; }
+
+        [JsonProperty(PropertyName = "deliveryDate")]
+        public DateTime DeliveryDate { get; set; }
+
+        [JsonProperty(PropertyName = "purchaseOrderNo")]
+        public string PurchaseOrderNo { get; set; }
+
+        [JsonProperty(PropertyName = "purchaseOrderCreationDate")]
+        public DateTime PurchaseOrderCreationDate { get; set; }
+    }
+}
+>>>>>>> develop

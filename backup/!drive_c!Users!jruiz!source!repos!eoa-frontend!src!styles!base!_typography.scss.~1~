@@ -1,0 +1,342 @@
+html {
+  font-family: $default-font-family;
+
+  body {
+    font-family: $default-font-family;
+  }
+}
+
+.Application-Title-Text {
+  font-family: $application-title-font-family;
+  font-size: $application-title-font-size;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal; // line-height: 5.07;
+  letter-spacing: 0.1px;
+  text-align: left;
+  color: $white;
+}
+
+.Equipment-Group-Header-Text {
+  font-family: $equipment-group-header-font-family;
+  font-size: $equipment-group-header-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: $dark-slate-blue;
+}
+
+.Equipment-Listview-Header-Text {
+  font-family: $equipment-listview-header-font-family;
+  font-size: $equipment-listview-header-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal; // line-height: 7.36;
+  letter-spacing: 1.1px;
+  text-align: left;
+  color: $bluish-grey;
+}
+
+.Badge-Pill-Text {
+  font-size: $badge-pill-font-size;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.93;
+  letter-spacing: 0.2px;
+  text-align: left;
+}
+
+.Modal-Header-Text {
+  font-family: $default-font-family;
+  font-size: $modal-header-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 3;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.Primary-Button-Text {
+  font-family: $default-font-family;
+  font-size: $primary-default-button-text-font-size !important;
+  font-weight: bold !important;
+  letter-spacing: 1.4px;
+}
+
+.Secondary-Link-Button-Text {
+  font-family: $default-font-family;
+  font-size: $secondary-button-text-font-size !important;
+  font-weight: bold !important;
+}
+
+.Filter-Criteria-Type-Icon-Text {
+  font-family: $default-font-family;
+  font-size: $primary-icon-font-size;
+}
+
+.Filteria-Criteria-Plus-Icon-Text {
+  font-size: $filter-criteria-plus-icon-font-size !important;
+  font-weight: bold;
+}
+
+.Filter-Criteria-Options-ShowAll-Text {
+  font-family: $default-font-family;
+  font-size: $filter-criteria-options-show-all-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 1.2px;
+  text-align: left;
+}
+
+.Equipment-Card-Primary-Text {
+  font-family: $equipment-card-primary-text-font-family;
+  font-size: $equipment-card-primary-text-font-size;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal; // line-height: 3.94;
+  letter-spacing: normal;
+  text-align: left;
+  color: $dark-blue-grey;
+}
+
+.Equipment-Card-Secondary-Text {
+  font-family: $equipment-card-secondary-text-font-family;
+  font-size: $equipment-card-secondary-text-font-size;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal; // line-height: 4.5;
+  letter-spacing: normal;
+  text-align: left;
+  color: $battleship-grey;
+}
+
+.Dropdown-Text {
+  font-family: $default-font-family;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal; // line-height: 1.93;
+  letter-spacing: normal;
+  text-align: left;
+  color: $dark-indigo;
+}
+
+.Dropdown-Label-Text {
+  font-family: $default-font-family;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal; // line-height: 3.86;
+  letter-spacing: normal;
+  text-align: left;
+  color: $battleship-grey;
+}
+
+.Clear-All-Text {
+  font-size: $clear-all-text-font-size !important;
+  line-height: 4.5;
+  letter-spacing: 1.2px;
+}
+
+.Primary-Default-Button-Text {
+  font-family: $default-font-family;
+  font-size: $primary-default-button-text-font-size !important;
+  font-weight: bold !important;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 2.25 !important;
+  letter-spacing: 1.2px !important;
+}
+
+.Filter-Criteria-Options-Text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Filter-Criteria-Options-Icon-Text {
+  font-weight: 600 !important;
+  font-size: $secondary-icon-font-size !important;
+}
+
+.Equipment-Card-Section-Header-Text {
+  font-family: $default-font-family;
+  font-size: $default-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal; // line-height: 1.69;
+  letter-spacing: 0.4px;
+  text-align: left;
+  color: $dark-blue-grey;
+}
+
+.New-Project-Plus-Icon-Text {
+  font-size: $primary-icon-font-size !important;
+  font-weight: bold;
+}
+
+.New-Project-Button-Banner-Text {
+  font-family: $default-font-family;
+  font-size: $new-project-button-banner-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 3.5;
+  letter-spacing: 0.5px;
+}
+
+.Project-Details-Back-Button-Text {
+  font-family: $default-font-family;
+  font-size: $project-back-button-font-size;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.6px;
+  text-align: left;
+}
+
+.New-Project-Back-Arrow-Icon-Text {
+  font-size: $new-project-back-arrow-icon-font-size;
+  font-weight: 100;
+}
+
+.Form-Control-Group-Label-Text {
+  font-family: $default-font-family;
+  font-size: $form-control-group-font-size;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.25;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.Project-Status-Text {
+  font-family: $default-font-family;
+  font-size: $project-status-active-font-size;
+  font-weight: bolder;
+
+  &.Deactivate {
+    font-size: $project-status-deactivate-font-size;
+    font-weight: normal;
+  }
+
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 5.25;
+  letter-spacing: 0.6px;
+  text-align: left;
+}
+
+.Calendar-Icon-Text {
+  font-size: $form-control-group-font-size;
+  font-weight: 100;
+}
+
+.Create-Project-Icon-Text {
+  font-size: $create-project-icon-font-size;
+  font-family: $default-font-family;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 2.25;
+  letter-spacing: 0.6px;
+}
+
+.Create-Project-Text {
+  font-size: 12px;
+  font-family: $default-font-family;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 2.25;
+  letter-spacing: 0.6px;
+}
+
+.Project-Card-Flex-Item-Status-Text {
+  font-size: $project-card-status-text-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.6px;
+}
+
+.Project-Card-Flex-Item-Undo-Text {
+  font-size: $project-card-status-text-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 1.2px;
+}
+
+.Delivery-Lead-Unit-Text {
+  font-family: $default-font-family;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 1.1px;
+  text-align: left;
+  color: $bluish-grey;
+}
+
+.Group-Header-Text {
+  font-family: $equipment-group-header-font-family;
+  font-size: $equipment-group-header-font-size;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: $dark-slate-blue;
+}
+
+.Group-Header-Deleted-Text {
+  font-family: $equipment-group-header-font-family;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0.4px;
+  text-align: left;
+  color: $lipstick;
+}
+
+.Comments-Action-Button-Text {
+  font-family: $default-font-family;
+  font-size: $comments-action-button-text-font-size !important;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 1.2px !important;
+  text-align: left;
+}
+
+.Report-Header-Title-Text {
+  font-family: $default-font-family;
+  font-size: $default-font-size;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.Report-Header-Remodel-Indicator-Text {
+  font-family: $default-font-family;
+  font-size: $report-header-remodel-indicator-text-size;
+  font-style: italic;
+}
+
+.Report-Header-Secondary-Text {
+  font-family: $default-font-family;
+  font-size: $secondary-text-font-size;
+}
+
+.Report-Header-Secondary-Italic-Text {
+  font-family: $default-font-family;
+  font-size: $secondary-text-font-size;
+  font-style: italic;
+  line-height: 1.2;
+}

@@ -1,0 +1,115 @@
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DepartmentListComponent } from '@app/admin/department-list/department-list.component';
+import { DepartmentViewModel } from '@app/admin/shared/viewmodels/department.viewmodel';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { AdminService } from '@app/admin/shared/admin.service';
+
+describe('DepartmentListComponent', () => {
+  let component: DepartmentListComponent;
+  let fixture: ComponentFixture<DepartmentListComponent>;
+  let adminService: AdminService;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [DepartmentListComponent, ModalDialogComponent],
+      imports: [FormsModule, HttpClientTestingModule],
+      providers: [AdminService]
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(DepartmentListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+      
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('#onCreateNewDepartment', () => {
+    beforeEach(() => {
+      component.selectedDepartment = {};
+      component.onCreateNewDepartment();
+    });
+
+    it('sets selected department to new instance of department view model', () => {
+      // component.selectedDepartment is instance of DepartmentViewModel
+      // component.selectedDepartment.id is null
+    });
+
+    it('resets the create department form', () => {
+
+    });
+
+    it('shows the create department modal', () => {
+        
+    });
+  });
+
+  describe('#onEditDepartment', () => {
+    var departmentToEdit = {};
+        
+    beforeEach(() => {
+      component.selectedDepartment = {};
+      departmentToEdit = new DepartmentViewModel(){
+          id: 'dep_id_1'
+      };
+      component.onCreateNewDepartment(departmentToEdit);
+    });
+
+    it('sets selected department passed in department', () => {
+      expect(component.selectedDepartment.id).toBe('dep_id_1');
+    });
+
+    it('resets the create department form', () => {
+        // TODO: should we be doing this??
+    });
+
+    it('shows the create department modal', () => {
+        expect(component.createDepartmentModal.show).toHaveBeenCalled();
+    });
+  });
+    
+
+  describe('#padSelectedDepartment', () => {
+    beforeEach(() => {
+      component.selectedDepartment = new DepartmentViewModel();
+    });
+    
+    it('pads a single digit with two 00s', () => {
+      component.selectedDepartment.number = '1';
+      component.padSelectedDepartment();
+      expect(component.selectedDepartment.number).toBe('001');
+    });
+
+    it('pads two digits with one 0', () => {
+      component.selectedDepartment.number = '01';
+      component.padSelectedDepartment();
+      expect(component.selectedDepartment.number).toBe('001');
+    });
+
+    it('pads two digits with one 0', () => {
+      component.selectedDepartment.number = '10';
+      component.padSelectedDepartment();
+      expect(component.selectedDepartment.number).toBe('010');
+    });
+
+    it('does not pad a department beginning with 00', () => {
+      component.selectedDepartment.number = '001';
+      component.padSelectedDepartment();
+      expect(component.selectedDepartment.number).toBe('001');
+    });
+
+    it('does not pad a department with 3 digits', () => {
+      component.selectedDepartment.number = '123';
+      component.padSelectedDepartment();
+      expect(component.selectedDepartment.number).toBe('123');
+    });
+  });
+});

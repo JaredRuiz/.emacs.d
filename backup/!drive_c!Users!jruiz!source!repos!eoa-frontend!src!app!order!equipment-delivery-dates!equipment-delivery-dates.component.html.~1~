@@ -1,0 +1,17 @@
+<div class="Delivery-Schedule-Generate-Container">
+  <ng-container *ngTemplateOutlet="!displayDeliveryScheduleCard?referenceDateRequiredWarning:generateDeliveryDates">
+  </ng-container>
+  <ng-template #referenceDateRequiredWarning>
+    <span class="Delivery-Schedule-Generate-Text">To Generated a Delievery Schedule you must first pick the Reference
+      Date</span>
+    <button class="Delivery-Schedule-Generate-Button" (click)="onEditProjectClicked()">
+      <span>EDIT PROJECT</span>
+    </button>
+  </ng-template>
+  <ng-template #generateDeliveryDates>
+    <span class="Delivery-Schedule-Generate-Text">A Delivery schedule has not yet been generated for this project</span>
+    <button class="Delivery-Schedule-Generate-Button" (click)="onDeliveryScheduleGenerateClicked()">
+      <span>GENERATE NOW</span>
+    </button>
+  </ng-template>
+</div>

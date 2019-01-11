@@ -1,0 +1,514 @@
+<div class="Secondary-Banner">
+
+  <div class="Banner-Left-Content">
+    <ng-select [items]="projectListItems" #projectListDropdown [(ngModel)]="selectedProjectListItem" bindLabel="projectName"
+      (change)="onSelectedProjectListItemChanged()" notFoundText="No projects found" placeholder="Select project" name="projectListInput"
+      [virtualScroll]="true" [searchFn]="projectListItemSearchFn">
+      <ng-template *ngIf="isInECRole" ng-header-tmp>
+        <div (click)="onNewProjectIconClicked()">
+          <span class="Create-Project-Plus-Icon">
+          </span>
+          <span class="Create-Project-Text">CREATE A PROJECT</span>
+        </div>
+      </ng-template>
+      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div>
+          {{item.projectName}}
+        </div>
+      </ng-template>
+    </ng-select>
+    <button (click)="onEditProjectClick()" *ngIf="selectedProject && isInECRole" class="Edit-Project-Button">EDIT PROJECT</button>
+    <app-modal-dialog [modelId]="'NewEditProjectModal'" [width]="'900px'" #newEditProjectModal>
+      <div modal-section="header">
+        {{newEditProjectModalTitle}}
+      </div>
+      <div modal-section="body">
+        <router-outlet></router-outlet>
+      </div>
+    </app-modal-dialog>
+  </div>
+
+  <div class="Banner-Right-Content">
+
+    <div class="View-Type-Filter-Dropdown-Container">
+      <ng-select name="viewTypeFilterInput" [items]="viewTypeFilterCriteria" [(ngModel)]="selectedViewTypeFilterCriteria"
+        notFoundText="No criteria found" placeholder="Select criteria">
+      </ng-select>
+    </div>
+
+    <div class="GroupBy-Dropdown-Container">
+      <ng-select name="groupByInput" [items]="groupByCriteria" [(ngModel)]="selectedGroupByCriteria" notFoundText="No criteria found"
+        placeholder="Select criteria">
+      </ng-select>
+    </div>
+
+    <div class="SortBy-Dropdown-Container">
+      <ng-select [items]="orderByCriteria" [(ngModel)]="selectedOrderByCriteria" notFoundText="No criteria found"
+        placeholder="Select criteria" name="sortByInput">
+      </ng-select>
+    </div>
+
+  </div>
+</div>
+
+<div class="Equipment-List-Scroll-Content" *ngIf="equipments?.length > 0">
+
+  <div class="Filter-Container">
+    <div class="Filter-Pills-Container">
+      <app-selected-filter-criteria [selectedFilterCriteriaItems]="selectedFilterCriteriaItems"
+        (selectedFilterCriteriaRemoveTriggered)="onSelectedFilterCriteriaRemoveTriggered($event)">
+      </app-selected-filter-criteria>
+    </div>
+
+    <div class="Filter-Buttons-Container">
+      <button (click)="onAddFilterClick()" class="Add-Filter-Button">+ ADD FILTER</button>
+      <a class="Secondary-Link-Button Clear-All-Text" *ngIf="selectedFilterCriteriaItems?.length > 0" (click)="onClearAllClicked()">CLEAR
+        ALL</a>
+    </div>
+    <app-modal-dialog [modelId]="'ApplyFiltersModal'" [width]="'900px'" #applyFiltersModal>
+      <div modal-section="header">
+        Add Filters
+      </div>
+      <div modal-section="body">
+        <app-filter-list [filterCriteriaItems]="filterCriteriaItems" [selectedFilterCriteriaItems]="selectedFilterCriteriaItems"
+          (applyFiltersActionTriggered)="OnApplyFiltersActionTriggered($event)" (cancelApplyingFiltersActionTriggered)="OnCancelApplyingFiltersActionTriggered()">
+        </app-filter-list>
+      </div>
+    </app-modal-dialog>
+  </div>
+
+  <div class="Equipment-List-Container" [ngClass]="{'shoppingCartVisible':displayShoppingCart}">
+
+    <app-grouped-equipment-list [equipments]="equipments" [viewType]="selectedViewTypeFilterCriteria" [groupBy]="selectedGroupByCriteria.value"
+      [orderBy]="selectedOrderByCriteria.value" [filterBy]="selectedFilterCriteriaItems"
+      (equipmentItemSelectionChanged)="onEquipmentItemSelectionChanged($event)" (equipmentItemsGroupSelectionChanged)="onEquipmentItemsGroupSelectionChanged($event)"
+      (equipmentItemsGroupByCompleted)="onEquipmentItemsGroupByCompleted($event)">
+      <ng-template appEquipmentGroupTitle let-group="group">
+
+        {{ group }}
+
+      </ng-template>
+
+      <ng-template appEquipmentGroupAction let-group="group">
+
+      </ng-template>
+
+      <ng-template appEquipmentListHeader let-group="group">
+
+        <div class="Row">
+
+          <div appSortExpression="equipmentCode" class="E-Code">
+            <span class="Equipment-Listview-Header-Text">
+              E. CODE/DESCRIPTION
+            </span>
+          </div>
+
+          <div appSortExpression="departmentDescription" class="Department">
+            <span class="Equipment-Listview-Header-Text">
+              DEPARTMENT
+            </span>
+          </div>
+
+          <div appSortExpression="currentTotalQuantity" class="Quantity">
+            <span class="Equipment-Listview-Header-Text">
+              QUANTITY
+            </span>
+          </div>
+
+          <div appSortExpression="manufacturer" class="Manufacturer">
+            <span class="Equipment-Listview-Header-Text">
+              MANUFACTURER
+            </span>
+          </div>
+
+          <div appSortExpression="vendor" class="Vendor">
+            <span class="Equipment-Listview-Header-Text">
+              VENDOR
+            </span>
+          </div>
+
+          <div appSortExpression="revisionBulletinNo" class="RB-No">
+            <span class="Equipment-Listview-Header-Text">
+              RB #
+            </span>
+          </div>
+
+          <div appSortExpression="deliveryDate" class="Delivery-Date">
+            <span class="Equipment-Listview-Header-Text">
+              DELIVERY DATE
+            </span>
+          </div>
+
+          <div appSortExpression="orderingStatus" class="Status">
+            <span class="Equipment-Listview-Header-Text">
+              STATUS/PO NO.
+            </span>
+          </div>
+
+          <div class="Action">
+            <!-- <span class="Equipment-Listview-Header-Text">
+              ACTION
+            </span> -->
+          </div>
+
+        </div>
+
+      </ng-template>
+
+      <ng-template appEquipmentCardHeader let-group="group" let-equipment="equipment">
+
+        <div class="Row">
+
+          <div class="E-Code">
+            <div *ngIf="equipment.cutSheets; then equipmentCodeLink else equipmentCode"></div>
+            <ng-template #equipmentCodeLink>
+              <span class="Equipment-Card-Primary-Text">
+                <a [href]="equipment.cutSheets" target="_blank">{{ equipment.equipmentCode }}</a>
+              </span>
+            </ng-template>
+            <ng-template #equipmentCode>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.equipmentCode }}
+              </span>
+            </ng-template>
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{ equipment.equipmentDescription }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Department" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <span class="Equipment-Listview-Primary-Text">
+              {{ equipment.departmentDescription }}
+            </span>
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{ equipment.departmentNumber }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Quantity" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span *ngIf="!hasQuantityChanged(equipment)" class="Equipment-Card-Primary-Text">
+                {{ equipment.currentTotalQuantity }}
+              </span>
+              <span class="Equipment-Item-Quantity-Change" *ngIf="hasQuantityChanged(equipment)">
+                <span class="Equipment-Card-Grey-Text">
+                  {{ equipment.currentTotalQuantity }}
+                </span>
+                <span class="Equipment-Item-Quantity-Change-Indicator" [ngClass]="getTemplate(equipment).name"></span>
+                <span class="Equipment-Item-New-Quantity-Text">
+                  {{ equipment.newTotalQuantity }}
+                </span>
+              </span>
+            </div>
+            <div>
+              <span class="Equipment-Card-Secondary-Text" [innerHTML]="getFloorQuantitiesText(equipment.floorQuantity)"></span>
+            </div>
+          </div>
+          <div class="Manufacturer" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.manufacturer }}
+              </span>
+            </div>
+
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{equipment.manufacturerDescription}}
+              </span>
+            </div>
+          </div>
+
+          <div class="Vendor" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.vendor }}
+              </span>
+            </div>
+          </div>
+
+          <div class="RB-No" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.revisionBulletinNo }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Delivery-Date" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.deliveryDate | date:'MM/dd/yyyy' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Status" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.orderingStatus }}
+              </span>
+            </div>
+
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{ equipment.purchaseOrderNo }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="Action">
+
+            <ng-template [ngTemplateOutlet]="getTemplate(equipment).template" [ngTemplateOutletContext]="{ $implicit: equipment }">
+            </ng-template>
+
+            <ng-template #statusAdded let-equipment>
+              <button class="Add-Code-Button" type="submit" (click)="onMarkEquipmentAsCountedAffirmed(equipment)">
+                <span>+ ADD</span>
+              </button>
+            </ng-template>
+
+            <ng-template #statusRequested let-equipment>
+              <button class="Cancel-IP-Button" type="submit" (click)="onMarkEquipmentAsCountedAffirmed(equipment)">
+                <span>- CANCEL</span>
+              </button>
+            </ng-template>
+
+            <ng-template #statusOther let-equipment>
+
+              <label class="Equipment-Card-Action-Label">
+                <span [ngClass]="equipment.hasDiscrepancies ? 'Equipment-Discrepancies-Icon' : 'Equipment-No-Discrepancies-Icon'"></span>
+              </label>
+              <label class="Equipment-Card-Action-Label">
+                <span class="Equipment-Comment-Icon Comment-Icon" [ngClass]="{'inactive':!equipment.hasComments}"></span>
+              </label>
+              <span class="Equipment-Card-Edit-Icon" (click)="onEditEquipmentItemClicked(equipment)"></span>
+            </ng-template>
+
+            <ng-template #quantityIncremented let-equipment>
+              <button class="Quantity-Incremented-Button" type="submit" (click)="onQuantityChangeAffirmed(equipment)">
+                <span>INCREASED</span>
+              </button>
+            </ng-template>
+
+            <ng-template #quantityDecremented let-equipment>
+              <button class="Quantity-Decremented-Button" type="submit" (click)="onQuantityChangeAffirmed(equipment)">
+                <span>DECREASED</span>
+              </button>
+            </ng-template>
+
+            <ng-template #quantityDeleted let-equipment>
+              <button class="Quantity-Deleted-Button" type="submit" (click)="onQuantityChangeAffirmed(equipment)">
+                <span>DELETED</span>
+              </button>
+            </ng-template>
+
+            <label class="Equipment-Card-Toggle-Icon" [ngClass]="{'expanded':equipment.expanded}" (click)="onEquipmentDetailsToggle($event, equipment)">
+              <span *ngIf="!equipment.expanded" class="Expand-Equipment-Details-Icon"></span>
+              <span *ngIf="equipment.expanded" class="Collapse-Equipment-Details-Icon"></span>
+            </label>
+
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template appEquipmentCardBody let-group="group" let-equipment="equipment">
+        <div class="Equipment-Comments-Container">
+          <div class="Discrepancies-Banner" *ngIf="equipment.hasDiscrepancies">
+            <div class="Discrepancy-Circle"></div>
+            <div class="Discrepancies-Banner-Text">This item has a discrepancy</div>
+            <button class="View-Discrepancies-Button" (click)="onDiscrepancyBannerClicked(equipment)">
+              <span>View Discrepancies</span>
+            </button>
+          </div>
+          
+          <div class="Card-Bottom-Container">
+            <app-equipment-comment [canEdit]="isInECRole" [equipment]="equipment" (saveComment)="onSaveComment($event['comment'],$event['equipment'])">
+            </app-equipment-comment>
+            <app-equipment-alt-delivery-loc [equipment]="equipment" [hideAddEdit]="hideAddEditAlternateDeliveryLocation(equipment)"
+              (saveAlternateDeliveryLocation)="onSaveAlternateDeliveryLocation($event)">
+            </app-equipment-alt-delivery-loc>
+          </div>
+        </div>
+
+        <div *ngIf="equipment.purchaseHistory.length > 0">
+          <app-purchase-history-details [equipmentItem]="equipment" [canEdit]="isInECRole" (savePurchaseHistoryItemUpdatesTriggered)="onPurchaseHistoryItemUpdatesTriggered($event)">
+          </app-purchase-history-details>
+        </div>
+      </ng-template>
+    </app-grouped-equipment-list>
+
+    <ng-container *ngTemplateOutlet="selectedEquipmentCount>0?shoppingCart:(!selectedProject.isRemodel&&!selectedProject.deliveryScheduleAssigned&&isInECRole?equipmentDeliveryDates:null)"></ng-container>
+    <ng-template #shoppingCart>
+      <app-shopping-cart #shoppingCart [shoppingCartDetailsText]="shoppingCartDetailsText" [shoppingCartButtonText]="'SEND TO PROCURE'"
+        (shoppingCartSubmitActionTriggered)="onSendToProcureActionTriggered()" (shoppingCartCancelActionTriggered)="onShoppingCartCancelActionTriggered()"></app-shopping-cart>
+    </ng-template>
+    <ng-template #equipmentDeliveryDates>
+      <app-equipment-delivery-dates [displayDeliveryScheduleCard]="selectedProject.openDate||selectedProject.turnoverDate"
+        (editProjectActionTriggered)="onEditProjectClick()" (deliveryScheduleGenerateActionTriggered)="onDeliveryScheduleGenerateActionTriggered()"></app-equipment-delivery-dates>
+    </ng-template>
+  </div>
+  <app-modal-dialog [modelId]="'EditEquipmentItemModal'" [width]="'900px'" #editEquipmentItemModal>
+    <div modal-section="header">
+      Edit {{equipmentItemSelectedToEdit.equipmentCode}}
+    </div>
+    <div modal-section="body">
+      <app-edit-equipment-item [equipmentItemSelectedToEdit]="equipmentItemSelectedToEdit"
+        (cancelEquipmentItemEditTriggered)="onCancelEquipmentItemEditTriggered()" (saveEquipmentItemUpdatesTriggered)="onSaveEquipmentItemUpdatesTriggered($event)"></app-edit-equipment-item>
+    </div>
+  </app-modal-dialog>
+</div>
+
+<app-modal-dialog [modelId]="'showDiscrepanciesModal'" [width]="'900px'" [colorStyle]="'danger'" #showDiscrepanciesModal>
+  <div modal-section="header">
+    <span>
+      Equipment {{ equipmentItemSelectedToEdit.equipmentCode }}{{ equipmentItemSelectedToEdit.purchaseOrder ? '/Purchase Order ' + equipmentItemSelectedToEdit.purchaseOrder.Number : '' }} Discrepancy
+    </span>
+  </div>
+  <div modal-section="body">
+    
+    <div class="Discrepancy-Modal-Card">
+      <div class="Discrepancy-Modal-Row"  *ngFor="let discrepancy of equipmentItemSelectedToEdit.orderDiscrepancies">
+        <div class="Discrepancy-Modal-Label-Container">
+          <label class="Discrepancy-Modal-Label">{{ transformToRegularText(discrepancy.field) }}</label>
+        </div>
+
+        <div class="Discrepancy-Modal-Group">
+          <div class="Discrepancy-Modal-Group-Item">
+            <div class="Discrepancy-Modal-Group-Item-Label">
+              <label class="Discrepancy-Modal-Group-Item-Label-Initial">
+                EOA: &nbsp;
+              </label>
+              <label class="Discrepancy-Modal-Group-Item-Label-Secondary">
+                {{ transformDiscrepancyValue(discrepancy, discrepancy.eoaValue) }}
+              </label>
+            </div>
+          </div>
+
+          <div class="Discrepancy-Modal-Group-Item">
+            <div class="Discrepancy-Modal-Group-Item-Label">
+              <label class="Discrepancy-Modal-Group-Item-Label-Initial">
+                Purchase Order: &nbsp;
+              </label>
+              <label class="Discrepancy-Modal-Group-Item-Label-Secondary">
+                {{ transformDiscrepancyValue(discrepancy, discrepancy.eamValue) }}
+              </label>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="Discrepancy-Modal-Comments-Container">
+        <label class="Discrepancy-Modal-Comments-Label">
+          Order Comments
+        </label>
+        <textarea class="Discrepancy-Modal-Comments-Text-Area" [(ngModel)]="editingOrderComment.comment">
+        </textarea>
+      </div>
+    </div>
+    
+    <div class="Delete-Button-Wrapper">
+      <button class="Secondary-Default-Button" id="cancelDeleteProjectBtn" type="button" (click)="onCloseDiscrepanciesModalClicked()">
+        <span class="ButtonText">Close</span>
+      </button>
+      <button class="Equipment-Updates-Save-Button" id="emailDiscrepanciesBtn"
+              type="submit" (click)="onEmailDiscrepanciesClicked()">
+        <span>EMAIL</span>
+      </button>
+      <button class="Project-Details-Ok-Button" id="resolveDiscrepanciesBtn"
+              type="submit" (click)="onResolveDiscrepanciesClicked()">
+        <span>RESOLVE</span>
+      </button>
+    </div>
+  </div>
+</app-modal-dialog>
+
+  <app-modal-dialog [modelId]="'completeProjectModal'" [width]="'900px'" #completeProjectModal>
+    <div modal-section="header">
+      Complete Project
+    </div>
+    <div modal-section="body">
+      <div class="Complete-Project-Count-Container">
+        <div class="Complete-Project-Count-Header">
+          {{ selectedProject?.projectName }}
+        </div>
+
+        <div class="Completion-Row">
+          <div class="Completion-Items-Column">
+            <span class="Completion-Text">Completed items</span>
+          </div>
+          <div class="Completion-Numbers-Column">
+            <div>
+              <span class="Completed-Items-Label">{{ orderedCount }}</span>
+              Ordered Equipment
+            </div>
+            <div>
+              <span class="Completed-Items-Label">{{ procuredViaOtherMethodCount }}</span>
+              Procured Via Other Method
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <hr class="Completion-Seperator-Line">
+        </div>
+
+        <div class="Completion-Row">
+          <div class="Completion-Items-Column">
+            <span class="Completion-Text">Incomplete items</span>
+            <button class="View-Incomplete-Items-Button" id="viewCompleteProjectItemsButton"
+                    type="submit" (click)="onViewIncompleteItemsClicked()">
+              <span>VIEW THESE ITEMS</span>
+            </button>
+          </div>
+          <div class="Completion-Numbers-Column">
+            <div>
+              <span class="Incomplete-Items-Label">{{ incompleteCount }}</span>
+              Not Ordered
+            </div>
+            <div>
+              <span class="Incomplete-Items-Label">{{ discrepancyCount }}</span>
+              PO Discrepancies
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div modal-section="footer">
+      <button class="Cancel-Archive-Button" id="cancelDeleteProjectBtn" type="button" (click)="onCancelCompleteProjectClicked()">
+        <span class="ButtonText">Cancel</span>
+      </button>
+      <button class="Archive-Project-Button" id="resolveDiscrepanciesBtn"
+              type="submit" (click)="onArchiveProjectClicked()">
+        <span>ARCHIVE PROJECT</span>
+      </button>
+    </div>
+  </app-modal-dialog>
+
+
+  <!-- TODO: turn this (and the corresponding guy in /admin) into its own component -->
+  <app-modal-dialog [modelId]="'archiveProjectConfirmationModal'" [width]="'700px'" [colorStyle]="'danger'" #archiveProjectConfirmationModal>
+    <div class="Delete-Project-Confirmation" modal-section="header">
+      <span>Archive Project Confirmation</span>
+    </div>
+    <div modal-section="body">
+      <div class="Delete-Project-Wrapper">
+        <label class="Really-Delete-Label">REALLY ARCHIVE {{ selectedProject?.projectName }}?</label>
+      </div>
+      <div class="Delete-Button-Wrapper">
+        <button class="Secondary-Default-Button" id="cancelDeleteProjectBtn" type="button" (click)="archiveProjectConfirmationModal.hide()">
+          <span class="ButtonText">Cancel</span>
+        </button>
+        <button class="Delete-Project-Button" id="deleteProjectBtn"
+          type="submit" (click)="onArchiveProjectConfirmationClicked()">
+          <span>CONFIRM ARCHIVE</span>
+        </button>
+      </div>
+    </div>
+  </app-modal-dialog>

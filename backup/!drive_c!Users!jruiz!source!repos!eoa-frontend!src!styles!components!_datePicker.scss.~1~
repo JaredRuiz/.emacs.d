@@ -1,0 +1,21 @@
+.datepicker-inline>.datepicker {
+  position: absolute !important;
+  right: 0 !important;
+  border-radius: 0px !important;
+  border: 1px solid $off-blue-50 !important;
+}
+
+.datepicker--day-name {
+  color: $off-blue !important;
+  font-weight: bold;
+}
+
+.datepicker--cell.datepicker--cell-day.-current- {
+  font-weight: bold;
+}
+
+.datepicker--cell.datepicker--cell-day.-selected-,
+.datepicker--cell.-selected-.-current {
+  background: $off-blue !important;
+  border-radius: 2px;
+}

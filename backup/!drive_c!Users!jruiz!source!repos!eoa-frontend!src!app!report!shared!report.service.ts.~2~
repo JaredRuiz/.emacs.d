@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { Constants } from '@app/app-constants';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { Observable } from 'rxjs';
+import { ProjectDropdownViewModel } from '@app/report/shared/viewmodels/project-dropdown-viewmodel';
+import { ProjectSpreadsheetViewModel } from '@app/report/shared/viewmodels/project-spreadsheet-viewmodel';
+import { EquipmentSpreadsheetViewModel } from '@app/report/shared/viewmodels/equipment-spreadsheet-viewmodel';
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ReportService {
+
+  constructor(private http: HttpClient) { }
+
+  getProjects(): Observable<Array<ProjectDropdownViewModel>> {
+    const url = environment.reportAPIBaseUrl + Constants.getReportProjectsList;
+    return this.http.get<Array<ProjectDropdownViewModel>>(url);
+  }
+
+  getDrawingCountForProject(projectId: string): Observable<Array<EquipmentSpreadsheetViewModel> {
+    const url = environment.reportAPIBaseUrl +
+          Constants.getDrawingCountReport.replace(Constants.projectIdParam, projectId);
+    return this.http.get<EquipmentSpreadsheetViewModel>(url);
+  }
+}

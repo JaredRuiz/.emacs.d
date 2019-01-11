@@ -1,0 +1,1364 @@
+.Secondary-Banner {
+  @extend .container-fluid;
+  @extend .d-flex;
+  @extend .align-items-center;
+  height: 63px;
+  padding: 0px 25px 0px 25px;
+  box-shadow: 0 1px 3px 0 $dark-blue-grey-19;
+  background-color: $white;
+  border-right: none !important;
+  border: solid 0.5px $bluey-grey;
+}
+
+.Equipment-List-Scroll-Content {
+  @extend .Scroll-Content;
+  width: 100%;
+}
+
+.Equipment-List-Container {
+  margin: 0 auto;
+  width: 1521px;
+  padding-bottom: 10px;
+
+  &.shoppingCartVisible {
+    margin-bottom: 90px;
+  }
+}
+
+.Filter-Container {
+  width: 1541px;
+  clear: left;
+  margin: 5px auto;
+}
+
+.Filter-Pills-Container {
+  padding: 0 10px;
+  margin: auto 0;
+}
+
+.Card-Selection-Gutter {
+  width: 20px;
+  cursor: pointer;
+  margin: 0.5px 0 0.5px 0.5px;
+  background-color: $white;
+  border-right: solid 0.5px $bluey-grey;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.Card-Selection-Gutter.Selected {
+  background-color: $off-blue;
+}
+
+.Card-Selection-Gutter.Disabled {
+  background-color: $pale-grey-two;
+}
+
+.Card-Selection-Remainder {
+  width: calc(100% - 21px)
+}
+
+// Equipment Group Card
+.Equipment-Group-Container {
+  width: 1521px;
+  height: auto;
+  margin-bottom: 10px;
+  background-color: $equipment-group-background-color;
+  border: solid 0.5px $equipment-group-border-color;
+  border-radius: 2px;
+  box-shadow: $dark-slate-blue-17;
+  cursor: pointer;
+}
+
+.Group-Header {
+  height: 54px;
+  width: 100%;
+}
+
+.Group-Title {
+  float: left;
+  padding: 13px 30px;
+  height: 53px;
+}
+
+.Group-Action {
+  float: right;
+  height: 53px;
+}
+
+.Group-Body {
+  padding: 0;
+}
+
+.List-Header {
+  padding-bottom: 5px;
+  padding-left: 50px;
+  padding-right: 30px; // padding-bottom: 16px;
+  // padding-left: 30px;
+  // padding-right: 30px;
+  padding-top: 5px;
+}
+
+.List-Item {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 20px; // transition: margin 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
+}
+
+.Card-Header {
+  padding: 0px 12px 0px 12px;
+  min-height: 56px;
+  cursor: pointer;
+}
+
+.Card-Body {
+  @extend .d-flex;
+  @extend .mb-3;
+  border-top: solid 1px $pale-grey-two;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.List-Header-Row-Wrapper {
+  padding: 0 12px;
+
+  .Row {
+    div {
+      height: 35px;
+      padding: 5px 0;
+    }
+  }
+}
+
+.E-Code {
+  width: 230px;
+}
+
+.Department {
+  width: 100px;
+}
+
+.Quantity {
+  width: 100px;
+  text-align: center;
+}
+
+.Manufacturer {
+  width: 165px;
+}
+
+.Vendor {
+  width: 155px;
+}
+
+.RB-No {
+  width: 135px
+}
+
+.Delivery-Date {
+  width: 120px
+}
+
+.Status {
+  width: 130px;
+}
+
+.Secondary-Commodity {
+  width: 120px;
+}
+
+.Store {
+  width: 100px;
+}
+
+.Buyer {
+  width: 135px;
+}
+
+.Part-Number {
+  width: 115px;
+}
+
+.Secondary-Commodity {
+  width: 100px;
+}
+
+.Requested-By {
+  width: 105px;
+}
+
+// Equipment Card
+.Equipment-Card-Container {
+  width: 1430px;
+  height: auto;
+  min-height: 56px; // margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: $equipment-card-background-color;
+  border: solid 0.5px $equipment-card-border-color;
+  border-radius: 2px;
+  cursor: default;
+}
+
+.Banner-Left-Content {
+  @extend .Row;
+  @extend .d-flex;
+  @extend .align-items-center;
+  @extend .flex-grow-1;
+  float: left;
+
+  .ng-select {
+    >.ng-select-container {
+      width: 250px;
+
+      .ng-value-container {
+        &:before {
+          @extend .Dropdown-Label-Text;
+          content: "Project";
+          padding-right: 10px;
+          color: $battleship-grey;
+        }
+
+        .ng-input>input {
+          margin-left: 50px;
+        }
+      }
+    }
+
+    .ng-dropdown-panel {
+      .ng-dropdown-header>div {
+        cursor: pointer;
+        background-color: $light-grey !important;
+        border-radius: 2px;
+        height: 36px;
+        padding: 0px 20px;
+        display: flex;
+        align-items: center;
+
+        .Create-Project-Plus-Icon {
+          @extend .Plus-Icon;
+          @extend .Create-Project-Icon-Text;
+          margin-right: 5px;
+          color: $medium-green;
+        }
+
+        .Create-Project-Text {
+          @extend .Create-Project-Text;
+          color: $medium-green;
+        }
+      }
+
+      .ng-option {
+        padding-left: 25px !important;
+      }
+    }
+  }
+}
+
+.Banner-Right-Content {
+  @extend .Row;
+  float: right;
+
+  .View-Type-Filter-Dropdown-Container {
+    margin-right: 20px;
+
+    .ng-select {
+      >.ng-select-container {
+        width: 200px;
+
+        .ng-value-container {
+          &:before {
+            @extend .Dropdown-Label-Text;
+            content: "View";
+            padding-right: 10px;
+            color: $battleship-grey;
+          }
+
+          .ng-input>input {
+            margin-left: 35px;
+          }
+        }
+      }
+
+      .ng-option {
+        padding-left: 25px !important;
+      }
+    }
+  }
+
+  .GroupBy-Dropdown-Container {
+    margin-right: 20px;
+
+    .ng-select {
+      >.ng-select-container {
+        width: 250px;
+
+        .ng-value-container {
+          &:before {
+            @extend .Dropdown-Label-Text;
+            content: "Group By";
+            padding-right: 10px;
+            color: $battleship-grey;
+          }
+
+          .ng-input>input {
+            margin-left: 60px;
+          }
+        }
+      }
+
+      .ng-option {
+        padding-left: 25px !important;
+      }
+    }
+  }
+
+  .SortBy-Dropdown-Container {
+    .ng-select {
+      >.ng-select-container {
+        width: 250px;
+
+        .ng-value-container {
+          &:before {
+            @extend .Dropdown-Label-Text;
+            content: "Sort By";
+            padding-right: 10px;
+            color: $battleship-grey;
+          }
+
+          .ng-input>input {
+            margin-left: 50px;
+          }
+        }
+      }
+
+      .ng-option {
+        padding-left: 25px !important;
+      }
+    }
+  }
+}
+
+.Sorted-Up {
+  span {
+    color: $off-blue;
+  }
+
+  ::after {
+    @extend .Sort-Up-Icon;
+    position: relative;
+    top: 2px;
+  }
+}
+
+.Sorted-Down {
+  span {
+    color: $off-blue;
+  }
+
+  ::after {
+    @extend .Sort-Down-Icon;
+    position: relative;
+    top: -2px;
+  }
+}
+
+.Equipment-Listview-Header-Text {
+  @extend .Equipment-Listview-Header-Text;
+  @extend .unselectable;
+}
+
+.New-Project-Button-Container-Base {
+  width: 389px;
+  box-shadow: 0 0 10px 0 $dark-grey-blue-13;
+  background-color: $white;
+  border: solid 0.5px $cool-grey-50;
+  cursor: pointer;
+}
+
+.New-Project-Button-Banner-Base {
+  @extend .New-Project-Button-Banner-Text;
+  height: 63px;
+  text-align: center;
+  background-color: $off-blue;
+  color: $white;
+}
+
+.New-Project-Button-Image-Container-Base {
+  height: 405px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
+
+  img {
+    width: 269px;
+    height: 269px;
+    border: solid 0.5px $dark-indigo-29;
+    border-radius: 135px;
+    box-shadow: 0 0 10px 0 $dark-indigo-14;
+  }
+}
+
+.New-Store-Project-Button-Container {
+  @extend .New-Project-Button-Container-Base;
+  float: left;
+  margin: 30px 15px 0px 40px;
+}
+
+.New-Store-Project-Button-Image-Container {
+  @extend .New-Project-Button-Image-Container-Base;
+}
+
+.New-Store-Project-Button-Banner {
+  @extend .New-Project-Button-Banner-Base;
+}
+
+.Remodel-Store-Project-Button-Container {
+  @extend .New-Project-Button-Container-Base;
+  float: right;
+  margin: 30px 50px 0px 15px;
+}
+
+.Remodel-Store-Project-Button-Image-Container {
+  @extend .New-Project-Button-Image-Container-Base;
+}
+
+.Remodel-Store-Project-Button-Banner {
+  @extend .New-Project-Button-Banner-Base;
+}
+
+.New-Project-Cancel-Button-Container {
+  clear: both;
+  height: 70px;
+  text-align: center;
+  padding-top: 30px;
+}
+
+.Project-Details-Container {
+  padding-left: 30px;
+  padding-right: 30px;
+  max-height: 900px;
+  overflow-y: overlay;
+  overflow-x: hidden;
+}
+
+.Invalid-Message-Container {
+  color: $lip-stick;
+  font-size: $invalid-message-font-size;
+}
+
+.Model-Body-Content-Section-Base {
+  width: 840px;
+  box-shadow: 0 1px 3px 0 $dark-grey-blue-13;
+  background-color: $white;
+  border: solid 0.5px $cool-grey-50;
+  margin-top: -8px;
+  padding: 6px 40px 0px 40px;
+
+  @supports(-ms-ime-align: auto) {
+    padding: 5px 40px 0px 40px;
+  }
+}
+
+.Project-Details-Body-Content-Section {
+  @extend .Model-Body-Content-Section-Base;
+}
+
+.Project-Details-Buttons-Container {
+  text-align: right;
+  margin: 12px -12px 6px 0px;
+}
+
+.Project-Status-Header-Row {
+  @extend .Row;
+  height: 36px;
+  margin-left: -39.5px !important;
+  margin-top: -5px !important;
+  margin-right: -39.5px !important;
+  background-color: $light-grey;
+
+  &.Deactivate {
+    background-color: $very-light-pink;
+  }
+
+  @supports (-ms-ime-align: auto) {
+    margin-top: -4px !important;
+  }
+
+  padding: 0px 40px 0px 40px;
+}
+
+.Project-Status-Header-Left {
+  float: left;
+  height: 36px;
+  width: 85%;
+  display: flex;
+  align-items: center;
+}
+
+.Project-Status-Header-Right {
+  width: 15%;
+  height: 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.Project-Status-Text {
+  color: $medium-green;
+
+  &.Deactivate {
+    color: $lip-stick;
+  }
+}
+
+.Project-Status-Form-Control-Group-Left {
+  @extend .Form-Control-Group;
+  @extend .col-md-6;
+  margin-bottom: 0px;
+  color: $light-grey;
+}
+
+.Project-Status-Form-Control-Group-Right {
+  @extend .Form-Control-Group;
+  @extend .col-md-6;
+  margin-bottom: 0px;
+  text-align: right;
+  color: $light-grey;
+}
+
+.Project-Details-Back-Button-Container {
+  height: 40px;
+  display: flex;
+  align-items: center;
+
+  &.hide {
+    height: 30px;
+  }
+}
+
+.Project-Form-Control-Group-Left {
+  @extend .Form-Control-Group;
+  @extend .col-md-6;
+  margin-right: 28px;
+  margin-bottom: 0px;
+}
+
+.Project-Form-Control-Group-Right {
+  @extend .Form-Control-Group;
+  @extend .col-md-6;
+  flex: 0 0 46.3%;
+  margin-bottom: 0px;
+}
+
+.Project-Name-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Project-Request-Number-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Project-Sub-Type-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+#projectSubTypeInput.ng-select.ng-select-single {
+  .ng-select-container {
+    border: solid 0.5px $silver-50 !important;
+    width: 100%;
+  }
+
+  .ng-option:first-child span.ng-option-label:empty::after {
+    content: '';
+    height: 20px;
+    display: block;
+  }
+}
+
+.Project-Departments-Form-Control-Container {
+  @extend .Project-Form-Control-Group-Right;
+  margin-top: 28px;
+
+  >div:first-child {
+    display: inline-block;
+    margin-bottom: -15px;
+  }
+
+  .Filter-Criteria-Container {
+    height: 36px !important;
+
+    .ng-select .ng-dropdown-panel {
+      margin-top: -1px !important;
+    }
+  }
+}
+
+.Project-Selected-Departments-Row-Container {
+  display: grid !important;
+  @extend .Row;
+}
+
+.Store-Name-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Store-Number-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Store-Dates-Container {
+  height: 72px;
+}
+
+.Open-Date-Form-Control {
+  @extend .Default-Form-Control;
+  width: 95.2%;
+}
+
+.Turnover-Date-Form-Control {
+  @extend .Default-Form-Control;
+  width: 87.1%;
+}
+
+.Date-Form-Control-Container-Base {
+  input {
+    height: 36px;
+    background-color: $pale-grey;
+    border: solid 0.5px $silver;
+  }
+
+  .datepicker-inline {
+    float: right;
+  }
+}
+
+.Open-Date-Form-Control-Container {
+  @extend .Date-Form-Control-Container-Base;
+  margin-right: 28px;
+
+  .Calendar-Button {
+    right: -28px;
+  }
+}
+
+.Turnover-Date-Form-Control-Container {
+  @extend .Date-Form-Control-Container-Base;
+}
+
+.Section-Seperator-Line {
+  border: solid 1px $bluey-grey-50;
+  margin-top: 20px;
+
+  @supports (-ms-ime-align: auto) {
+    margin-top: 19px;
+  }
+
+  margin-bottom: 5px;
+}
+
+.AR-Number-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Construction-Job-Number-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Maintenance-WO-Number-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Alternate-Delivery-Location-Form-Control-Group {
+  @extend .Form-Control-Group;
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.Alternate-Delivery-Location-Form-Control {
+  @extend .Default-Form-Control;
+  height: 63px;
+}
+
+.Notes-Form-Control-Group {
+  @extend .Form-Control-Group;
+  width: 100%;
+}
+
+.Notes-Form-Control {
+  @extend .Default-Form-Control;
+  height: 63px;
+  margin-bottom: 10px;
+}
+
+.Comment-Row {
+  @extend .Row;
+  @extend .align-items-center;
+  width: 100%;
+  float: left;
+  min-height: 58px;
+  border-bottom: solid 1px $pale-grey-two;
+  padding: 16px 0 !important;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.Comment-Type {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.Comment-Text {
+  width: 100%;
+  overflow-wrap: break-word
+}
+
+.Comment-Action {
+  text-align: left;
+}
+
+.Action {
+  @extend .d-flex;
+  @extend .align-items-center;
+  @extend .flex-grow-1;
+  justify-content: flex-end;
+  text-align: center;
+}
+
+.Equipment-Card-Action-Label {
+  width: 30px;
+  margin-top: 2px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.Equipment-Card-Toggle-Icon {
+  @extend .Equipment-Card-Action-Label;
+  width: 25px;
+  border-radius: 20px;
+  background: $white;
+  box-shadow: 0 1px 1px 0 rgba(57, 61, 70, 0.16);
+  margin-bottom: 4px !important;
+
+  &.expanded {
+    background: $off-blue;
+  }
+}
+
+.Expand-Equipment-Details-Icon {
+  @extend .Accordion-Open-Icon;
+  font-size: 5px;
+  color: $off-blue;
+  vertical-align: middle;
+}
+
+.Collapse-Equipment-Details-Icon {
+  @extend .Accordion-Close-Icon; // TODO change here
+  font-size: 5px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  color: $white;
+}
+
+.Equipment-Comment-Icon {
+  @extend .Comment-Icon;
+  color: $dark-sky-blue;
+  cursor: text;
+
+  &.inactive {
+    color: $pale-grey-two;
+    cursor: text;
+  }
+}
+
+.Equipment-Card-Edit-Icon {
+  @extend .Edit-Icon;
+  @extend .Equipment-Card-Action-Label;
+  text-align: left;
+  margin-right: 0px;
+  margin-top: 4px;
+  color: $warm-purple;
+
+  &.inactive {
+    color: $pale-grey-two;
+    cursor: text;
+  }
+}
+
+.Comment-Icon {
+  position: relative;
+  top: 4px;
+}
+
+.Status-Icon {
+  @extend .Status-Icon;
+  font-size: $filter-status-icon-font-size;
+
+  @supports (-ms-ime-align: auto) {
+    padding-top: 2px;
+  }
+}
+
+.TextArea-Input {
+  resize: vertical-auto;
+  display: block;
+  height: auto;
+  overflow: auto;
+  background-color: $pale-grey-six !important;
+  border: solid 1px $silver-50;
+  width: 100%;
+  min-height: 154px;
+  padding: 10px;
+
+  &:focus {
+    background-color: $white !important;
+  }
+}
+
+.Comment-Input {
+  @extend .TextArea-Input;
+}
+
+.Add-Code-Button {
+  @extend .Primary-Default-Button;
+  background-color: $medium-green;
+  width: 110px;
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+.Equipment-Item-Quantity-Change {
+  @extend .d-flex;
+  @extend .align-items-center;
+  @extend .justify-content-center;
+
+  .Equipment-Item-Quantity-Change-Indicator {
+    @extend .Short-Arrow-Icon;
+    font-size: 7px;
+    margin-left: 6px;
+    margin-right: 6px;
+    padding-top: 2px;
+
+    &.incremented {
+      color: $medium-green;
+    }
+
+    &.decremented {
+      color: $pumpkin-two;
+    }
+
+    &.deleted {
+      color: $lip-stick;
+    }
+  }
+}
+
+.Equipment-Card-Grey-Text {
+  color: $bluey-grey;
+  font-size: 14px;
+  padding-right: 0px !important;
+}
+
+.Quantity-Incremented-Button {
+  @extend .Primary-Default-Button;
+  background-color: $medium-green;
+  padding: 0px;
+  width: 110px;
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+.Quantity-Decremented-Button {
+  @extend .Primary-Default-Button;
+  background-color: $pumpkin-two;
+  padding: 0px;
+  width: 110px;
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+.Quantity-Deleted-Button {
+  @extend .Primary-Default-Button;
+  background-color: $lip-stick;
+  padding: 0px;
+  width: 110px;
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+.Cancel-IP-Button {
+  @extend .Primary-Default-Button;
+  background-color: $bluey-grey;
+  width: 110px;
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+.Equipment-Body-Action-Button {
+  @extend .Secondary-Default-Button;
+  @extend .Comments-Action-Button-Text;
+}
+
+.Equipment-Body-Save-Action-Button {
+  @extend .Equipment-Body-Action-Button;
+  color: $medium-green;
+}
+
+.Comments-Container {
+  @extend .p-2;
+  width: 850px;
+  @extend .flex-grow-1;
+  @extend .flex-column;
+}
+
+.Alt-Delivery-Loc-Container {
+  @extend .p-2;
+  @extend .flex-grow-1;
+  @extend .Comment-Row;
+  width: 450px !important;
+  margin: 35px 25px !important;
+  padding: 15px 20px !important;
+  background-color: $pale-grey-four;
+  border: solid 1px $light-grey-blue !important;
+}
+
+.Add-Alt-Delivery-Loc-Button {
+  @extend .Primary-Default-Button;
+  width: 400px;
+}
+
+.Add-Alt-Delivery-Loc-Button-SM {
+  @extend .Primary-Default-Button;
+  width: 280px;
+  margin-left: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.Alt-Delivery-Loc-Input {
+  @extend .TextArea-Input;
+  width: 100%;
+}
+
+.Alt-Delivery-Loc-Input-SM {
+  @extend .TextArea-Input;
+  width: 100%;
+  min-height: 60px !important;
+}
+
+.Alt-Delivery-Loc-Text {
+  @extend .Comment-Text;
+}
+
+.Alt-Delivery-Loc-Type {
+  @extend .Comment-Type;
+}
+
+.Alt-Delivery-Loc-Action {
+  @extend .Comment-Action;
+}
+
+.Equipment-Item-Floor-Quantities-Value-Text {
+  padding: 0px 4px 0px 4px;
+}
+
+.Equipment-Item-Floor-Quantities-Empty-Text {
+  padding: 0px 6px 0px 6px;
+}
+
+.Edit-Equipment-Item-Container {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.Equipment-Item-Form-Control-Group {
+  @extend .Form-Control-Group;
+  @extend .col-md-3;
+  width: 35%;
+  margin-right: 28px;
+  margin-bottom: 0px;
+}
+
+.Edit-Equipment-Item-Current-Quantity-Card {
+  @extend .Model-Body-Content-Section-Base;
+  border: solid 0.5px $cool-grey-25;
+  margin-top: 25px;
+  padding: 0px;
+}
+
+.Edit-Equipment-Item-Row {
+  @extend .Row;
+  height: 80px;
+}
+
+.Edit-Equipment-Item-Current-Quantity-Row {
+  @extend .Edit-Equipment-Item-Row;
+  margin: 10px 0px 15px 20px !important;
+}
+
+.Equipment-Item-Delivery-Date-Form-Control-Container {
+  @extend .Date-Form-Control-Container-Base;
+}
+
+.Equipment-Item-Delivery-Date-Form-Control {
+  @extend .Default-Form-Control;
+  width: 89%;
+}
+
+.New-Equipment-Item-Delivery-Date-Form-Control-Container {
+  @extend .Date-Form-Control-Container-Base;
+}
+
+.New-Equipment-Item-Delivery-Date-Form-Control {
+  @extend .Default-Form-Control;
+  width: 89%;
+}
+
+.Equipment-Updates-Save-Button {
+  @extend .Primary-Default-Button;
+  width: 130px;
+}
+
+.Edit-Equipment-Item-New-Quantity-Card {
+  @extend .Model-Body-Content-Section-Base;
+  border: solid 0.5px $cool-grey-25;
+  margin-top: 15px;
+  padding: 0px;
+}
+
+.Edit-Equipment-Item-New-Quantity-Header-Row {
+  background-color: #e9f5ea;
+  color: #3da548;
+  font-family: "Source Sans Pro";
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  margin-top: -10px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+
+  .Header-Text {
+    width: 98%;
+  }
+}
+
+.Edit-Equipment-Item-New-Quantity-Row {
+  @extend .Edit-Equipment-Item-Row;
+  margin: 10px 0px 0px 20px !important;
+}
+
+.Equipment-Item-Quantity-Form-Control-Group {
+  @extend .Form-Control-Group;
+  @extend .col-md-6;
+  margin-right: 28px;
+  margin-bottom: 0px;
+  @extend .d-flex;
+}
+
+.Equipment-Item-Alt-Delivery-Loc-Form-Control-Group {
+  @extend .Form-Control-Group;
+  margin: auto 40px 20px 20px;
+}
+
+.Equipment-Item-Revision-Bulletin-No-Form-Control {
+  @extend .Default-Form-Control;
+}
+
+.Equipment-Item-Quantity-Form-Control {
+  @extend .d-flex;
+  @extend .align-items-center;
+}
+
+.Equipment-Item-New-Quantity-Form-Control {
+  @extend .d-flex;
+  @extend .align-items-center;
+}
+
+.Equipment-Item-Quantity-Decrement-Icon {
+  @extend .Backward-Icon;
+  z-index: 1;
+  font-size: 10px;
+  color: $medium-green;
+  position: relative;
+  left: 11px;
+  cursor: pointer;
+}
+
+.Equipment-Item-Quantity-Input {
+  @extend .Default-Form-Control;
+  padding: 0px 26px 0px 25px;
+  margin-left: -6px;
+  text-align: center;
+  width: 120px;
+}
+
+.Equipment-Item-Quantity-Increment-Icon {
+  @extend .Forward-Icon;
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  color: $medium-green;
+  right: 17px;
+  cursor: pointer;
+}
+
+.Equipment-Item-Split-Quantity-Button {
+  background-color: $ice-blue-two;
+  border: solid 1px $silver;
+  border-left: solid 2px $faded-blue-five !important;
+  height: 36px;
+  margin-left: -8px;
+  border-left: none;
+  padding: 0px 10px;
+}
+
+.Equipment-Item-Split-Quantity-Button-Icon {
+  @extend .Split-Icon;
+  font-size: 11px;
+  color: $off-blue;
+}
+
+.Equipment-Item-Split-Indicator-Icon {
+  @extend .Split-Icon;
+  font-size: 9px;
+  $color: $battleship-grey;
+}
+
+.Equipment-Item-Split-Quantity-Indicator-Container {
+  @extend .d-flex;
+  @extend .align-items-center;
+  justify-content: center;
+  margin-top: 25px;
+  width: 10%;
+}
+
+.Equipment-Item-Split-Remove-Icon {
+  @extend .Close-Icon;
+  color: $light-grey-blue;
+  font-size: $secondary-icon-font-size; // margin: 0px 5px 0px 15px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.Equipment-Item-Buttons-Container {
+  @extend .Project-Details-Buttons-Container;
+}
+
+.Equipment-Item-Cancel-Button {
+  @extend .Secondary-Link-Button;
+  padding-right: 13px;
+}
+
+.Delivery-Schedule-Generate-Container {
+  @extend .d-flex;
+  @extend .align-items-center;
+  justify-content: center;
+  color: $dark-indigo;
+  border-radius: 0px !important;
+  background-color: $off-white;
+  border-top: solid 2px $pumpkin;
+  width: 100%;
+  height: 70px;
+  right: 0px;
+  position: fixed;
+  bottom: 0;
+
+  >.span {
+    font-family: "Source Sans Pro";
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: 0.5px;
+    text-align: left;
+    color: $dark-blue-grey;
+  }
+}
+
+.Delivery-Schedule-Generate-Button {
+  @extend .Primary-Default-Button;
+  background-color: $pumpkin-two;
+  width: 190px;
+  height: 45px;
+
+  >.span {
+    font-family: "Source Sans Pro";
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: 1.2px;
+    text-align: left;
+    color: $white;
+  }
+}
+
+.Direct-Buy-Button {
+  @extend .Primary-Default-Button;
+  width: 95px;
+  margin-right: 8px;
+  margin-left: 0px;
+  padding-left: 10px;
+}
+
+#UpdateEquipmentItemModal {
+  .incremented & {
+    .app-modal-header {
+      background-color: $medium-green !important;
+    }
+  }
+
+  .decremented & {
+    .app-modal-header {
+      background-color: $pumpkin-two !important;
+    }
+  }
+
+  .deleted & {
+    .app-modal-header {
+      background-color: $lipstick !important;
+    }
+  }
+
+  .directBuy & {
+    .app-modal-header {
+      background-color: $off-blue !important;
+    }
+  }
+}
+
+.Equipment-Item-Modal-Container {
+  padding-left: 30px;
+  padding-right: 30px;
+
+  .Form {
+    border: solid 0.5px rgba(143, 158, 165, 0.25);
+    margin-top: 25px;
+    padding: 0px 0px 15px 0px;
+    width: 840px;
+    box-shadow: 0 1px 4px 0 rgba(46, 69, 96, 0.35);
+    background-color: #ffffff;
+
+    .Body-Banner {
+      @extend .Row;
+    }
+
+    .Body-Banner-Base {
+      @extend .col-6;
+      @extend .d-flex;
+      @extend .align-items-center;
+      height: 54px;
+      background-color: #f2f4f6;
+    }
+
+    .Body-Banner-Left-Section {
+      @extend .Body-Banner-Base;
+      padding-left: 35px;
+      font-size: $header-font-size;
+      font-weight: bold;
+    }
+
+    .Body-Banner-Right-Section {
+      @extend .Body-Banner-Base;
+      justify-content: flex-end;
+      font-size: $secondary-text-font-size;
+      padding-right: 35px;
+
+      span:first-child {
+        padding-right: 10px;
+        padding-top: 1px;
+      }
+    }
+
+    .Body-Content-Message-Text-Row {
+      @extend .Row;
+      padding: 15px 35px 0px 35px;
+    }
+
+    .Body-Content-Options-Row {
+      @extend .Row;
+      padding: 5px 35px 10px 35px;
+
+      label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 193.4px;
+        height: 45px;
+        border-radius: 4px !important;
+        box-shadow: 0 1px 1px 0 $black--8;
+        background-color: $pale-grey;
+        border: solid 0.5px $silver-50;
+        color: $dark-blue-grey;
+        margin-right: 10px;
+
+        &.active {
+          background-color: $ice-blue-two;
+          border: solid 0.5px $off-blue-50;
+          color: $off-blue;
+        }
+      }
+    }
+
+    .Body-Content-Seperator-Row {
+      @extend .Row;
+      padding: 0px 35px 0px 35px;
+
+      hr {
+        width: 100%;
+        border-bottom-width: 0.5px;
+        border-top-width: 0.5px;
+        margin-top: 10px;
+        margin-bottom: 0px;
+      }
+    }
+
+    .Body-Content-Comments-Row {
+      @extend .Row;
+      padding: 20px 35px 5px 35px;
+
+      label {
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        letter-spacing: 0.4px;
+        text-align: left;
+        color: #676f80;
+      }
+
+      textarea {
+        background-color: #ffffff;
+        border: solid 1px #bfc3ce;
+        width: 100%;
+        padding: 10px;
+        min-height: 0px;
+      }
+    }
+  }
+}
+
+.Equipment-Item-New-Quantity-Text {
+  @extend .Equipment-Card-Primary-Text;
+  margin-top: -2px;
+}
+
+.Equipment-Item-Modal-Buttons-Container {
+  text-align: right;
+  margin: 12px -12px 6px 0px;
+
+  .Equipment-Item-Modal-Cancel-Button {
+    @extend .Secondary-Link-Button;
+    color: #9ea5b5 !important;
+    cursor: pointer;
+    padding-right: 13px;
+  }
+
+  .Equipment-Item-Modal-Action-Button {
+    @extend .Equipment-Updates-Save-Button;
+    min-width: 100px;
+  }
+}

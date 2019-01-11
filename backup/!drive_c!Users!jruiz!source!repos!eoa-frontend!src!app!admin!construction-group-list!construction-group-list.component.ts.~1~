@@ -1,0 +1,205 @@
+import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { ConstructionGroupViewModel, DeliveryLeadDurationViewModel } from '@app/admin/shared/viewmodels/construction-group-viewmodel';
+import { AdminService } from '@app/admin/shared/admin.service';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { NgForm } from '@angular/forms';
+import { DepartmentViewModel } from '@app/admin/shared/viewmodels/department.viewmodel';
+// import { fromEvent } from 'rxjs';
+declare var $: any;
+@Component({
+  selector: 'app-construction-group-list',
+  templateUrl: './construction-group-list.component.html'
+})
+export class ConstructionGroupListComponent implements OnInit, AfterViewInit {
+
+  // @ViewChildren('deleteBtn') deleteBtns: Array<ElementRef>;
+  // buttonObservables: Observable<any>[] = null;
+
+  @ViewChild('createNewModal') createNewModal: ModalDialogComponent;
+  @ViewChild('createNewForm') createNewForm: NgForm;
+
+  @ViewChild('standard') standard: TemplateRef<any>;
+  @ViewChild('deleted') deleted: TemplateRef<any>;
+
+  allConstructionGroups: Array<ConstructionGroupViewModel>;
+  constructionGroups: Array<ConstructionGroupViewModel>;
+  selectedConstructionGroup: ConstructionGroupViewModel = new ConstructionGroupViewModel();
+
+  departments: Array<DepartmentViewModel>;
+
+  searchTerm = '';
+
+  constructor(private adminService: AdminService) { }
+
+  ngOnInit() {
+
+    this.adminService.getConstructionGroups().subscribe(x => {
+      this.allConstructionGroups = <ConstructionGroupViewModel[]>x;
+      this.allConstructionGroups.sort((a, b) => (a.name).localeCompare(b.name));
+      this.filterConstructionGroups();
+    });
+
+
+    this.adminService.getDepartments(false).subscribe(x => {
+      this.departments = <Array<DepartmentViewModel>>x;
+    });
+  }
+
+  ngAfterViewInit(): void { }
+
+  private filterConstructionGroups() {
+    if (!this.allConstructionGroups) {
+      return;
+    }
+
+    if (!this.searchTerm) {
+      this.constructionGroups = this.allConstructionGroups;
+      return;
+    }
+
+    this.constructionGroups = this.allConstructionGroups.filter(x =>
+      x.name && x.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  onCreateNew() {
+    this.selectedConstructionGroup = new ConstructionGroupViewModel();
+    this.createNewForm.form.reset();
+    this.fillDepartmentsToLeadWeeks();
+    this.createNewModal.show();
+  }
+
+  onSaveGroupConfirmed() {
+
+    // Get a copy of group because it is bound to UI
+    const group = $.extend(true, {}, this.selectedConstructionGroup);
+
+    // Remove departments that have no delivery lead time specified
+    group.deliveryLeadDuration = group.deliveryLeadDuration.filter(x =>
+      x.deliveryLeadWeeks && x.deliveryLeadWeeks > 0
+    );
+
+    // Check update or new creation
+    if (group.id) {
+      this.adminService.updateConstructionGroup(group).subscribe(x => {
+
+        const indexToReplace = this.allConstructionGroups.map(a => a.id).indexOf(x.id);
+
+        if (indexToReplace >= 0) {
+          this.allConstructionGroups.splice(indexToReplace, 1, x);
+        } else {
+          this.allConstructionGroups.push(x);
+        }
+
+        this.filterConstructionGroups();
+        this.createNewModal.hide();
+      }, e => this.handleError(e));
+    } else {
+      this.adminService.createConstructionGroup(group).subscribe(x => {
+        this.allConstructionGroups.push(x);
+        this.filterConstructionGroups();
+        this.createNewModal.hide();
+      }, e => this.handleError(e));
+    }
+  }
+
+  onEdit(group: ConstructionGroupViewModel) {
+    this.selectedConstructionGroup = $.extend(true, {}, group);
+    // this.selectedConstructionGroup = group;
+    this.fillDepartmentsToLeadWeeks();
+    this.createNewModal.show();
+  }
+
+  onDelete(group: ConstructionGroupViewModel) {
+
+    const groupToDelete = $.extend(true, {}, group);
+    groupToDelete.isDeleted = true;
+
+    this.adminService.updateConstructionGroup(groupToDelete).subscribe(x => {
+
+      this.allConstructionGroups[this.allConstructionGroups.indexOf(group)] = x;
+      this.filterConstructionGroups();
+
+      setTimeout(() => {
+        group = this.constructionGroups.find(i => i.id === x.id);
+        if (group.isDeleted && x.lastUpdatedOn === group.lastUpdatedOn) {
+          this.allConstructionGroups = this.allConstructionGroups.filter(a => a.id !== group.id);
+          this.filterConstructionGroups();
+        }
+      }, 10000);
+
+    });
+  }
+
+  onUndoDelete(group: ConstructionGroupViewModel) {
+
+    const groupDeleted = $.extend(true, {}, group);
+    groupDeleted.isDeleted = false;
+
+    this.adminService.updateConstructionGroup(groupDeleted).subscribe(x => {
+
+      this.allConstructionGroups[this.allConstructionGroups.indexOf(group)] = x;
+      this.filterConstructionGroups();
+
+    });
+  }
+
+  onSearch() {
+    this.filterConstructionGroups();
+  }
+
+  onReferenceDateTypeChange() {
+    // console.log(this.selectedConstructionGroup.referenceDateType);
+  }
+
+
+  trackConstructionGroup(index, group: ConstructionGroupViewModel) {
+    return group ? group.id : index;
+  }
+
+  getTemplate(group) {
+    if (group && group.isDeleted) {
+      return this.deleted;
+    }
+    return this.standard;
+  }
+
+  isValidData() {
+    return this.selectedConstructionGroup && this.selectedConstructionGroup.referenceDateType
+      && this.selectedConstructionGroup.deliveryLeadDuration.some(x => x.deliveryLeadWeeks && x.deliveryLeadWeeks > 0);
+  }
+
+  private fillDepartmentsToLeadWeeks() {
+
+    if (!this.selectedConstructionGroup.deliveryLeadDuration) {
+      this.selectedConstructionGroup.deliveryLeadDuration = [];
+    }
+
+    if (this.departments) {
+      this.departments.forEach(x => {
+        if (!this.selectedConstructionGroup.deliveryLeadDuration.some(a => a.departmentNumber === x.number)) {
+          const dept = new DeliveryLeadDurationViewModel();
+          dept.departmentName = x.description;
+          dept.departmentNumber = x.number;
+          this.selectedConstructionGroup.deliveryLeadDuration.push(dept);
+        }
+      });
+
+      this.selectedConstructionGroup.deliveryLeadDuration.sort((a, b) =>
+        (a.departmentNumber + a.departmentName).localeCompare(b.departmentNumber + b.departmentName)
+      );
+    }
+  }
+
+  private handleError(e) {
+
+    const propertyInError = Object.keys(e.error)[0];
+    if (propertyInError === 'name') {
+      this.createNewForm.form.controls['constructionGroupNameInput'].setErrors({ 'duplicate': true });
+    } else if (propertyInError === 'referenceDateType') {
+      this.createNewForm.form.controls[''].setErrors({ 'duplicate': true });
+    }
+
+  }
+
+}

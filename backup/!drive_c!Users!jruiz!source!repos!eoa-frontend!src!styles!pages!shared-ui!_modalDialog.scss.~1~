@@ -1,0 +1,59 @@
+.app-modal {
+  @extend .modal;
+}
+
+.app-modal-dialog {
+  @extend .modal-dialog;
+  @extend .modal-dialog-centered;
+  @extend .h-100;
+  @extend .d-flex;
+  @extend .flex-column;
+  @extend .justify-content-center;
+  @extend .my-0;
+  min-width: 575px;
+}
+
+.app-modal-content {
+  @extend .modal-content;
+  background-color: $off-blue;
+  box-shadow: 0 1px 3px 0 $dark-blue-grey-19;
+  -webkit-border-radius: 0px !important;
+  -moz-border-radius: 0px !important;
+  border-radius: 0px !important;
+}
+
+.app-modal-header {
+  @extend .modal-header;
+  @extend .Modal-Header-Text;
+  padding: 0 32.5px;
+  border: 0;
+  color: $white;
+}
+
+.app-modal-body {
+  @extend .modal-body;
+  background-color: $pale-grey-five;
+  padding: 0px;
+  min-height: 63px;
+}
+
+.app-modal-footer {
+  @extend .modal-footer;
+  padding: .2rem;
+  padding-top: 0;
+  background-color: $pale-grey-five;
+  border: none;
+}
+
+.app-modal-opacity {
+  background-color: $dark-blue-grey-two-10;
+  border: solid 1px $warm-grey;
+}
+
+.app-modal-open {
+  -webkit-filter: blur(1px);
+  -moz-filter: blur(1px);
+  -o-filter: blur(1px);
+  -ms-filter: blur(1px);
+  filter: blur(1px);
+}

@@ -1,0 +1,91 @@
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { FormGroup, FormArray, FormControl, NgForm } from '@angular/forms';
+// TODO: do we need this?
+//declare var $: any;
+
+@Component({
+  selector: 'app-edit-equipment-purchase-order',
+  templateUrl: './edit-procurement-item.component.html'
+})
+
+// TODO: how should we be thinking of this procurement? We are adding purchase order
+// info to equipment, yet we are editing that equipment. To the end user it is as if we are
+// just attaching a purchase order to equipment, or rather adding equipment to PO. Perhaps
+// call it EditEquipmentPurchaseOrder
+// or AttachPurchaseOrderToEquipment
+export class EditEquipmentPurchaseOrderDetailsComponent implements OnInit {
+
+    // TODO: what is this guy doing????
+    // TODO: we can also change the name of this form if needed
+    @ViewChild('editEquipmentForm') editEquipmentForm: NgForm;
+    _equipmentToEdit = new EquipmentViewModel();
+    @Input() set equipmentToEdit(value: EquipmentViewModel) {
+        // TODO: add particulars here to save...
+    // this._equipmentToEdit = value;
+    //   this.orginialEquipmentItemSelectedToEdit = $.extend(true, {}, value);
+    // this.selectedEquipmentItemOriginalQuantity = value.currentTotalQuantity;
+  }
+  get equipmentToEdit() {
+    return this._equipmentToEdit;
+  }
+
+  selectedEquipmentItemOriginalQuantity = 0;
+  orginialEquipmentItemSelectedToEdit: EquipmentViewModel;
+  addAlternateDeliveryLocation = false;
+  isSelectedCreationDateValid = true;
+  isSelectedDeliveryDateValid = true;
+
+  @Output() cancelEquipmentPurchaseOrderTriggered = new EventEmitter();
+  @Output() updateEquipmentPurchaseOrderDetailsTriggered = new EventEmitter<any>();
+
+  private static markAsTouched(group: FormGroup | FormArray) {
+    Object.keys(group.controls).map((field) => {
+      const control = group.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof FormGroup) {
+        this.markAsTouched(control);
+      }
+    });
+  }
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  onCreationDatePickerBackspaceKeyPressed() {
+    this.isSelectedCreationDateValid = this.editEquipmentForm.submitted;
+  }
+
+  onCreationDateSelectionTriggered(date) {
+    this.equipmentToEdit.purchaseOrder.creationDate = date;
+  }
+
+  onDeliveryDatePickerBackspaceKeyPressed() {
+    this.isSelectedDeliveryDateValid = this.editEquipmentForm.submitted;
+  }
+
+  onDeliveryDateSelectionTriggered(date) {
+    this.equipmentToEdit.purchaseOrder.deliveryDate = date;
+  }
+
+    // TODO: maybe we should name these differently than in parent component...
+    onUpdateEquipmentPurchaseOrderDetailsClicked() {
+        // TODO: what is happening here???
+//    EditProcurementItemComponent.markAsTouched(this.editEquipmentForm.form);
+      if (this.editEquipmentForm.valid) {
+          // TODO: what do we need to do in the parent component??
+      this.updateEquipmentPurchaseOrderDetailsTriggered.emit(
+        { editEquimentItem: this.equipmentToEdit }
+      );
+          // TODO:
+//      this.reset();
+    }
+  }
+
+  onCancelEquipmentPurchaseOrderUpdatesClicked() {
+    this.cancelEquipmentPurchaseOrderTriggered.emit();
+  }
+}

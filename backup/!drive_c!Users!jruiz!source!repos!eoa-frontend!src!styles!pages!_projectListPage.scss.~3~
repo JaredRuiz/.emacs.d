@@ -1,0 +1,207 @@
+.Admin-Navigation-Banner {
+  @extend .container-fluid;
+  height: 63px;
+  box-shadow: 0 1px 3px 0 $dark-blue-grey-19;
+  background-color: $white;
+  border-right: none !important;
+  border: solid 0.5px $bluey-grey;
+  padding: 0;
+
+  a {
+    padding: 18px;
+    display: block;
+    width: 207px;
+    text-align: center;
+
+    span {
+      font-family: $default-font-family;
+      font-size: $default-font-size;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: $dark-blue-grey !important;
+    }
+  }
+
+  a:hover {
+    text-decoration: none;
+    background-color: $ice-blue-two;
+    border-bottom: solid 2px $off-blue;
+  }
+
+  a.active {
+    background-color: $ice-blue-two;
+    border-bottom: solid 2px $off-blue;
+  }
+}
+
+.Search-Input {
+  // background-image: url('searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 1232px;
+  height: 45px;
+  background-color: $white;
+  border: solid 0.5px $silver;
+  margin: 10px;
+  padding: 10px;
+}
+
+.Border {
+  width: 1496px;
+  border: solid 1px #95abbb;
+  margin: 5px 10px;
+}
+
+app-project-list .Scroll-Content {
+  overflow-y: hidden;
+}
+
+.Project-List-Container {
+  margin: 10px auto;
+  width: 1521px;
+  padding-bottom: 10px;
+}
+
+.Project-List-Header-Row {
+  @extend .Row;
+  align-items: center;
+
+  .Search-Icon {
+    @extend .Search-Icon;
+    margin-left: 25px;
+    position: fixed;
+    font-size: 18px;
+    margin-top: 0px;
+    color: $off-blue;
+  }
+
+  .Search-Input {
+    @extend .Search-Input;
+    width: 98.5% !important;
+    padding-left: 45px !important;
+  }
+
+  ng-select {
+    margin-left: 20px;
+
+    >.ng-select-container {
+      width: 250px !important;
+
+      .ng-value-container {
+        &:before {
+          @extend .Dropdown-Label-Text;
+          content: "View";
+          padding-right: 10px;
+          color: $battleship-grey;
+        }
+
+        .ng-input>input {
+          margin-left: 37px;
+        }
+      }
+    }
+  }
+}
+
+.Project-Card-Container {
+  margin-top: 20px;
+  margin-left: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: calc(100vh - 210px);
+}
+
+.Project-Card {
+  @extend .d-flex;
+  @extend .mb-3;
+  @extend .align-content-center;
+  width: 1496px;
+  height: auto;
+  background-color: $white; // border: solid 0.5px $equipment-card-border-color;
+  border-radius: 2px; // cursor: default;
+  padding: 7px 7px 7px 12px;
+
+  label {
+    margin-bottom: 0px;
+  }
+
+  &.deleted {
+    background-color: $very-light-pink;
+    color: $lip-stick;
+    padding: 0px 0px 1px 10px;
+    border: solid 0.5px $lip-stick;
+  }
+
+  &.activated {
+    background-color: $light-grey;
+    color: $medium-green;
+    padding: 0px 0px 1px 10px;
+    border: solid 0.5px $medium-green;
+  }
+}
+
+.Project-Card-Flex-Item-Base {
+  @extend .p-2;
+  @extend .d-flex;
+}
+
+.Project-Card-Flex-Item-Name {
+  @extend .Project-Card-Flex-Item-Base;
+  @extend .flex-grow-1;
+  justify-content: left;
+  font-weight: bold;
+}
+
+.Project-Card-Flex-Item-Slider {
+  @extend .Project-Card-Flex-Item-Base;
+  @extend .align-items-center;
+  justify-content: left;
+  font-weight: bold;
+}
+
+.Project-Card-Flex-Item-Status-Text {
+  @extend .Project-Card-Flex-Item-Base;
+  @extend .align-items-center;
+  @extend .Project-Card-Flex-Item-Status-Text;
+  width: 135px;
+  justify-content: left;
+  color: $lip-stick;
+}
+
+.Project-Card-Flex-Item-Delete-Icon {
+  @extend .Project-Card-Flex-Item-Base;
+  width: 49px;
+  height: 36px;
+  border-radius: 2px;
+  background-color: $very-light-pink;
+  color: $lip-stick;
+  justify-content: center;
+}
+
+.Project-Card-Flex-Item-Undo-Button {
+  @extend .Project-Card-Flex-Item-Base;
+  @extend .Project-Card-Flex-Item-Undo-Text;
+  @extend .d-flex;
+  @extend .align-items-center;
+  padding-right: 18px;
+  cursor: pointer;
+}
+
+.Project-Card-Flex-Item-Reload {
+  @extend .Project-Card-Flex-Item-Base;
+  justify-content: left;
+  font-weight: bold;
+}
+
+.Project-Card-Flex-Item-Reload-Button {
+  @extend .Project-Card-Flex-Item-Base;
+  @extend .Project-Card-Flex-Item-Undo-Text;
+  @extend .d-flex;
+  @extend .align-items-center;
+  padding-right: 18px;
+  margin-top: 4px;
+  cursor: pointer;
+}

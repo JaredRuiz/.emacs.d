@@ -1,0 +1,373 @@
+import {
+  Component, OnInit, Input, ContentChild, TemplateRef, OnDestroy,
+  Output, EventEmitter, ViewChild
+} from '@angular/core';
+import { from, Subscription } from 'rxjs';
+import { toArray, groupBy, map } from 'rxjs/operators';
+import { SortService, SortCriteria } from '@app/shared-ui/sorting/sort.service';
+import SortHelper from '@app/shared/utils/SortHelper';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+import {
+  ReportBodyGroupItemRowTemplateDirective,
+  ReportBodyGroupFooterTemplateDirective,
+  ReportBodyGroupItemRowDetailTemplateDirective
+} from '@app/report/shared/report-templates.directive';
+import { isFunction } from '@app/shared-ui/grouped-equipment-list/grouped-equipment-list.component';
+import { ReportViewModel } from '@app/report/shared/view-models/report-viewmodel';
+import { ReportGroupViewModel } from '@app/report/shared/view-models/report-group-viewmodel';
+import { ReportProjectViewModel } from '@app/report/shared/view-models/report-project-viewmodel';
+import { Datasource } from 'ngx-ui-scroll';
+import { ReportService } from '../report.service';
+declare var $: any;
+
+@Component({
+  selector: 'app-report-body',
+  templateUrl: './report-body.component.html'
+})
+
+export class ReportBodyComponent implements OnInit, OnDestroy {
+
+  @Output() reportItemsGroupByCompleted = new EventEmitter<any>();
+  @Output() reportItemsViewTypeFilterCompleted = new EventEmitter<any>();
+  @ViewChild('reportPreviewModal') reportPreviewModal;
+
+  subscription$: Subscription = new Subscription();
+  reportItemGroups: Array<ReportGroupViewModel> = [];
+  generateReport = false;
+
+  private _groupBy;
+  private _sortCriteria: SortCriteria;
+
+  private _reportFeed = new ReportViewModel();
+  private _originalReportItems: Array<any>;
+  private _reportItems: Array<any>;
+
+  private isVirtualScrollDataSourceLoaded = false;
+  private EOL = '\r\n';
+
+  groupedItemsVirtualScrollDatasource = new Datasource({
+    get: (index, count, success) => {
+      this.isVirtualScrollDataSourceLoaded = true;
+      const min = 0;
+      const max = this.reportItemGroups.length - 1;
+      const data = [];
+      const start = Math.max(min, index);
+      const end = Math.min(index + count - 1, max);
+      if (start <= end) {
+        for (let i = start; i <= end; i++) {
+          this.reportItemGroups[i].groupTotalCost
+          data.push(this.reportItemGroups[i]);
+        }
+      }
+      success(data);
+    },
+    settings: {
+      startIndex: 0,
+      bufferSize: 1
+    }
+  });
+
+  reportId: string;
+  @Input() set id(value) {
+    this.reportId = value;
+  }
+
+  @Input()
+  set reportFeed(rf: ReportViewModel) {
+    if (rf && rf.reportData) {
+      this._reportFeed = rf;
+      this._originalReportItems = $.extend(true, [], rf.reportData);
+      this.filterReportItems();
+    }
+  }
+  get reportFeed(): ReportViewModel {
+    return this._reportFeed;
+  }
+
+  @Input() selectedProject: ReportProjectViewModel;
+  @Input() isBudget = false;
+  @Input() displayGroupFooter: boolean;
+
+  @Input()
+  set groupBy(criteria) {
+    if (!isFunction(criteria.fn)) {
+      throw Error('`groupBy` must be a function.');
+    }
+    if (this._groupBy && this._groupBy.fn && criteria.fn && this._groupBy.fn.toString() === criteria.fn.toString()) {
+    } else {
+      this._groupBy = criteria;
+      this.groupReportItems();
+      this.reportItemsGroupByCompleted.emit(this.reportItemGroups);
+    }
+  }
+
+  @Input()
+  set orderBy(expression: string) {
+    this._sortCriteria = <SortCriteria>{ sortExpression: expression, sortDirection: 'asc' };
+    this.sortService.columnSorted(this._sortCriteria);
+  }
+
+  selectedFilterCriteriaItemsTracked: SelectedFilterCriteriaItemModel[];
+
+  @Input() set selectedFilterCriteriaItems(value: SelectedFilterCriteriaItemModel[]) {
+    this.selectedFilterCriteriaItemsTracked = value;
+    this.filterReportItems();
+  }
+
+
+  @ContentChild(ReportBodyGroupItemRowTemplateDirective, { read: TemplateRef }) reportBodyGroupItemRowTemplate: TemplateRef<any>;
+  // tslint:disable-next-line:max-line-length
+  @ContentChild(ReportBodyGroupItemRowDetailTemplateDirective, { read: TemplateRef }) reportBodyGroupItemRowDetailTemplate: TemplateRef<any>;
+  @ContentChild(ReportBodyGroupFooterTemplateDirective, { read: TemplateRef }) reportBodyGroupFooterTemplate: TemplateRef<any>;
+
+  constructor(private sortService: SortService, private reportService: ReportService) {
+    this.subscription$.add(this.reportService.CreateCSV.subscribe(s => this.onExportCSV(s)));
+    this.subscription$.add(this.reportService.PrintPDF.subscribe(s => this.onGeneratePDF()));
+  }
+
+  ngOnInit() {
+    this.subscription$.add(this.sortService.sorting$.subscribe(event => {
+      this._sortCriteria = event;
+      this.orderReportItems();
+    }));
+    if(this.isBudget){
+      this.totalGroupItems();
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+    this.groupedItemsVirtualScrollDatasource = null;
+  }
+
+  cumulativeLength(index) {
+    let acc = 0;
+    for (let i = 0; i < index; i++) {
+      if (this.reportItemGroups[i] && this.reportItemGroups[i].items) {
+        acc += this.reportItemGroups[i].items.length;
+      }
+    }
+    return acc;
+  }
+
+  trackProject(index, project) {
+    return project ? project.projectName : index;
+  }
+
+  trackColumnHeader(index, columnHeader) {
+    return columnHeader ? columnHeader.name : index;
+  }
+
+  trackReportItem(index, reportItem) {
+    return reportItem && reportItem.equipmentCode && reportItem.departmentNumber
+      ? reportItem.equipmentCode + reportItem.departmentNumber : index;
+  }
+
+  private filterReportItems() {
+    if (this._originalReportItems) {
+      this._reportItems = $.extend(true, [], this._originalReportItems);
+
+      if (!this.selectedFilterCriteriaItemsTracked
+        || !Array.isArray(this.selectedFilterCriteriaItemsTracked)
+        || this.selectedFilterCriteriaItemsTracked.length === 0) {
+        this.groupReportItems();
+        return;
+      }
+
+      this.subscription$.add(from(this.selectedFilterCriteriaItemsTracked).pipe(
+        groupBy((e) => e.property),
+        map(arr => ({ 'key': arr.key, 'items': arr.pipe(toArray()) })),
+      ).subscribe(
+        next => {
+          next.items.subscribe(items => {
+            this._reportItems = this._reportItems.filter(x => items.some(y => y.text === x[next.key]));
+          });
+        },
+        (error: any) => { },
+        () => {
+          if (this._reportItems && this._reportItems.length > 0) {
+            this.groupReportItems();
+          } else {
+            this.reportItemGroups = new Array<ReportGroupViewModel>();
+            if (this.isVirtualScrollDataSourceLoaded) {
+              this.groupedItemsVirtualScrollDatasource.adapter.reload(0);
+            }
+          }
+        }
+      ));
+    }
+  }
+
+  private totalGroupItems(){
+
+    // Initialize project totals
+    this.selectedProject.projectTotalCost = 0;
+
+    this.reportItemGroups.forEach(grouping => {
+
+      // Initialize grouping totals
+      grouping.groupTotalCost = 0;
+
+      grouping.items.forEach(item => {
+        item.totalCost = item.unitCost * item.currentTotalQuantity;
+        grouping.groupTotalCost += item.totalCost;
+      })
+
+      this.selectedProject.projectTotalCost += grouping.groupTotalCost;
+    })
+  }
+
+  private totalGroupItems(){
+
+    // Initialize project totals
+    this.selectedProject.projectTotalCost = 0;
+
+    this.reportItemGroups.forEach(grouping => {
+
+      // Initialize grouping totals
+      grouping.groupTotalCost = 0;
+
+      grouping.items.forEach(item => {
+        item.totalCost = item.unitCost * item.currentTotalQuantity;
+        grouping.groupTotalCost += item.totalCost;
+      })
+
+      this.selectedProject.projectTotalCost += grouping.groupTotalCost;
+    })
+  }
+
+  private groupReportItems() {
+
+    if (!this._groupBy) { return; }
+
+    if (!this._reportItems) { return; }
+
+    this.reportItemGroups = <Array<ReportGroupViewModel>>[];
+
+    this.subscription$.add(from(this._reportItems).pipe(
+      groupBy(this._groupBy.fn),
+      map(arr => ({ 'key': arr.key, 'items': arr.pipe(toArray()) })),
+    ).subscribe(
+      next => {
+        const grp = <ReportGroupViewModel>{};
+
+        next.items.subscribe(reportItems => {
+          grp.items = reportItems;
+        });
+        grp.groupKey = next.key + '';
+        this.reportItemGroups.push(grp);
+      },
+      (error: any) => { },
+      () => {
+        this.reportItemGroups.sort((a, b) => a.groupKey.localeCompare(b.groupKey));
+        if (this.reportItemGroups.length > 0) {
+          this.reportItemGroups[0].items[0].expanded = true;
+        }
+        this.orderReportItems();
+      }));
+  }
+
+  private orderReportItems() {
+    if (!this._sortCriteria) {
+      if (this.isVirtualScrollDataSourceLoaded) {
+        this.groupedItemsVirtualScrollDatasource.adapter.reload(0);
+      }
+      return;
+    }
+    if (!this.groupReportItems) {
+      if (this.isVirtualScrollDataSourceLoaded) {
+        this.groupedItemsVirtualScrollDatasource.adapter.reload(0);
+      }
+      return;
+    }
+    const criteria = this._sortCriteria;
+    if (criteria.sortExpression === this._groupBy.label) {
+      this.reportItemGroups.sort((a, b) => criteria.sortDirection === 'asc' ?
+        a.groupKey.localeCompare(b.groupKey) : b.groupKey.localeCompare(a.groupKey));
+      if (this.isVirtualScrollDataSourceLoaded) {
+        this.groupedItemsVirtualScrollDatasource.adapter.reload(0);
+      }
+      return;
+    }
+    this.reportItemGroups.forEach(element => {
+      element.items.sort(function (a, b) {
+        return SortHelper.sortBy(SortHelper.toAny(a[criteria.sortExpression]),
+          SortHelper.toAny(b[criteria.sortExpression]), criteria.sortDirection);
+      });
+    });
+    if (this.isVirtualScrollDataSourceLoaded) {
+      this.groupedItemsVirtualScrollDatasource.adapter.reload(0);
+    }
+  }
+
+  onGeneratePDF(): void {
+    const element = document.getElementById('Report-Print-Content');
+
+    const printContents = element.outerHTML;
+    const head = document.getElementsByTagName('head')[0].innerHTML;
+
+    const popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+    popupWin.document.open();
+    popupWin.document.write(`<!doctype html>
+      <html>
+        <head>
+        ${head}
+        <style type="text/css" media="print">
+          @page { size: landscape; }
+        </style>
+        </head>
+        <body onload="window.print();window.close()">
+        ${printContents}
+        </body>
+      </html>`);
+    popupWin.document.close();
+  }
+
+  onExportCSV(title): void {
+    var csv = '';
+    var fileName = title + ".csv"
+
+    let headers: string[] = [];
+    this.reportFeed.reportHeaders.forEach(h => {
+      if (this.selectedFilterCriteriaItemsTracked && this.selectedFilterCriteriaItemsTracked.length > 0) {
+        var filterValues = this.selectedFilterCriteriaItemsTracked.filter(f => f.property == h.sortExpression).map(f => f.value.toString().replace('"', '""'));
+        if (filterValues.length > 0) {
+          headers.push('"' + h.text + " (" + filterValues.join(", ") + ')"');
+          return;
+        }
+      }
+      headers.push('"' + h.text + '"');
+    });
+
+    csv += headers.join() + this.EOL;
+
+    this.reportItemGroups.forEach(group => {
+      group.items.forEach(item => {
+        let values: string[] = [];
+        this.reportFeed.reportHeaders.map(h => h.sortExpression).forEach(field =>
+          values.push('"' + (item[field] ? item[field] + '' : '').replace('"', '""') + '"')
+        )
+        csv += values.join() + this.EOL;
+      });
+    });
+
+    const blob = new Blob([csv], { 'type': 'text/csv;charset=utf8;' });
+
+    if (navigator.msSaveBlob) {
+      navigator.msSaveBlob(blob, fileName);
+    } else {
+      //const uri = 'data:attachment/csv;charset=utf-8,' + encodeURI(csv);
+      const link = document.createElement('a');
+
+      link.href = URL.createObjectURL(blob);
+
+      link.setAttribute('visibility', 'hidden');
+      link.download = fileName;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
+}

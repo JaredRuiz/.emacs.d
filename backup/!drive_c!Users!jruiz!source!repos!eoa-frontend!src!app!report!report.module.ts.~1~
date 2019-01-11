@@ -1,0 +1,45 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+
+import { ReportRoutingModule } from './report-routing.module';
+<<<<<<< HEAD
+import { DrawingCountComponent } from './drawing-count/drawing-count.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ReportService } from '@app/report/shared/report.service';
+import { FormsModule } from '@angular/forms';
+=======
+import { DrawingCountReportComponent } from './drawing-count/drawing-count.component';
+import {
+  ReportBodyGroupItemRowTemplateDirective,
+  ReportBodyGroupFooterTemplateDirective
+} from '@app/report/shared/report-templates.directive';
+import { SharedUiModule } from '@app/shared-ui/shared-ui.module';
+import { ReportShellComponent } from './shared/report-shell/report-shell.component';
+>>>>>>> feature/reports-ui
+
+@NgModule({
+  imports: [
+    CommonModule,
+    ReportRoutingModule,
+<<<<<<< HEAD
+    NgSelectModule,
+    FormsModule
+  ],
+  declarations: [
+    DrawingCountComponent
+  ],
+  providers: [
+    ReportService
+=======
+    SharedUiModule
+  ],
+  declarations: [
+    DrawingCountReportComponent,
+    ReportBodyGroupItemRowTemplateDirective,
+    ReportBodyGroupFooterTemplateDirective,
+    ReportShellComponent
+>>>>>>> feature/reports-ui
+  ]
+})
+export class ReportModule { }

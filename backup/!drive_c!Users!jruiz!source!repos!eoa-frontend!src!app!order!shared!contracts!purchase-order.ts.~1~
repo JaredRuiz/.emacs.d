@@ -1,0 +1,7 @@
+export interface PurchaseOrder {
+    ID: string;
+    Number: string;
+    Status: string;
+    CreateDate: string;
+    DueDate: string;
+}

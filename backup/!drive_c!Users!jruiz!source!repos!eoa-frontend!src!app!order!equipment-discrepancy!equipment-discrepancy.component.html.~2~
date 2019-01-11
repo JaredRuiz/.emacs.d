@@ -1,0 +1,25 @@
+<div class="Edit-Equipment-Item-Container">
+  <!-- TODO: are we actually having something happen here...do we need a form?? -->
+  <form #editEquipmentForm="ngForm" autocomplete="off" novalidate>
+    <div class="Edit-Equipment-Item-Current-Quantity-Card">
+      <div class="Edit-Equipment-Item-Current-Quantity-Row" >
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="deliveryDateInput">Delivery Date</label>
+          <app-date-picker [Id]="'Equipment-Item-Delivery-Date'" [selectedDateValue]="equipmentItemSelectedToEditTracked.deliveryDate"
+            (dateSelectionTriggered)="onEquipmentItemDeliveryDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="currentRevisionBulletinNumberInput">Revision Bulletin</label>
+          <input type="text" name="currentRevisionBulletinNumberInput" #currentRevisionBulletinNo="ngModel" [(ngModel)]="equipmentItemSelectedToEditTracked.revisionBulletinNo"
+            class="Equipment-Item-Revision-Bulletin-No-Form-Control" id="currentRevisionBulletinNumberInput" [disabled]="disableButton()">
+        </div>
+      </div>
+    </div>
+    <!-- TODO: we also have buttons on the main page... -->
+    <!-- <div class="Equipment-Item-Buttons-Container"> -->
+    <!--   <a class="Equipment-Item-Cancel-Button" (click)="onCancelEquipmentItemUpdatesClicked()">Cancel</a> -->
+    <!--   <button id="equipmentUpdatesSaveButton" type="submit" class="Equipment-Updates-Save-Button" (click)="onSaveEquipmentItemUpdatesClicked()">SAVE</button> -->
+    <!-- </div> -->
+  </form>
+</div>

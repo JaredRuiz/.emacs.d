@@ -1,0 +1,168 @@
+app-construction-group-list .Scroll-Content {
+  overflow-y: hidden;
+  height: calc(100vh - 108px);
+}
+
+.Group-List-Container {
+  margin: 10px auto;
+  width: 1521px;
+  padding-bottom: 10px;
+
+  .Search-Icon {
+    @extend .Search-Icon;
+    margin-left: 25px;
+    margin-top: 19px;
+    position: fixed;
+    font-size: 18px;
+    color: $off-blue;
+  }
+}
+
+.Group-Card-Container {
+  margin-top: 20px;
+  margin-left: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: calc(100vh - 210px);
+}
+
+.Group-Card {
+  width: 1496px;
+  height: auto;
+  min-height: 54px; // margin-top: 8px;
+  margin-bottom: 10px;
+  background-color: $white; // border: solid 0.5px $equipment-card-border-color;
+  border-radius: 2px; // cursor: default;
+  padding: 9px 12px 9px 20px;
+}
+
+.Group-Search-Input {
+  // background-image: url('searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 1212px;
+  height: 45px;
+  background-color: $white;
+  border: solid 0.5px $silver;
+  margin: 10px;
+  padding: 10px 10px 10px 45px !important;
+}
+
+.Group-Header-Wrapper {
+  padding: 4px 0;
+}
+
+.Create-Button-Wrapper {
+  text-align: right; // padding: 0px 15px 15px 0px;
+  margin: 10px 28px 15px;
+}
+
+.Edit-Construction-Button {
+  @extend .Edit-Button;
+  margin-right: auto;
+  width: 127px;
+  margin-right: 10px;
+}
+
+.Delete-Construction-Button {
+  @extend .Delete-Button;
+  width: 49px;
+}
+
+.Card-Buttons-Wrapper {
+  margin-left: auto;
+}
+
+.Deleted-Card-Container {
+  width: 1496px;
+  min-height: 36px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  background-color: $very-light-pink;
+  border: solid 0.5px $lipstick;
+  padding: 5px 10px;
+}
+
+a.Delete {
+  color: $lipstick;
+  padding: 11px;
+  text-decoration: none; // display: block;
+
+  // width: 150px;
+  // text-align: center;
+  span {
+    // padding: 0 5px;
+    font-family: $default-font-family;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: 1.2px;
+    text-align: left;
+  }
+}
+
+.Reference-Date-Type-Radio {
+  position: relative;
+  top: 32px;
+  margin-left: 50px;
+
+  label {
+    margin-left: 20px;
+
+    span {
+      margin-left: 10px;
+      position: relative;
+      top: -2px;
+    }
+  }
+}
+
+.Create-Group-Body-Wrapper {
+  width: 840px;
+  min-height: 170px;
+  box-shadow: 0 0 10px 0 $dark-grey-blue-13;
+  background-color: $white;
+  border: solid 0.5px $cool-grey;
+  margin: auto;
+  margin-top: 22px;
+  margin-bottom: 22px;
+}
+
+.Create-Group-Body-Header {
+  padding: 10px 20px;
+  min-height: 100px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.Create-Group-Body {
+  // background-color: red;
+  min-height: 100px;
+  max-height: 635px;
+  padding: 10px;
+  overflow-y: auto;
+  margin: 10px;
+}
+
+.Delivery-Lead-Item {
+  height: 45px; // border-bottom: solid 1px $warm-grey;
+  border-bottom: solid 1px rgba(70, 70, 70, 0.17);
+}
+
+.Delivery-Lead-Department-Desc {
+  width: 270px;
+  padding: 10px 0;
+
+  .active {
+    color: $off-blue;
+  }
+}
+
+.Delivery-Lead-Time {
+  width: 70px;
+  padding: 2px;
+}
+
+.Delivery-Lead-Unit {
+  padding: 8px 0;
+}

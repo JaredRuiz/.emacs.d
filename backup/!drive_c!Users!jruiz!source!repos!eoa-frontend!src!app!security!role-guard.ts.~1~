@@ -1,0 +1,57 @@
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Route } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
+import { Injectable } from '@angular/core';
+import { User } from 'msal/lib-commonjs/User';
+
+@Injectable()
+export class RoleGuard implements CanActivate {
+    /**
+     *
+     */
+    constructor(private msal: MsalService) {}
+
+    public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+        return this.checkRouteRole(route);
+    }
+
+    public checkRouteRole(route: Route | ActivatedRouteSnapshot): boolean {
+        const user = this.msal.getUser();
+        let hasAccess = false;
+
+        if (route.data && route.data.roles && route.data.roles.length > 0) {
+            if (user && user.idToken && user.idToken) {
+                const token: any = user.idToken;
+                if (token && token.groups) {
+                    route.data.roles.forEach(roleId => {
+                        if (token.groups.indexOf(roleId) >= 0) {
+                            hasAccess = true;
+                        }
+                    });
+                }
+            }
+        } else {
+            hasAccess = true; // allow all users if no data
+        }
+
+        return hasAccess;
+    }
+
+    public userIsInRole(roleId: string): boolean {
+        const user = this.msal.getUser();
+        return this.isInRole(user, roleId);
+    }
+
+    private isInRole(user: User, roleId: string): boolean {
+        let inRole = false;
+        if (user && user.idToken && user.idToken) {
+            const token: any = user.idToken;
+            if (token && token.groups) {
+                if (token.groups.indexOf(roleId) >= 0) {
+                    inRole = true;
+                }
+            }
+        }
+
+        return inRole;
+    }
+}

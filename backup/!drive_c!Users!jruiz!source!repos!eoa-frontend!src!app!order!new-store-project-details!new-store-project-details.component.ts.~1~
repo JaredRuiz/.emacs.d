@@ -1,0 +1,37 @@
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OrderInteractionService } from '@app/order/shared/order-interaction.service';
+import { ProjectViewModel } from '@app/order/shared/viewmodels/project-viewmodel';
+import { OrderService } from '@app/order/shared/order.service';
+
+@Component({
+  selector: 'app-new-store-project-details',
+  templateUrl: './new-store-project-details.component.html'
+})
+export class NewStoreProjectDetailsComponent implements OnInit {
+
+  project = new ProjectViewModel();
+  projectId = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private interactionService: OrderInteractionService,
+    private orderService: OrderService
+  ) {
+    this.projectId = this.route && this.route.snapshot ? this.route.snapshot.paramMap.get('projectId') : '';
+    this.project.isActive = true;
+    if (this.projectId) {
+      this.orderService.getProjectDetails(this.projectId).subscribe(x => {
+        this.project = <ProjectViewModel>x;
+      });
+    } else {
+      this.project.isRemodel = false;
+    }
+  }
+
+  ngOnInit() {
+    this.interactionService.notifyLoadProjectModal(this.projectId && this.projectId !== '' ? 'Edit Store' : 'Create a New Store');
+  }
+
+}

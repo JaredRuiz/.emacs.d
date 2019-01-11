@@ -1,0 +1,29 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+<<<<<<< HEAD
+import { DrawingCountComponent } from '@app/report/drawing-count/drawing-count.component';
+=======
+import { DrawingCountReportComponent } from '@app/report/drawing-count/drawing-count.component';
+>>>>>>> feature/reports-ui
+
+const routes: Routes = [
+  {
+    path: '',
+<<<<<<< HEAD
+    redirectTo: 'drawing_count',
+    pathMatch: 'full'
+  },
+  {
+    path: 'drawing_count',
+    component: DrawingCountComponent
+=======
+    component: DrawingCountReportComponent
+>>>>>>> feature/reports-ui
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class ReportRoutingModule { }

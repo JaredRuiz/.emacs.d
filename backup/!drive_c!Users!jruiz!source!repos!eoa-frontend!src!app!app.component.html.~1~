@@ -1,0 +1,48 @@
+<div id="MainPageDiv">
+
+
+  <div class="Primary-Banner" *ngIf="showNav">
+    <div class="Row">
+
+      <div class="Wegmans-Logo">
+      </div>
+
+      <div class="Equipment-Ordering-Application-Title">
+        <span class="Application-Title-Text">
+          Equipment Ordering Application
+        </span>
+      </div>
+
+      <div class="Main-Navigation-Control">
+        <div class="Row">
+
+          <a routerLink="/order" routerLinkActive="active" [class.disabled]="!routeCanActivate('order')">
+            <span class="icon-orders"></span>
+            <span>Order</span>
+          </a>
+
+          <a routerLink="/procure" routerLinkActive="active" [class.disabled]="!routeCanActivate('procure')">
+            <span class="icon-empty-package"></span>
+            <span>Procure</span>
+          </a>
+
+          <a routerLink="/report" routerLinkActive="active" [class.disabled]="!routeCanActivate('report')">
+            <span class="icon-report"></span>
+            <span>Reports</span>
+          </a>
+
+          <a routerLink="/admin" routerLinkActive="active" [class.disabled]="!routeCanActivate('admin')">
+            <span class="icon-settings"></span>
+            <span>Settings</span>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <div id="ContentPlaceholder">
+    <router-outlet></router-outlet>
+  </div>
+</div>

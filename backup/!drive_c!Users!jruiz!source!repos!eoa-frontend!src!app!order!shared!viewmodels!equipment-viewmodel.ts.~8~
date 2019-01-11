@@ -1,0 +1,59 @@
+import { Equipment } from '@app/order/shared/contracts/equipment';
+import { EquipmentCardModel } from '@app/shared-ui/equipment-card-model';
+import { CommentViewModel } from '@app/order/shared/viewmodels/comment-viewmodel';
+import { ConstructionGroup } from '@app/order/shared/contracts/construction-group';
+import { Finish } from '@app/order/shared/contracts/finish';
+import { OrderDiscrepancy } from '@app/order/shared/contracts/order-discrepancy';
+import { PurchaseOrder } from '@app/order/shared/contracts/purchase-order';
+
+export class EquipmentViewModel implements Equipment, EquipmentCardModel {
+
+    id: string;
+    deliveryDate: string;
+    departmentDescription: string;
+    departmentNumber: string;
+    equipmentCode: string;
+    equipmentDescription: string;
+    previousTotalQuantity: number;
+    currentTotalQuantity: number;
+    newTotalQuantity: number;
+    floorQuantity: Array<
+        {
+            floor: string;
+            quantity: number;
+        }>;
+    manufacturer: string;
+    manufacturerDescription: string;
+    purchaseOrderNo: string;
+    orderingStatus: string;
+    purchaseOrderDiscrepancies: boolean; // TODO: what is this???
+    revisionBulletinNo: string;
+    vendor: string;
+    category: string;
+    comments: Array<CommentViewModel>;
+    lastUpdatedOn: string;
+    alternateDeliveryLocation: string;
+
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+
+    hasComments: boolean;
+
+    hasConcurrencyError: boolean;
+    constructionGroupName: string;
+    constructionGroup: ConstructionGroup;
+    quantityChangeECVerified: boolean;
+    finishesSpecificationRequired: boolean;
+    finishes: Array<Finish>;
+    finishesMissing: boolean;
+    finishesFilterString: string;
+<<<<<<< HEAD
+    orderDiscrepancies: Array<OrderDiscrepancy>;
+    hasDiscrepancies: boolean;
+    purchaseOrder: PurchaseOrder;
+=======
+
+    cutSheets: string;
+>>>>>>> develop
+}

@@ -1,0 +1,35 @@
+<div class="Edit-Equipment-Item-Container">
+  <!-- TODO: what should this be?? -->
+  <form #editEquipmentForm="ngForm" autocomplete="off" novalidate>
+    <div class="Edit-Equipment-Item-Current-Quantity-Card">
+      <div class="Edit-Equipment-Item-Current-Quantity-Row">
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="poNumber">PO #</label>
+          <input type="text" required name="purchaseOrderNumberInput" #purchaseOrderNumberInput="ngModel"
+            [(ngModel)]="equipmentItemSelectedToEdit.purchaseOrder.number" class="Equipment-Item-Revision-Bulletin-No-Form-Control"
+            id="currentRevisionBulletinNumberInput">
+          <!-- <div *ngIf="editEquipmentForm.submitted&&currentRevisionBulletinNo.invalid&&(currentRevisionBulletinNo.dirty||currentRevisionBulletinNo.touched)" -->
+          <!--   class="Invalid-Message-Container"> -->
+          <!--   Revision Bulletin No is required. -->
+          <!-- </div> -->
+        </div>          
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="poCreationDate">PO Creation Date</label>
+          <app-date-picker [Id]="Purchase-Order-Creation-Date'" [isfSelectedDateValid]="isSelectedCreationDateValid"
+            [selectedDateValue]="equipmentItemSelectedToEdit.purchaseOrder.creationDate" (datePickerBackspaceKeyPressed)="onCreationDatePickerBackspaceKeyPressed()"
+                           (dateSelectionTriggered)="onCreationDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+        <div class="Equipment-Item-Form-Control-Group">
+          <label for="poDeliveryDate">Actual Delivery Date</label>
+          <app-date-picker [Id]="Purchase-Order-Delivery-Date-Date'" [isfSelectedDateValid]="isSelectedDeliveryDateValid"
+            [selectedDateValue]="equipmentItemSelectedToEdit.purchaseOrder.deliveryDate" (datePickerBackspaceKeyPressed)="onDeliveryDatePickerBackspaceKeyPressed()"
+                           (dateSelectionTriggered)="onDeliveryDateSelectionTriggered($event)"></app-date-picker>
+        </div>
+      </div>
+    </div>
+    <div class="Equipment-Item-Buttons-Container">
+      <a class="Equipment-Item-Cancel-Button" (click)="onCancelEquipmentPurchaseOrderUpdatesClicked()">Cancel</a>
+      <button id="equipmentUpdatesSaveButton" type="submit" class="Equipment-Updates-Save-Button" (click)="onUpdateEquipmentPurchaseOrderDetailsClicked()">SAVE AND ORDER</button>
+    </div>
+  </form>
+</div>

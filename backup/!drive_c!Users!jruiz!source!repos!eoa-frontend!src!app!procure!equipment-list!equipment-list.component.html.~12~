@@ -1,0 +1,464 @@
+<div class="Secondary-Banner">
+  <div class="Banner-Left-Content"></div>
+  <div class="Banner-Right-Content">
+
+    <div class="GroupBy-Dropdown-Container">
+      <ng-select name="groupByInput" [items]="groupByCriteria" [(ngModel)]="selectedGroupByCriteria" notFoundText="No criteria found"
+        placeholder="Select criteria" (change)="onGroupByChange($event)">
+      </ng-select>
+    </div>
+
+    <div class="SortBy-Dropdown-Container">
+      <ng-select [items]="orderByCriteria" [(ngModel)]="selectedOrderByCriteria" notFoundText="No criteria found"
+        placeholder="Select criteria" name="sortByInput">
+      </ng-select>
+    </div>
+
+    <div class="ViewBy-Dropdown-Container">
+      <ng-select [items]="viewingCriteria" [(ngModel)]="selectedViewingCriteria" notFoundText="No criteria found"
+        placeholder="Select criteria" name="viewingInput">
+      </ng-select>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="Equipment-List-Scroll-Content" *ngIf="equipments?.length > 0"> -->
+  <div class="Equipment-List-Scroll-Content">
+
+  <div class="Filter-Container">
+    <div class="Filter-Pills-Container">
+      <app-selected-filter-criteria [selectedFilterCriteriaItems]="selectedFilterCriteriaItems"
+        (selectedFilterCriteriaRemoveTriggered)="onSelectedFilterCriteriaRemoveTriggered($event)">
+      </app-selected-filter-criteria>
+    </div>
+    <div class="Filter-Buttons-Container">
+      <button (click)="onAddFilterClick()" class="Add-Filter-Button">+ ADD FILTER</button>
+      <a class="Secondary-Link-Button Clear-All-Text" *ngIf="selectedFilterCriteriaItems?.length > 0" (click)="onClearAllClicked()">CLEAR
+        ALL</a>
+    </div>
+
+    <app-modal-dialog [modelId]="'ApplyFiltersModal'" [width]="'900px'" #applyFiltersModal>
+      <div modal-section="header">
+        Add Filters
+      </div>
+      <div modal-section="body">
+        <app-filter-list [filterCriteriaItems]="filterCriteriaItems" [selectedFilterCriteriaItems]="selectedFilterCriteriaItems"
+          (applyFiltersActionTriggered)="OnApplyFiltersActionTriggered($event)" (cancelApplyingFiltersActionTriggered)="OnCancelApplyingFiltersActionTriggered()">
+        </app-filter-list>
+      </div>
+    </app-modal-dialog>
+  </div>
+  <div class="Equipment-List-Container">
+    <app-grouped-equipment-list [equipments]="equipments" [groupBy]="selectedGroupByCriteria.value" [orderBy]="selectedOrderByCriteria.value"
+      [filterBy]="selectedFilterCriteriaItems" [viewType]="selectedViewingCriteria" (selectionChanged)="onSelectionChanged()">
+      <ng-template appEquipmentGroupTitle let-group="group">
+
+        {{ group }}
+
+      </ng-template>
+
+      <ng-template appEquipmentGroupAction let-group="group">
+
+      </ng-template>
+
+      <ng-template appEquipmentListHeader let-group="group">
+
+        <div class="Row">
+
+          <div appSortExpression="partSecondaryCommodityDescription" class="Secondary-Commodity">
+            <span class="Equipment-Listview-Header-Text">
+              <input type="checkbox"  [(ngModel)]="allEquipmentSelected" (click)="toggleAllEquipment()">
+            </span>
+          </div>
+          
+          <div appSortExpression="partSecondaryCommodityDescription" class="Secondary-Commodity">
+            <span class="Equipment-Listview-Header-Text">
+              S. COMMODITY
+            </span>
+          </div>
+          
+          <div appSortExpression="storeNumber" class="Store">
+            <span class="Equipment-Listview-Header-Text">
+              STORE
+            </span>
+          </div>
+
+          <div appSortExpression="currentTotalQuantity" class="Quantity">
+            <span class="Equipment-Listview-Header-Text">
+              QUANTITY
+            </span>
+          </div>
+
+          <div appSortExpression="departmentDescription" class="Department">
+            <span class="Equipment-Listview-Header-Text">
+              DEPARTMENT
+            </span>
+          </div>
+
+          <div appSortExpression="partNumber" class="Part-Number">
+            <span class="Equipment-Listview-Header-Text">
+              PART NUMBER
+            </span>
+          </div>
+
+          <div appSortExpression="manufacturer" class="Manufacturer">
+            <span class="Equipment-Listview-Header-Text">
+              MANUFACTURER
+            </span>
+          </div>
+
+          <div appSortExpression="vendor" class="Vendor">
+            <span class="Equipment-Listview-Header-Text">
+              VENDOR
+            </span>
+          </div>
+
+          <div appSortExpression="deliveryDate" class="Delivery-Date">
+            <span class="Equipment-Listview-Header-Text">
+              DELIVERY DATE
+            </span>
+          </div>
+
+          <div appSortExpression="requestedBy" class="Requested-By">
+            <span class="Equipment-Listview-Header-Text">
+              REQUESTED BY
+            </span>
+          </div>
+        </div>
+
+      </ng-template>
+
+      <ng-template appEquipmentCardHeader let-group="group" let-equipment="equipment">
+
+        <div class="Row">
+
+          <div class="Secondary-Commodity">
+            <input type="checkbox"  [(ngModel)]="equipment.selected" (click)="updateSelectedCount()">
+          </div>
+          
+          <div class="Secondary-Commodity" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <span class="Equipment-Listview-Primary-Text">
+              {{ equipment.partSecondaryCommodityDescription }}
+            </span>
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{ equipment.partSecondaryCommodityCode }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="Store" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.storeNumber }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Quantity" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                <span *ngIf="!hasQuantityChanged(equipment)" class="Equipment-Card-Primary-Text">
+                  {{ equipment.currentTotalQuantity }}
+                </span>
+                <span class="Equipment-Item-Quantity-Change" *ngIf="hasQuantityChanged(equipment)">
+                  <span class="Equipment-Card-Grey-Text">
+                    {{ equipment.previousTotalQuantity }}
+                  </span>
+                  <span class="Equipment-Item-Quantity-Change-Indicator" [ngClass]="getTemplate(equipment).name"></span>
+                  <span class="Equipment-Item-New-Quantity-Text">
+                    {{ equipment.currentTotalQuantity }}
+                  </span>
+                </span>
+              </span>
+            </div>
+            <div>
+              <span class="Equipment-Card-Secondary-Text" [innerHTML]="getFloorQuantitiesText(equipment.floorQuantity)"></span>
+            </div>
+          </div>
+          
+          <div class="Department" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <span class="Equipment-Listview-Primary-Text">
+              {{ equipment.departmentDescription }}
+            </span>
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{ equipment.departmentNumber }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Part-Number" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.partNumber }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Manufacturer" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.manufacturer }}
+              </span>
+            </div>
+
+            <div>
+              <span class="Equipment-Card-Secondary-Text">
+                {{equipment.manufacturerDescription}}
+              </span>
+            </div>
+          </div>
+
+          <div class="Vendor" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.vendor }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Delivery-Date" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div *ngIf="equipment.purchaseOrder.deliveryDate">
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.purchaseOrder.deliveryDate | date: 'MM/dd/yyyy' }}
+              </span>
+            </div>
+
+            <div *ngIf="equipment.purchaseOrder.number">
+              <span class="Equipment-Card-Secondary-Text">
+                {{"PO# " + equipment.purchaseOrder.number}}
+              </span>
+            </div>
+          </div>
+
+          <div class="Requested-By" (click)="onEquipmentDetailsToggle($event, equipment)">
+            <div>
+              <span class="Equipment-Card-Primary-Text">
+                {{ equipment.requestedBy }}
+              </span>
+            </div>
+          </div>
+
+          <div class="Action">
+
+            <ng-template [ngTemplateOutlet]="getTemplate(equipment).template" [ngTemplateOutletContext]="{ $implicit: equipment }">
+            </ng-template>
+
+            <ng-template #directBuy let-equipment>
+              <button class="Direct-Buy-Button" type="submit" (click)="onActionButtonClicked(equipment)">
+                <span>DIRECT BUY</span>
+              </button>
+            </ng-template>
+
+            <ng-template #quantityIncremented let-equipment>
+              <button class="Quantity-Incremented-Button" type="submit" (click)="onActionButtonClicked(equipment)">
+                <span>INCREASED</span>
+              </button>
+            </ng-template>
+
+            <ng-template #quantityDecremented let-equipment>
+              <button class="Quantity-Decremented-Button" type="submit" (click)="onActionButtonClicked(equipment)">
+                <span>DECREASED</span>
+              </button>
+            </ng-template>
+
+            <ng-template #quantityDeleted let-equipment>
+              <button class="Quantity-Deleted-Button" type="submit" (click)="onActionButtonClicked(equipment)">
+                <span>DELETED</span>
+              </button>
+            </ng-template>
+
+            <label class="Equipment-Card-Action-Label">
+              <span class="Equipment-Comment-Icon Comment-Icon" [ngClass]="{'inactive':!equipment.hasComments}"></span>
+            </label>
+            <span class="Equipment-Card-Edit-Icon" [ngClass]="{'inactive': false}"
+                  (click)="onEditProcurementItemClicked(equipment)">
+            </span>
+
+            <label class="Equipment-Card-Toggle-Icon" [ngClass]="{'expanded':equipment.expanded}" (click)="onEquipmentDetailsToggle($event, equipment)">
+              <span *ngIf="!equipment.expanded" class="Expand-Equipment-Details-Icon"></span>
+              <span *ngIf="equipment.expanded" class="Collapse-Equipment-Details-Icon"></span>
+            </label>
+
+          </div>
+        </div>
+
+      </ng-template>
+
+      <ng-template appEquipmentCardBody let-group="group" let-equipment="equipment">
+
+        <app-equipment-comment [equipment]="equipment" (saveComment)="onSaveComment($event['comment'],$event['equipment'])">
+        </app-equipment-comment>
+
+      </ng-template>
+
+    </app-grouped-equipment-list>
+  </div>
+  <app-modal-dialog [modelId]="'UpdateEquipmentItemModal'" [width]="'900px'" [ngClass]="getTemplate(selectedEquipmentItem).name"
+    #updateEquipmentItemModal>
+    <div modal-section="header">
+      {{ getTemplate(selectedEquipmentItem).name === 'incremented' ? 'Incremented Quantity' :
+      getTemplate(selectedEquipmentItem).name === 'decremented' ? 'Decremented Quantity' :
+      getTemplate(selectedEquipmentItem).name === 'deleted' ? 'Delete Quantity' : 'Direct
+      Buy' }}
+    </div>
+    <div modal-section="body">
+      <div class="Equipment-Item-Modal-Container">
+        <div class="Form">
+
+          <div class="Body-Banner">
+            <div class="Body-Banner-Left-Section">
+              {{ selectedEquipmentItem.equipmentCode + ' / ' +
+              selectedEquipmentItem.departmentDescription + ' ' +
+              selectedEquipmentItem.departmentNumber }}
+            </div>
+            <div class="Body-Banner-Right-Section">
+              <span>Total Quantity:</span>
+              <span *ngIf="!hasQuantityChanged(selectedEquipmentItem)" class="Equipment-Card-Primary-Text">
+                {{ selectedEquipmentItem.currentTotalQuantity }}
+              </span>
+              <span class="Equipment-Item-Quantity-Change" *ngIf="hasQuantityChanged(selectedEquipmentItem)">
+                <span class="Equipment-Card-Grey-Text">
+                  {{ selectedEquipmentItem.previousTotalQuantity }}
+                </span>
+                <span class="Equipment-Item-Quantity-Change-Indicator" [ngClass]="getTemplate(selectedEquipmentItem).name"></span>
+                <span class="Equipment-Item-New-Quantity-Text">
+                  {{ selectedEquipmentItem.currentTotalQuantity }}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'directbuy'">
+            <div class="Body-Content-Comments-Row">
+              <label for="CommentsInput">Add Purchasing Comment</label>
+              <textarea class="Comment-Input" id="CommentsInput" [(ngModel)]="purchasingComments.comment"></textarea>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'incremented'">
+            <div class="Body-Content-Message-Text-Row">
+              <label for="CommentsInput">Select an Action to take for PO# <b>{{selectedEquipmentItem.purchaseOrderNo}}</b>
+                ?</label>
+            </div>
+            <div class="Body-Content-Options-Row">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn active" (click)="onAmendPOOptionSelected(true)">
+                  <input type="radio" name="AmendCurrentPORadioButton" id="AmendCurrentPORadioButton">Amend
+                  Current PO#
+                </label>
+                <label class="btn" (click)="onAmendPOOptionSelected(false)">
+                  <input type="radio" name="AmendCurrentPORadioButton" (click)="onAmendPOOptionSelected(false)" id="AmendCurrentPORadioButton">Request
+                  New PO#
+                </label>
+              </div>
+            </div>
+            <div class="Body-Content-Seperator-Row">
+              <hr class="Section-Seperator-Line">
+            </div>
+            <div class="Body-Content-Comments-Row">
+              <textarea class="Comment-Input" placeholder="Add Purchasing Comment" id="CommentsInput" [(ngModel)]="purchasingComments.comment"></textarea>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'decremented'">
+            <div class="Body-Content-Message-Text-Row">
+              <label for="CommentsInput">Are you sure you want to amend this PO# <b>{{selectedEquipmentItem.purchaseOrderNo}}</b>
+                ?</label>
+            </div>
+            <div class="Body-Content-Seperator-Row">
+              <hr class="Section-Seperator-Line">
+            </div>
+            <div class="Body-Content-Comments-Row">
+              <textarea class="Comment-Input" placeholder="Add Purchasing Comment" id="CommentsInput" [(ngModel)]="purchasingComments.comment"></textarea>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'deleted'">
+            <div class="Body-Content-Message-Text-Row">
+              <label for="CommentsInput">Are you sure you want to cancel this PO# <b>{{selectedEquipmentItem.purchaseOrderNo}}</b>
+                ?</label>
+            </div>
+            <div class="Body-Content-Seperator-Row">
+              <hr class="Section-Seperator-Line">
+            </div>
+            <div class="Body-Content-Comments-Row">
+              <textarea class="Comment-Input" placeholder="Add Purchasing Comment" id="CommentsInput" [(ngModel)]="purchasingComments.comment"></textarea>
+            </div>
+          </ng-container>
+
+        </div>
+        <div class="Equipment-Item-Modal-Buttons-Container">
+          <a class="Equipment-Item-Modal-Cancel-Button" (click)="onEquipmentItemModalCancelClicked()">Cancel</a>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'directbuy'">
+            <button id="DirectOrderEquipmentItemCommentsSaveButton" type="submit" class="Equipment-Item-Modal-Action-Button"
+              (click)="onDirectOrderSaveClicked()">
+              <span>SAVE</span>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'incremented'">
+            <button id="IncrementedQuantitiesApplyActionButton" type="submit" class="Equipment-Item-Modal-Action-Button"
+              (click)="onIncrementedQuantitiesApplyActionClicked(amendCurrentPORadioButton)">
+              <span>APPLY ACTION</span>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'decremented'">
+            <button id="IncrementedQuantitiesApplyActionButton" type="submit" class="Equipment-Item-Modal-Action-Button"
+              (click)="onDecrementedQuantitiesAmendPOClicked()">
+              <span>AMEND PO#</span>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="getTemplate(selectedEquipmentItem).name === 'deleted'">
+            <button id="IncrementedQuantitiesApplyActionButton" type="submit" class="Equipment-Item-Modal-Action-Button"
+              (click)="onDeletedQuantitiesCancelPOClicked()">
+              <span>CANCEL PO#</span>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </app-modal-dialog>
+  
+    <app-modal-dialog [modelId]="'EditEquipmentPurchaseOrderDetailsModal'" [width]="'900px'" #editEquipmentPurchaseOrderDetailsModal>
+    <div modal-section="header">
+      Editing Details
+    </div>
+    <div modal-section="body">
+      <app-edit-equipment-purchase-order [equipmentToEdit]="equipmentToEditPurchaseOrder"
+        (cancelEquipmentPurchaseOrderTriggered)="onCancelEquipmentPurchaseOrderUpdatesClicked()" (updateEquipmentPurchaseOrderDetailsTriggered)="onUpdateEquipmentPurchaseOrderDetailsClicked($event)"></app-edit-equipment-purchase-order>
+    </div>
+    </app-modal-dialog>
+
+    <!-- <div class="Secondary-Banner" *ngIf="selectedItemsCount > 0"> -->
+   <div class="Secondary-Banner">
+      <div class="Banner-Left-Content">
+        {{ selectedItemsCount }} items selected
+      </div>
+      <div class="Banner-Right-Content">
+        <a class="Release-To-Eam-Banner-Button" (click)="onCancelReleaseToEamClick()">Cancel</a>
+        <button id="DirectOrderEquipmentItemCommentsSaveButton" type="submit" class="Add-Filter-Button"
+                (click)="onReleaseToEamClick()">
+          <span>REQUEST ITEMS</span>
+        </button>
+      </div>
+      
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

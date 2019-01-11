@@ -1,0 +1,9 @@
+import { PurchaseOrder } from '@app/shared/contracts/purchase-order';
+ 
+export class PurchaseOrderViewModel implements PurchaseOrder  {
+    number: string;
+    message: string;
+    creationDate: string;
+    deliveryDate: string;
+    eamLineNumbers: Array<number>;
+}

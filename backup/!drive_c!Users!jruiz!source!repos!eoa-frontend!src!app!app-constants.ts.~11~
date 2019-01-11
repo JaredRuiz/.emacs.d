@@ -1,0 +1,76 @@
+export class Constants {
+  // Parameters
+  public static projectIdParam = '{projectId}';
+  public static equipmentIdParam = '{equipmentId}';
+  public static commentIdParam = '{commentId}';
+  public static constructionGroupId = '{constructionGroupId}';
+  public static departmentId = '{departmentId}';
+
+  // Order API Urls
+  public static getProjectListUrl = '/api/order/projects';
+  public static getProjectDetailsUrl = '/api/order/project/' + Constants.projectIdParam;
+  public static createProjectUrl = '/api/order/project';
+  public static updateProjectUrl = '/api/order/project/' + Constants.projectIdParam;
+  public static addCommentForEquipmentUrl = '/api/order/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/comment';
+  public static updateCommentInEquipmentUrl = '/api/order/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/comment/' + Constants.commentIdParam;
+  public static patchEquipmenUpdatesUrl = '/api/order/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/';
+  public static patchEquipmenListUpdatesUrl = '/api/order/project/' + Constants.projectIdParam
+    + '/equipment/';
+  public static resolveEquipmentDiscrepancies = '/api/order/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/resolve';
+  public static splitEquipmentUrl = '/api/order/project/' + Constants.projectIdParam + '/equipment/' + Constants.equipmentIdParam
+    + '/split';
+  public static generateEquipmentDeliveryDatesUrl = '/api/order/project/' + Constants.projectIdParam + '/equipment-delivery-dates';
+  public static updateEquipmentQuantityUrl = '/api/order/project/' + Constants.projectIdParam + '/equipment/' + Constants.equipmentIdParam
+    + '/updatequantity';
+  public static sendSelectedEquipmentsToProcureUrl = '/api/order/project/' + Constants.projectIdParam + '/send-to-procure';
+
+  // Procure URLs
+  public static getProcureEquipmentsUrl = '/api/procure/equipments';
+  public static releaseEquipmentToEamUrl = '/api/procure/equipments/release-to-eam';
+  public static addProcureCommentForEquipmentUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/comment';
+  public static updateProcureCommentInEquipmentUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/comment/' + Constants.commentIdParam;
+  public static markEquipmentAsDirectOrderUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/directorder';
+  public static incrementEquipmentItemQuantitiesUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/increment';
+  public static decrementEquipmentItemQuantitiesUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/decrement';
+  public static deleteEquipmentItemQuantitiesUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/delete';
+  public static addPurchaseOrderToEquipmentUrl = '/api/procure/project/' + Constants.projectIdParam
+    + '/equipment/' + Constants.equipmentIdParam + '/purchase-order';
+
+
+  // Project URLs
+  public static getAdminProjectList = '/api/admin/projects';
+  public static deactivateProjectUrl = '/api/admin/project/' + Constants.projectIdParam + '/deactivate';
+  public static activateProjectUrl = '/api/admin/project/' + Constants.projectIdParam + '/activate';
+  public static deleteProjectUrl = '/api/admin/project/' + Constants.projectIdParam + '/delete';
+
+  // Report URLS
+  public static getReportProjectsList = '/api/reports/projects';
+  public static getDrawingCountReport = '/api/reports/project/' + Constants.projectIdParam + '/drawing-count';
+  public static getEquipmentcountsReport = '/api/reports/equipment-counts';
+  public static getFinishesReport = '/api/reports/project/' + Constants.projectIdParam + '/finishes';
+  public static getConstructionDelivery = '/api/reports/project/' + Constants.projectIdParam + '/construction-delivery';
+  public static getConstructionGroups = '/api/reports/construction-group';
+  public static getPurchasingReport = '/api/reports/project/' + Constants.projectIdParam + '/purchasing-report';
+  public static getEquipmentBudget = '/api/reports/project/' + Constants.projectIdParam + '/equipment-budget';
+  public static getFixtureEstimate = '/api/reports/project/' + Constants.projectIdParam + '/fixture-estimate';
+
+  // Departments
+  public static getDepartmentsUrl = '/api/admin/departments';
+  public static createDepartmentUrl = '/api/admin/department';
+  public static updateDepartmentUrl = '/api/admin/department/' + Constants.departmentId;
+
+  // Cosntruction Groups
+  public static getConstructionGroupsUrl = '/api/admin/construction-groups';
+  public static createConstructionGroupUrl = '/api/admin/construction-group';
+  public static updateConstructionGroupUrl = '/api/admin/construction-group/' + Constants.constructionGroupId;
+}

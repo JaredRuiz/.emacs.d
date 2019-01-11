@@ -1,0 +1,28 @@
+import { Department } from '@app/order/shared/contracts/department';
+import { Equipment } from '@app/order/shared/contracts/equipment';
+import { PurchaseOrder } from '@app/order/shared/contracts/purchase-order';
+import { Project } from '@app/order/shared/contracts/project';
+
+export class ProjectViewModel implements Project {
+    id: string;
+    projectType: string;
+    projectSubType: string;
+    projectName: string;
+    isActive: boolean;
+    isDeleted: boolean;
+    description: string;
+    projectRequestNumber: string;
+    openDate: string;
+    turnoverDate: string;
+    arNumber: string;
+    constructionJobNumber: string;
+    maintenanceWorkOrderNumber: string;
+    departments: Array<Department>;
+    projectNotes: string;
+    equipments: Array<Equipment>;
+    purchaseOrders: PurchaseOrder;
+    storeName: string;
+    storeNumber: string;
+    isRemodel: boolean;
+    deliveryScheduleAssigned: boolean;
+}

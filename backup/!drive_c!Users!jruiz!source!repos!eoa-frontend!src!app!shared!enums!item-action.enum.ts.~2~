@@ -1,0 +1,8 @@
+export enum ItemAction {
+  Ok,
+  NotOrdered,
+  Ordered,
+  Discrepancies,
+  Deleted,
+  MissingFinishes
+}

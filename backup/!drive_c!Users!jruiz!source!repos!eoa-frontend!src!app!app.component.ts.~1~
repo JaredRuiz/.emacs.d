@@ -1,0 +1,35 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ToastrManagerService } from '@app/shared/toastr-manager.service';
+import { Router, RoutesRecognized } from '@angular/router';
+import { RoleGuard } from '@app/security/role-guard';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'app';
+  showNav = false;
+
+  constructor(private toastrManager: ToastrManagerService, private router: Router, private routeGuard: RoleGuard) {
+  }
+
+  ngOnInit() {
+    this.toastrManager.initialize();
+    this.router.events
+      .filter(event => event instanceof RoutesRecognized)
+      .subscribe((data) => {
+        const route: RoutesRecognized =  <RoutesRecognized>data;
+        this.showNav = !route.state.root.firstChild.data.hideNav;
+      });
+
+  }
+
+  routeCanActivate(path: string) {
+    return this.routeGuard.checkRouteRole(this.router.config.find(r => r.path === path));
+  }
+
+  ngOnDestroy() {
+    this.toastrManager.subscription$.unsubscribe();
+  }
+}

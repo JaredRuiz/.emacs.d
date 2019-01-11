@@ -1,0 +1,77 @@
+<div class="Equipment-Group-Container" *ngFor="let group of equipmentGroups; trackBy: trackGroup" (click)="toggleGroupCardExpansion(group)">
+  <div class="Row">
+
+    <div class="Card-Selection-Gutter" (click)="toggleEquipmentItemsGroupSelection($event,group)" [class.Selected]="group.selected"
+      [class.Disabled]="group.disabled">
+    </div>
+
+    <div class="Card-Selection-Remainder">
+
+      <div class="Group-Header">
+
+        <div class="Group-Title">
+
+          <span class="Equipment-Group-Header-Text">
+            <ng-template [ngTemplateOutlet]="groupTitleTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+            </ng-template>
+          </span>
+
+        </div>
+
+        <div class="Group-Action">
+          <ng-template [ngTemplateOutlet]="groupActionTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+          </ng-template>
+        </div>
+
+      </div>
+
+      <div class="Group-Body" *ngIf="group.expanded">
+
+        <div class="List-Header" (click)="$event.stopPropagation()">
+          <div class="List-Header-Row-Wrapper">
+            <ng-template [ngTemplateOutlet]="listHeaderTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="List-Item">
+          <div class="Equipment-Card-Container" *ngFor="let item of group.items; trackBy: trackEquipment" (click)="toggleCardExpansion($event, item)">
+
+            <div class="Row">
+
+              <div class="Card-Selection-Gutter" (click)="toggleEquipmentItemSelection($event,item, group)"
+                [class.Selected]="item.selected" [class.Disabled]="item.disabled">
+              </div>
+
+              <div class="Card-Selection-Remainder">
+
+                <div class="Card-Header">
+                  <ng-template [ngTemplateOutlet]="cardHeaderTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, equipment: item }">
+                  </ng-template>
+                </div>
+
+                <div class="Card-Body" *ngIf="item.expanded">
+                  <ng-template [ngTemplateOutlet]="cardBodyTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, equipment: item }">
+                  </ng-template>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div><!-- Row -->
+        </div><!-- Equipment-Card-Container -->
+
+        <!-- <div class="Equipment-Purchase-History-Container" *ngFor="let item of group.items; trackBy: trackEquipment" (click)="toggleCardExpansion($event, item)"> -->
+        <!--   <div class="Row"> -->
+        <!--         <div class="Card-Body" *ngIf="item.expanded"> -->
+        <!--           <ng-template [ngTemplateOutlet]="purchaseHistoryTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, equipment: item }"> -->
+        <!--           </ng-template> -->
+        <!--         </div> -->
+        <!--   </div> -->
+        <!-- </div> -->
+
+      </div>
+    </div>
+  </div>
+</div>

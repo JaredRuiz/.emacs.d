@@ -1,0 +1,284 @@
+.Button {
+  @extend .btn;
+  @include border-radius(2px);
+
+  &:focus {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  padding: 0px 32px 0px 32px;
+  color: $white;
+  margin: 10px;
+  height: 36px;
+}
+
+.Active-Button {
+  background-color: $off-blue;
+}
+
+.Primary-Default-Button {
+  @extend .Button;
+  @extend .Primary-Button-Text;
+  @extend .Active-Button;
+  padding: 0px 26px 0px 26px;
+  box-shadow: 0 1px 2px 0 $cobalt-16;
+}
+
+.Primary-Ok-Button {
+  @extend .Button;
+  @extend .Primary-Button-Text;
+  background-color: $medium-green;
+}
+
+.Secondary-Default-Button {
+  @extend .Button;
+  @extend .Secondary-Link-Button-Text;
+  padding: 0 10px !important;
+  margin: 0;
+  box-shadow: none;
+  background-color: transparent;
+  color: $off-blue;
+}
+
+.Secondary-Link-Button {
+  @extend .Secondary-Link-Button-Text;
+  color: $bluey-grey-three !important;
+  cursor: pointer;
+}
+
+.New-Project-Button {
+  width: 36px;
+  height: 36px;
+  background-color: $medium-green-11;
+  border: solid 0.5px $medium-green;
+  border-radius: 2px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+
+  @supports (-ms-ime-align: auto) {
+    padding-top: 0px !important;
+  }
+}
+
+.New-Project-Plus-Icon {
+  @extend .Plus-Icon;
+  @extend .New-Project-Plus-Icon-Text;
+  color: $medium-green;
+  cursor: pointer;
+}
+
+.Add-Filter-Button {
+  @extend .Primary-Default-Button;
+  margin-right: 16px;
+}
+
+.Filter-List-Modal-Cancel-Button {
+  @extend .Secondary-Link-Button;
+  padding-right: 13px;
+}
+
+.Release-To-Eam-Banner-Cancel-Button {
+  @extend .Secondary-Link-Button;
+  padding-top: 19px;
+  padding-right: 13px;
+  color: black;
+}
+
+.Filter-List-Apply-Filters-Button {
+  @extend .Primary-Ok-Button;
+}
+
+.Project-Details-Back-Button {
+  @extend .Project-Details-Back-Button-Text;
+  @extend .d-flex;
+  @extend .align-items-center;
+  cursor: pointer;
+  color: $steel-grey !important;
+}
+
+.Project-Details-Cancel-Button {
+  @extend .Secondary-Link-Button;
+  padding-right: 13px;
+}
+
+.Project-Details-Ok-Button {
+  @extend .Primary-Ok-Button;
+
+  &.disabled {
+    background-color: $bluey-grey !important;
+  }
+}
+
+.Project-Details-Deactivate-Button {
+  @extend .Primary-Ok-Button;
+  background-color: $lip-stick !important;
+}
+
+.New-Project-Back-Arrow {
+  @extend .Back-Arrow-Icon;
+  @extend .Back-Arrow-Icon-Text;
+  padding-right: 3px;
+}
+
+.Calendar-Button {
+  @extend .Primary-Default-Button;
+  background-color: $ice-blue-two;
+
+  .Calendar-Icon {
+    @extend .Calendar-Icon-Text;
+    color: $off-blue;
+  }
+
+  &.active {
+    background-color: $off-blue;
+
+    .Calendar-Icon {
+      @extend .Calendar-Icon-Text;
+      color: $white;
+    }
+  }
+
+  margin-bottom: 0px;
+  width: 45px;
+  float: right;
+  top: -36px;
+  position: relative;
+  height: 36px;
+  border: solid 0.5px $silver;
+  border-left: solid 2px $faded-blue-five;
+  box-shadow: none;
+  border-radius: 0px;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+  border-radius: 0px;
+
+  @supports (-ms-ime-align: auto) {
+    margin-bottom: 3px;
+  }
+}
+
+.Create-Department-Button {
+  @extend .Primary-Default-Button;
+  background-color: $medium-green;
+  margin: auto;
+}
+
+.Delete-Project-Button {
+  @extend .Primary-Default-Button;
+  background-color: $lipstick;;
+  margin: auto;
+}
+
+.Shopping-Cart-Cancel-Button {
+  @extend .Secondary-Link-Button;
+  padding-right: 13px;
+}
+
+.Edit-Button {
+  @extend .Primary-Default-Button;
+  background-color: $off-blue;
+  margin: auto;
+  padding: 0px;
+}
+
+.Delete-Button {
+  @extend .Primary-Default-Button;
+  background-color: $very-light-pink;
+  margin: auto;
+  padding: 0;
+
+  span {
+    font-size: $default-font-size;
+    color: $lipstick;
+  }
+}
+
+.Edit-Project-Button {
+  @extend .Primary-Default-Button;
+  background-color: $white;
+  color: $off-blue;
+  border-radius: 2px;
+  border: solid 0.5px $bluey-grey-50;
+  box-shadow: none;
+}
+
+.Complete-Project-Button {
+  @extend .Primary-Default-Button;
+  position: relative;
+  right: 408px;
+  background-color: $white;
+  color: $medium-green;
+  border-radius: 3px;
+  border: solid 0.5px $bluey-grey-three;
+}
+
+.Add-Button {
+  @extend .Primary-Default-Button;
+  background-color: $medium-green;
+  margin: auto;
+  padding: 0px;
+}
+
+.Apply-All-Button {
+  @extend .Secondary-Default-Button;
+  box-shadow: 0 1px 2px 0 $black-16;
+  background-color: $pale-grey-four;
+  margin-right: 10px;
+  font-family: SourceSansPro;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: $medium-green
+}
+
+.Copy-Button{
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding-top: 5px;
+}
+
+.Copy-Button:focus{
+  outline: none;
+}
+
+.View-Incomplete-Items-Button {
+  @extend .Secondary-Default-Button;
+  font-size: 16px;
+  font-weight: bold;
+  color: $lipstick;
+  position: relative;
+  right: 10px;
+}
+
+.Cancel-Archive-Button {
+  @extend .Secondary-Default-Button;
+  position: relative;
+  bottom: 4px;
+  right: 8px;
+}
+
+.Archive-Project-Button {
+  @extend .Primary-Ok-Button;
+  margin: 0 16px 12px 0;
+  background-color: $medium-green;
+}
+
+.Confirm-Bulk-Edit-Button {
+  @extend .Edit-Button;
+  padding: 0 24px;
+}
+
+.Show-Selected-Ordered-Items-Button {
+  @extend .Button;
+  @extend .Secondary-Link-Button-Text;
+  box-shadow: none;
+  background-color: transparent;
+  color: $off-blue;
+  margin: -4px 0 0 -20px;
+}

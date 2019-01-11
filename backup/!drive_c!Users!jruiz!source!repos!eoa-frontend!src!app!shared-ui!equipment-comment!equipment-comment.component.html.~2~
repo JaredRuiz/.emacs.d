@@ -1,0 +1,61 @@
+<div class="Comments-Container">
+  <ng-container *ngFor="let comment of equipment.comments; trackBy: trackComment">
+    <div class="Comment-Row">
+
+      <ng-template [ngTemplateOutlet]="getCommentTemplate(comment)" [ngTemplateOutletContext]="{ $implicit: comment, equipment: equipment }">
+      </ng-template>
+
+      <ng-template #addCommentTemplate let-comment let-equipment="equipment">
+
+        <div class="Comment-Type">
+          <span>{{ comment.type }}</span>
+        </div>
+
+        <div class="Comment-Action">
+          <button class="Equipment-Body-Action-Button" type="button" (click)="comment.beingEdited=!comment.beingEdited">
+            <span class="ButtonText">+ ADD COMMENT</span>
+          </button>
+        </div>
+
+
+      </ng-template>
+
+      <ng-template #viewCommentTemplate let-comment let-equipment="equipment">
+
+        <div class="Comment-Type">
+          <span>{{ comment.type }}</span>
+        </div>
+
+        <div class="Comment-Action">
+          <button class="Equipment-Body-Action-Button" type="button" (click)="comment.beingEdited=!comment.beingEdited">
+            <span class="ButtonText">EDIT / UPDATE</span>
+          </button>
+        </div>
+
+        <div class="Comment-Text">
+          <span>{{ comment.comment }}</span>
+        </div>
+
+      </ng-template>
+
+      <ng-template #editCommentTemplate let-comment let-equipment="equipment">
+
+        <div class="Comment-Type">
+          <span>{{ comment.type }}</span>
+        </div>
+
+        <div class="Comment-Action">
+          <button class="Equipment-Body-Save-Action-Button" type="button" (click)="onSaveComment(comment,equipment)">
+            <span class="ButtonText">SAVE COMMENT</span>
+          </button>
+        </div>
+
+        <div class="Comment-Text">
+          <textarea class="Comment-Input" [(ngModel)]="comment.comment"></textarea>
+        </div>
+
+      </ng-template>
+
+    </div>
+  </ng-container>
+</div>

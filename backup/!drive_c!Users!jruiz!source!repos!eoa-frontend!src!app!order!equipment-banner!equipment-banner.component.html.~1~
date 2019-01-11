@@ -1,0 +1,7 @@
+<div class="Equipment-Banner" [ngClass]="bannerType" *ngIf="showBanner">
+  <div class="Equipment-Banner-Circle"></div>
+  <div class="Equipment-Banner-Text" [ngClass]="bannerType">{{ bannerMessage }}</div>
+  <button class="View-Equipment-Banner-Button" [ngClass]="bannerType" *ngIf="buttonText" (click)="onClicked()">
+    <span>{{ buttonText }}</span>
+  </button>
+</div>

@@ -1,0 +1,84 @@
+import { Component, OnInit, Input, Output. EventEmitter, ViewChild, TemplateRef } from '@angular/core';
+import { PurchaseHistoryViewModel } from '@app/order/shared/viewmodels/purchase-history-viewmodel';
+
+@Component({
+  selector: 'app-purchase-history-details',
+  templateUrl: './purchase-history.component.html'
+})
+export class EquipmentItemPurchaseHistoryComponent implements OnInit {
+
+  @ViewChild('viewPurchaseHistoryTemplate') viewPurchaseHistoryTemplate: TemplateRef<any>;
+  @ViewChild('editPurchaseHistoryTemplate') editPurchaseHistoryTemplate: TemplateRef<any>;
+
+  @Input() canEdit = true;
+  @Input() equipmentItem;
+
+  @Output() savePurchaseHistoryItemUpdatesTriggered = new EventEmitter<any>();    
+
+  detailsExpanded = false;
+  temporaryRevisionBulletinNo: string;
+  temporaryDeliveryDate: string;
+  temporaryComments: string;
+    
+  constructor() { }
+  
+  ngOnInit() {}
+
+  onExpandPurchaseHistoryDetails() {
+    this.detailsExpanded = !this.detailsExpanded;
+  }
+
+  getHistoryItemTemplate(historyItem: PurchaseHistoryViewModel) {
+    return historyItem.beingEdited ? this.editPurchaseHistoryTemplate : this.viewPurchaseHistoryTemplate;
+  }
+    
+  onReadMoreClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.commentsExpanded = !historyItem.commentsExpanded;
+  }
+
+  onEditHistoryItemClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.beingEdited = true;
+    this.temporaryDeliveryDate = historyItem.deliveryDate;
+    this.temporaryRevisionBulletinNo = historyItem.revisionBulletinNo;
+    this.temporaryComments = historyItem.comments;
+  }
+
+  onSaveHistoryItemClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.beingEdited = false;
+
+    if (this.historyItemHasChanged(historyItem)) {
+      historyItem.deliveryDate = this.temporaryDeliveryDate;
+      historyItem.revisionBulletinNo = this.temporaryRevisionBulletinNo;
+      historyItem.comments = this.temporaryComments;
+      this.savePurchaseHistoryItemUpdatesTriggered.emit(this.equipmentItem);
+    }
+  }
+
+  onDeliveryDateSelectionTriggered(deliveryDate) {
+    this.temporaryDeliveryDate = deliveryDate;
+  }
+
+  hasQuantityChanged(purchaseHistoryItem: PurchaseHistoryViewModel) : boolean {
+    return purchaseHistoryItem.currentTotalQuantity !== purchaseHistoryItem.newTotalQuantity;
+  }
+
+  getTemplate(purchaseHistoryItem: PurchaseHistoryViewModel) {
+    let templateName = '';
+
+    if (purchaseHistoryItem.newTotalQuantity === 0) {
+      templateName =  'deleted';
+    } else if (purchaseHistoryItem.currentTotalQuantity > purchaseHistoryItem.newTotalQuantity) {
+      templateName =  'decremented';
+    } else {
+      templateName = 'incremented';
+    }
+
+    return templateName;
+  }
+
+  private historyItemHasChanged(historyItem: PurchaseHistoryViewModel) : boolean {
+    return historyItem.deliveryDate !== this.temporaryDeliveryDate ||
+      historyItem.revisionBulletinNo !== this.temporaryRevisionBulletinNo ||
+      historyItem.comments !== this.temporaryComments;
+  }
+}

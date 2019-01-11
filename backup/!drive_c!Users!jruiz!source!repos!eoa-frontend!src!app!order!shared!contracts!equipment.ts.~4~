@@ -1,0 +1,37 @@
+import { Comment } from '@app/order/shared/contracts/comment';
+import { ConstructionGroup } from '@app/order/shared/contracts/construction-group';
+import { Finish } from '@app/order/shared/contracts/finish';
+export interface Equipment {
+
+    id: string;
+    deliveryDate: string;
+    departmentDescription: string;
+    departmentNumber: string;
+    equipmentCode: string;
+    equipmentDescription: string;
+    previousTotalQuantity: number;
+    currentTotalQuantity: number;
+    newTotalQuantity: number;
+    floorQuantity: Array<
+    {
+        floor: string;
+        quantity: number;
+    }>;
+    manufacturer: string;
+    manufacturerDescription: string;
+    purchaseOrderNo: string;
+    orderingStatus: string;
+    purchaseOrderDiscrepancies: boolean;
+    revisionBulletinNo: string;
+    vendor: string;
+    category: string;
+    comments: Array<Comment>;
+    alternateDeliveryLocation: string;
+    lastUpdatedOn: string;
+    constructionGroupName: string;
+    constructionGroup: ConstructionGroup;
+    quantityChangeECVerified: boolean;
+    finishesSpecificationRequired: boolean;
+    finishes: Array<Finish>;
+    missingFinishes: boolean;
+}

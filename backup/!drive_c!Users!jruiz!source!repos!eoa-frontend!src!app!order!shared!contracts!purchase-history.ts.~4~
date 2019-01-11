@@ -1,0 +1,10 @@
+export interface PurchaseHistory {
+  currentTotalQuantity: string;
+  newTotalQuantity: string;
+  historyCreatedDate: string;
+  revisionBulletinNo: string;
+  deliveryDate: string;
+  comments: string;
+  purchaseOrderNo: string;
+  purchaseOrderCreationDate: string;
+}

@@ -1,0 +1,146 @@
+<div class="Purchase-History-Container">
+  <div class="Purchase-History-Container-Label">
+    Purchase history
+    <label class="Purchase-History-Toggle-Icon" [ngClass]="{'expanded':detailsExpanded}" (click)="onExpandPurchaseHistoryDetails()">
+      <span *ngIf="!detailsExpanded" class="Expand-Purchase-History-Icon"></span>
+      <span *ngIf="detailsExpanded" class="Collapse-Purchase-History-Icon"></span>
+    </label>
+  </div>
+
+  <div  *ngIf="detailsExpanded">
+    <div class="Purchase-History-Header">
+      <div class="Purchase-History-Top-Row">
+        <div class="Purchase-History-Column-PO-Number">
+          <span>PO#</span>
+        </div>
+
+        <div class="Purchase-History-Column-Status">
+          <span>STATUS</span>
+        </div>
+
+        <div class="Purchase-History-Column-Qty">
+          <span>QTY</span>
+        </div>
+
+        <div class="Purchase-History-Column-Change-Date">
+          <span>CHANGE DATE</span>
+        </div>
+
+        <div class="Purchase-History-Column-Revision">
+          <span>RB#</span>
+        </div>
+
+        <div class="Purchase-History-Column-Delivery-Date">
+          <span>DELV DATE</span>
+        </div>
+
+        <div class="Purchase-History-Column-Comments">
+          <span>COMMENTS</span>
+        </div>
+
+        <div class="Purchase-History-Column-Read-More">
+        </div>
+
+        <div class="Purchase-History-Column-Edit-Update">
+        </div>
+      </div>
+    </div>
+    
+    <ng-container *ngFor="let historyItem of purchaseHistory">
+
+      <ng-template [ngTemplateOutlet]="getHistoryItemTemplate(historyItem)" [ngTemplateOutletContext]="{ historyItem: historyItem }">
+      </ng-template>
+
+      <ng-template #viewPurchaseHistoryTemplate let-historyItem="historyItem">
+        <div class="Purchase-History-Item-Row">
+          <div class="Purchase-History-Column-PO-Number">
+            <span>{{ historyItem.purchaseOrderNo }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Status">
+            <span>{{ historyItem.status }}</span>
+          </div>
+          
+          <div class="Purchase-History-Column-Qty">
+            <span>{{ historyItem.currentTotalQuantity }}</span>
+            <span>{{ historyItem.newTotalQuantity }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Change-Date">
+            <span>{{ historyItem.historyCreatedDate | date }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Revision">
+            <span>{{ historyItem.revisionBulletinNo }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Delivery-Date">
+            <span>{{ historyItem.deliveryDate | date }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Comments-Overflow">
+            <div *ngIf="historyItem.commentsExpanded">
+              <textarea readonly class="Purchase-History-Comment-Input-Readonly" [(ngModel)]="historyItem.comments"></textarea>
+            </div>
+            <div *ngIf="!historyItem.commentsExpanded">
+              <span class="Purchase-History-Comments-Read-More">{{ historyItem.comments }}</span>
+            </div>
+          </div>
+
+          <div class="Purchase-History-Column-Read-More">
+            <button class="Purchase-History-Action-Button" type="button" (click)="onReadMoreClicked(historyItem)">
+              <span class="ButtonText">READ MORE</span>
+            </button>
+          </div>
+
+          <div class="Purchase-History-Column-Edit-Update">
+            <button class="Purchase-History-Action-Button" type="button" (click)="onEditHistoryItemClicked(historyItem)">
+              <span class="ButtonText">EDIT/UPDATE</span>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #editPurchaseHistoryTemplate let-historyItem="historyItem">
+        <div class="Purchase-History-Item-Row">
+          <div class="Purchase-History-Column-PO-Number">
+            <textarea readonly class="Purchase-History-Input-Readonly" [(ngModel)]="historyItem.purchaseOrderNo"></textarea>
+          </div>
+
+          <div class="Purchase-History-Column-Status">
+            <textarea readonly class="Purchase-History-Input-Readonly" [(ngModel)]="historyItem.status"></textarea>
+          </div>
+          
+          <div class="Purchase-History-Column-Qty">
+            <span>{{ historyItem.currentTotalQuantity }}</span>
+            <span>{{ historyItem.newTotalQuantity }}</span>
+          </div>
+
+          <div class="Purchase-History-Column-Change-Date">
+            <textarea readonly class="Purchase-History-Input-Readonly" [(ngModel)]="historyItem.historyCreatedDate"></textarea>
+          </div>
+
+          <div class="Purchase-History-Column-Revision">
+            <textarea class="Purchase-History-Input" [(ngModel)]="temporaryRevisionBulletinNo"></textarea>
+          </div>
+
+          <div class="Purchase-History-Column-Delivery-Date">
+            <app-date-picker [Id]="'Purchase-History-Delivery-Date'" [selectedDateValue]="temporaryDeliveryDate"
+                             (dateSelectionTriggered)="onDeliveryDateSelectionTriggered($event)">
+            </app-date-picker>
+          </div>
+
+          <div class="Purchase-History-Column-Comments-Overflow">
+            <textarea class="Purchase-History-Comment-Input" [(ngModel)]="temporaryComments"></textarea>
+          </div>
+
+          <div class="Purchase-History-Column-Edit-Update">
+            <button class="Purchase-History-Action-Button" type="button" (click)="onSaveHistoryItemClicked(historyItem)">
+              <span class="ButtonText">SAVE UPDATE</span>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>

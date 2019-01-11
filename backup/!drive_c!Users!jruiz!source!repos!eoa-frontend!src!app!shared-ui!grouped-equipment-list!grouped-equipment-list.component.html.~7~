@@ -1,0 +1,80 @@
+<div class="Equipment-Group-Container" *ngFor="let group of equipmentGroups; trackBy: trackGroup">
+  <div class="Group-Header" [ngClass]="group.expanded ? 'Expanded' : 'Closed'" (click)="toggleGroupCardExpansion(group)"> 
+    <div class="Row">
+      <div class="Card-Selection-Gutter" [ngClass]="group.expanded ? 'Expanded' : ''" (click)="toggleEquipmentItemsGroupSelection($event,group)" [class.Selected]="group.selected"
+           [class.Disabled]="group.disabled">
+      </div>
+
+      <div class="Group-Action">
+        <ng-template [ngTemplateOutlet]="groupActionTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+        </ng-template>
+      </div>
+      
+      <div class="Group-Title-And-Column-Title-Container">
+        <div [ngClass]="'Group-Title'">
+          <span class="Equipment-Group-Header-Text">
+            <ng-template [ngTemplateOutlet]="groupTitleTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+            </ng-template>
+          </span>
+        </div>  
+
+        <div class="List-Header" *ngIf="group.expanded" (click)="$event.stopPropagation()">
+          <div class="List-Header-Row-Wrapper">
+            <ng-template [ngTemplateOutlet]="listHeaderTemplate" [ngTemplateOutletContext]="{ group: group.groupKey }">
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="Group-Header-Action">
+        <div class="Missing-Finishes-Icon" [ngClass]="group.finishesCount > 0 ? 'Active' : ''">
+          <span class="Group-Item-Count">{{ group.finishesCount }}</span>
+        </div>
+
+        <div class="Has-Discrepancies-Icon" [ngClass]="group.discrepanciesCount > 0 ? 'Active' : ''">
+          <span class="Group-Item-Count">{{ group.discrepanciesCount }}</span>
+        </div>
+        
+        <div class="New-Item-Icon" [ngClass]="group.newItemsCount > 0 ? 'Active' : ''">
+          <span class="Group-Item-Count">{{ group.newItemsCount }}</span>
+        </div>
+        
+        <div class="Deleted-Icon" [ngClass]="group.deletedCount > 0 ? 'Active' : ''">
+          <span class="Group-Item-Count">{{ group.deletedCount }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="Group-Body" *ngIf="group.expanded">
+
+    <div class="List-Item">
+      <div class="Equipment-Card-Container" *ngFor="let item of group.items; trackBy: trackEquipment" (click)="toggleCardExpansion($event, item)">
+
+        <div class="Row">
+
+          <div class="Card-Selection-Gutter" (click)="toggleEquipmentItemSelection($event,item, group)"
+               [class.Selected]="item.selected" [class.Disabled]="item.disabled">
+          </div>
+
+          <div class="Card-Selection-Remainder">
+
+            <div class="Card-Header">
+              <ng-template [ngTemplateOutlet]="cardHeaderTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, equipment: item }">
+              </ng-template>
+            </div>
+
+            <div class="Card-Body" *ngIf="item.expanded">
+              <ng-template [ngTemplateOutlet]="cardBodyTemplate" [ngTemplateOutletContext]="{ group: group.groupKey, equipment: item }">
+              </ng-template>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

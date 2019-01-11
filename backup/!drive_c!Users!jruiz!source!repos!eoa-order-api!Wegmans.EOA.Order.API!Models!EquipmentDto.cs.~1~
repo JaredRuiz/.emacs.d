@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using Wegmans.EOA.Common.Contracts.Entities;
+
+namespace Wegmans.EOA.Order.API.Models
+{
+    public class EquipmentDto : BaseAuditUpdateInfoDto
+    {
+        public string Id { get; set; }
+
+        public DateTime? DeliveryDate { get; set; }
+
+        public string DepartmentDescription { get; set; }
+
+        public string DepartmentNumber { get; set; }
+
+        public string EquipmentCode { get; set; }
+
+        public string EquipmentDescription { get; set; }
+
+        public int PreviousTotalQuantity { get; set; }
+
+        public int? NewTotalQuantity { get; set; } = null;
+
+        public int CurrentTotalQuantity { get; set; }
+
+        public IList<FloorQuantityDto> FloorQuantity { get; set; } = new List<FloorQuantityDto>();
+
+        public string Manufacturer { get; set; }
+
+        public string ManufacturerDescription { get; set; }
+
+        public double? PurchaseOrderNo { get; set; }
+
+        public OrderingStatus OrderingStatus { get; set; }
+
+        public string RevisionBulletinNo { get; set; }
+
+        public string Vendor { get; set; }
+
+        public string Category { get; set; }
+
+        public string ConstructionGroupName { get; set; }
+
+        public IList<CommentDto> Comments { get; set; } = new List<CommentDto>();
+
+        public string AlternateDeliveryLocation { get; set; } = string.Empty;
+
+        public ProcurementMethod ProcurementMethod { get; set; }
+
+        public bool QuantityChangeECVerified { get; set; }
+
+        public bool FinishesSpecificationRequired { get; set; }
+
+        public List<Finish> Finishes { get; set; } = new List<Finish>();
+
+        public bool FinishesMissing { get; set; }
+
+        public PurchaseOrder PurchaseOrder { get; set; }
+
+        public List<OrderDiscrepancy> OrderDiscrepancies { get; set; } = new List<OrderDiscrepancy>();
+
+        public string CutSheets { get; set; }
+<<<<<<< HEAD
+=======
+
+        public List<PurchaseHistoryEntity> PurchaseHistory { get; set; } = new List<PurchaseHistoryEntity>();
+>>>>>>> develop
+    }
+}

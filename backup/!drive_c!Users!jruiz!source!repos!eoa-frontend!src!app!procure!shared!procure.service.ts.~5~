@@ -1,0 +1,177 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { Constants } from '@app/app-constants';
+import { Observable, throwError } from 'rxjs';
+import { EquipmentViewModel } from '@app/procure/shared/viewmodels/equipment-viewmodel';
+import { map, catchError } from 'rxjs/operators';
+import { CommentViewModel } from '@app/procure/shared/viewmodels/comment-viewmodel';
+import { EquipmentCommentType } from '@app/shared/enums/equipment-comment-type.enum';
+import { PurchaseOrderViewModel } from '@app/procure/shared/viewmodels/purchase-order-viewmodel';
+@Injectable({
+  providedIn: 'root'
+})
+export class ProcureService {
+
+  constructor(private http: HttpClient) { }
+
+  getEquipmentList(): Observable<EquipmentViewModel[]> {
+    const url = environment.procureAPIUrl + Constants.getProcureEquipmentsUrl;
+
+      return this.http.get<Array<EquipmentViewModel>>(url).pipe(map(equipments => {
+      equipments.forEach(equipment => {
+
+        let orderComment = equipment.comments.find(x => x.type.trimAll() === EquipmentCommentType[EquipmentCommentType.OrderingComments]);
+        // tslint:disable-next-line:max-line-length
+        let procureComment = equipment.comments.find(x => x.type.trimAll() === EquipmentCommentType[EquipmentCommentType.ProcurementComments]);
+          
+        equipment.hasComments = !!orderComment && !!orderComment.id || !!procureComment && !!procureComment.id;
+
+        if (!orderComment) {
+          orderComment = <CommentViewModel>{ 'type': 'Ordering Comments' };
+          equipment.comments.push(orderComment);
+        }
+
+        if (!procureComment) {
+          procureComment = <CommentViewModel>{ 'type': 'Procurement Comments' };
+          equipment.comments.push(procureComment);
+        }
+
+          // if (equipment.purchaseOrder) {
+          //     equipment.purchaseOrder.no =  equipment.purchaseOrder.no;
+          // }
+          // TODO: should this be no or number??
+         
+        // if (equipment.purchaseOrder) {
+        //   equipment.purchaseOrder = <PurchaseOrderViewModel>{
+        //     'no': equipment.purchaseOrder.number,
+        //     'creationDate': equipment.purchaseOrder.creationDate,
+        //     'deliveryDate': equipment.purchaseOrder.deliveryDate
+        //   };
+        // } else {
+        //   equipment.purchaseOrder = new PurchaseOrderViewModel();
+        // }
+      });
+      return equipments;
+    }));
+  }
+
+  AddCommentToEquipment(comment: CommentViewModel, projectId: string, equipmentId: string): Observable<CommentViewModel> {
+    const url = environment.procureAPIUrl + Constants.addProcureCommentForEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    return this.http.post<CommentViewModel>(url, comment);
+  }
+
+  UpdateCommentInEquipment(comment: CommentViewModel, projectId: string, equipmentId: string): Observable<CommentViewModel> {
+    const url = environment.procureAPIUrl + Constants.updateProcureCommentInEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId)
+      .replace(Constants.commentIdParam, comment.id);
+
+    return this.http.put<CommentViewModel>(url, comment);
+  }
+
+  markEquipmentItemForDirectOrder(projectId: string, equipmentId: string, commentText: string): Observable<CommentViewModel> {
+    const url = environment.procureAPIUrl + Constants.markEquipmentAsDirectOrderUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<CommentViewModel>(url, JSON.stringify(commentText), { headers: headers })
+      .pipe(
+        map((r) => {
+          return r;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  incrementEquipmentItemQuantities(
+    projectId: string,
+    equipmentId: string,
+    commentText: string,
+    amendPO: boolean): Observable<EquipmentViewModel> {
+    const url = environment.procureAPIUrl + Constants.incrementEquipmentItemQuantitiesUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<EquipmentViewModel>(url, JSON.stringify({ commentText: commentText, amendPO: amendPO }), { headers: headers })
+      .pipe(
+        map((r) => {
+          return r;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  decrementEquipmentQuantites(
+    projectId: string,
+    equipmentId: string,
+    commentText: string): Observable<EquipmentViewModel> {
+    const url = environment.procureAPIUrl + Constants.decrementEquipmentItemQuantitiesUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<EquipmentViewModel>(url, JSON.stringify({ commentText: commentText }), { headers: headers })
+      .pipe(
+        map((r) => {
+          return r;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  deleteEquipmentQuantites(
+    projectId: string,
+    equipmentId: string,
+    commentText: string): Observable<EquipmentViewModel> {
+      const url = environment.procureAPIUrl + Constants.deleteEquipmentItemQuantitiesUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+      const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<EquipmentViewModel>(url, JSON.stringify({ commentText: commentText }), { headers: headers })
+      .pipe(
+        map((r) => {
+          return r;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  updateEquipmentPurchaseOrder(projectId: string, equipmentId: string,
+    purchaseOrder: PurchaseOrderViewModel) : Observable<EquipmentViewModel> {
+      // TODO: be sure in component or here that we dont overwrite data in the original purchase
+      // order that the user didnt change
+      const url = environment.procureAPIUrl + Constants.addPurchaseOrderToEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+      const body = JSON.stringify({
+        purchaseOrderNumber: purchaseOrder.number,
+        purchaseOrderDeliveryDate: purchaseOrder.deliveryDate,
+        purchaseOrderCreationDate: purchaseOrder.creationDate
+      });
+      const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+      return this.http.put<EquipmentViewModel>(url, body, { headers: headers })
+        .pipe(
+          map((r) => {
+            return r;
+          }),
+          catchError((e: HttpErrorResponse) => {
+            return throwError(e);
+          })
+        );
+  }
+}

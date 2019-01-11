@@ -1,0 +1,45 @@
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/internal/Subject';
+import { ProjectViewModel } from '@app/order/shared/viewmodels/project-viewmodel';
+
+@Injectable()
+export class OrderInteractionService {
+
+    private LoadProjectModalSource = new Subject<string>();
+    loadProjectModalTriggered = this.LoadProjectModalSource.asObservable();
+
+    private createProjectCancellationSource = new Subject();
+    createProjectCancelTriggered = this.createProjectCancellationSource.asObservable();
+
+    private createProjectSuccessSource = new Subject();
+    createProjectSuccessTriggered = this.createProjectSuccessSource.asObservable();
+
+    private updateProjectSuccessSource = new Subject<ProjectViewModel>();
+    updateProjectSuccessTriggered = this.updateProjectSuccessSource.asObservable();
+
+    private completeProjectSource = new Subject<ProjectViewModel>();
+    openCompleteProjectModalTriggered = this.completeProjectSource.asObservable();
+
+    constructor() { }
+
+    openCompleteProjectModal() {
+        this.completeProjectSource.next();
+    }
+    
+    notifyCreateProjectCancelled() {
+        this.createProjectCancellationSource.next();
+    }
+
+    notifyLoadProjectModal(title: string) {
+        this.LoadProjectModalSource.next(title);
+    }
+
+    notifyCreateProjectSuccess() {
+        this.createProjectSuccessSource.next();
+    }
+
+    notifyUpdateProjectSuccess(updatedProject: ProjectViewModel) {
+        this.updateProjectSuccessSource.next(updatedProject);
+    }
+}
+

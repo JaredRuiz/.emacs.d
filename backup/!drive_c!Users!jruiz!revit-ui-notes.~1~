@@ -1,0 +1,7 @@
+notes on Revit UI stuff:
+It looks like we have little control over how things look style-wise...no css etc. as far as I can tell. However, we can add custom images for buttons and labels. Here is a more detailed list of basically everything we can do: https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2017/ENU/Revit-API/files/GUID-1547E521-59BD-4819-A989-F5A238B9F2B3-htm.html, and here is the TLDR version:
+- we can add new tabs to Revit with custom name/text, or add new features to an existing tab
+- any new tab (or one we modify/add to) can have buttons, vertical bars/separators, dropdowns which contain more buttons, and that's about it.
+- there 
+- The amount of styling we can do with these buttons or clickable items seems to be changing the color or adding an image, but no more than that.
+- We have control over the text for each button and can add tooltips.

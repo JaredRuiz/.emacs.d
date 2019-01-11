@@ -1,0 +1,59 @@
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild, TemplateRef } from '@angular/core';
+import { CommentViewModel } from '@app/procure/shared/viewmodels/comment-viewmodel';
+import { EquipmentViewModel } from '@app/order/shared/viewmodels/equipment-viewmodel';
+declare var $: any;
+
+@Component({
+  selector: 'app-equipment-comment',
+  templateUrl: './equipment-comment.component.html'
+})
+export class EquipmentCommentComponent implements OnInit {
+
+  @ViewChild('viewCommentTemplate') viewCommentTemplate: TemplateRef<any>;
+  @ViewChild('editCommentTemplate') editCommentTemplate: TemplateRef<any>;
+  @ViewChild('addCommentTemplate') addCommentTemplate: TemplateRef<any>;
+  originalComments: CommentViewModel[];
+
+  @Input() canEdit = true;
+
+  _equipment = new EquipmentViewModel();
+  @Input() set equipment(value: EquipmentViewModel) {
+    this._equipment = value;
+    if (this._equipment && this._equipment.comments && this._equipment.comments.length > 0) {
+      this._equipment.comments.sort((a, b) => a.type.localeCompare(b.type));
+      this.originalComments = $.extend(true, [], this._equipment.comments);
+    }
+  }
+  get equipment() {
+    return this._equipment;
+  }
+
+  @Output() saveComment = new EventEmitter<any>();
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  onSaveComment(comment: any, equipment: any) {
+    if (comment.id && !comment.comment) {
+      comment.comment = this.originalComments.find(x => x.id === comment.id).comment;
+      comment.beingEdited = false;
+      return;
+    }
+    this.originalComments.find(x => x.id === comment.id).comment = comment.comment;
+    this.saveComment.emit({ comment, equipment });
+  }
+
+  trackComment(index, comment: CommentViewModel) {
+    return comment ? comment.id : index;
+  }
+
+  getCommentTemplate(comment) {
+    if ((!comment || !comment.comment) && !comment.beingEdited) {
+      return this.addCommentTemplate;
+    }
+    return comment.beingEdited ? this.editCommentTemplate : this.viewCommentTemplate;
+  }
+
+}

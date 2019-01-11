@@ -1,0 +1,54 @@
+import { Component, OnInit, Input, ViewChild, TemplateRef } from '@angular/core';
+import { PurchaseHistoryViewModel } from '@app/order/shared/viewmodels/purchase-history-viewmodel';
+
+@Component({
+  selector: 'app-purchase-history-details',
+  templateUrl: './purchase-history.component.html'
+})
+export class EquipmentItemPurchaseHistoryComponent implements OnInit {
+
+  @ViewChild('viewPurchaseHistoryTemplate') viewPurchaseHistoryTemplate: TemplateRef<any>;
+  @ViewChild('editPurchaseHistoryTemplate') editPurchaseHistoryTemplate: TemplateRef<any>;
+
+  @Input() canEdit = true;
+  @Input() purchaseHistory;
+
+  detailsExpanded = false;
+  temporaryRevisionBulletinNo: string;
+  temporaryDeliveryDate: string;
+  temporaryComments: string;
+    
+  constructor() { }
+  
+  ngOnInit() {}
+
+  onExpandPurchaseHistoryDetails() {
+    this.detailsExpanded = !this.detailsExpanded;
+  }
+
+  getHistoryItemTemplate(historyItem: PurchaseHistoryViewModel) {
+    return historyItem.beingEdited ? this.editPurchaseHistoryTemplate : this.viewPurchaseHistoryTemplate;
+  }
+    
+  onReadMoreClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.commentsExpanded = !historyItem.commentsExpanded;
+  }
+
+  onEditHistoryItemClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.beingEdited = true;
+    this.temporaryDeliveryDate = historyItem.deliveryDate;
+    this.temporaryRevisionBulletinNo = historyItem.revisionBulletinNo;
+    this.temporaryComments = historyItem.comments;
+  }
+
+  onSaveHistoryItemClicked(historyItem: PurchaseHistoryViewModel) {
+    historyItem.beingEdited = false;
+    historyItem.deliveryDate = this.temporaryDeliveryDate;
+    historyItem.revisionBulletinNo = this.temporaryRevisionBulletinNo;
+    historyItem.comments = this.temporaryComments;
+  }
+
+  onDeliveryDateSelectionTriggered(deliveryDate) {
+    this.temporaryDeliveryDate = deliveryDate;
+  }
+}

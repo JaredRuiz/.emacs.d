@@ -1,0 +1,86 @@
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { fromEvent, Subscription } from 'rxjs';
+declare var $: any;
+
+@Component({
+  selector: 'app-date-picker',
+  templateUrl: './date-picker.component.html'
+})
+export class DatePickerComponent implements OnInit, OnDestroy {
+
+  datePicker: any;
+  selectedDate: Date;
+  isCalendarOpened = false;
+  subscription$ = new Subscription();
+  airDatePickerOptions: any;
+  todayDate = new Date(new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate());
+
+
+  selectedDateValueTracked: string;
+  @Input() set selectedDateValue(value: string) {
+    if (value) {
+      const newDate = new Date(value);
+      this.selectedDate = new Date(newDate.getTime() + newDate.getTimezoneOffset() * 60000);
+      this.selectedDateValueTracked = this.selectedDate.toLocaleDateString();
+    } else {
+      this.selectedDate = new Date(this.todayDate.getTime() + this.todayDate.getTimezoneOffset() * 60000);
+      this.selectedDateValueTracked = '';
+    }
+  }
+
+  @Output() dateSelectionTriggered = new EventEmitter();
+
+  @Input() Id: string;
+  @Input() choosePastDates: boolean = false;
+
+  constructor() {}
+
+  ngOnInit() {
+    const mouseUp$ = fromEvent(document, 'mouseup');
+    this.subscription$.add(mouseUp$.subscribe((event: any) => {
+      if (!$(event.srcElement).parents().hasClass(this.Id + '-Form-Control-Calendar-Container') &&
+        this.isCalendarOpened) {
+        this.isCalendarOpened = false;
+      }
+    }));
+
+    this.airDatePickerOptions = {
+      timepicker: false,
+      datepicker: true,
+      enabledDateRanges: [
+        {
+          start: this.choosePastDates ? new Date('1980-12-31') : this.todayDate,
+          end: new Date('9999-12-31')
+        }
+      ]
+    };
+
+ }
+
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+  }
+
+  onCalendarButtonClicked() {
+    this.isCalendarOpened = !this.isCalendarOpened;
+  }
+
+  onDateSelected() {
+    this.isCalendarOpened = false;
+    this.selectedDate = new Date(this.selectedDate.getTime() + this.selectedDate.getTimezoneOffset() * 60000);
+    this.selectedDateValue = this.selectedDate.toLocaleDateString();
+    this.dateSelectionTriggered.emit(new Date(this.selectedDateValueTracked).toISOString());
+  }
+
+  onKeyPressed(event) {
+    event.preventDefault();
+  }
+
+  onInputDateChanged(s: string) {
+    this.selectedDate = new Date(s);
+
+
+
+
+  }
+}

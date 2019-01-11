@@ -1,0 +1,7 @@
+export interface PurchaseOrder {
+    id: string;
+    number: string;
+    creationDate: string;
+    deliveryDate: string;
+    message: string;
+}

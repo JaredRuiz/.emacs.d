@@ -1,0 +1,9 @@
+
+import { ReportProjectViewModel } from '@app/report/shared/view-models/report-project-viewmodel';
+import { ReportColumnHeaderViewModel } from '@app/report/shared/view-models/report-column-header-viewmodel';
+
+export class ReportViewModel {
+    projects: Array<ReportProjectViewModel>;
+    reportHeaders: Array<ReportColumnHeaderViewModel>;
+    reportData: Array<any>;
+}

@@ -1,0 +1,47 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { OrderRoutingModule } from '@app/order/order-routing.module';
+import { OrderService } from '@app/order/shared/order.service';
+import { EquipmentListComponent } from '@app/order/equipment-list/equipment-list.component';
+import { SharedUiModule } from '@app/shared-ui/shared-ui.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
+import { NewProjectOptionsComponent } from '@app/order/new-project-options/new-project-options.component';
+import { OrderInteractionService } from '@app/order/shared/order-interaction.service';
+import { NewStoreProjectDetailsComponent } from '@app/order/new-store-project-details/new-store-project-details.component';
+import { RemodelStoreProjectDetailsComponent } from '@app/order/remodel-store-project-details/remodel-store-project-details.component';
+import { ProjectShellComponent } from '@app/order/project-shell/project-shell.component';
+import { AdminService } from '@app/admin/shared/admin.service';
+import { EditEquipmentItemComponent } from './edit-equipment-item/edit-equipment-item.component';
+import { EquipmentDeliveryDatesComponent } from './equipment-delivery-dates/equipment-delivery-dates.component';
+import { EquipmentItemPurchaseHistoryComponent } from './purchase-history/purchase-history.component';
+import { RegularTextForm } from '@app/order/shared/regular-text-form.pipe.ts';
+import { EquipmentBannerComponent } from './equipment-banner/equipment-banner.component';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    OrderRoutingModule,
+    SharedUiModule,
+    NgSelectModule,
+    FormsModule
+  ],
+  declarations: [
+    EquipmentListComponent,
+    NewProjectOptionsComponent,
+    NewStoreProjectDetailsComponent,
+    RemodelStoreProjectDetailsComponent,
+    ProjectShellComponent,
+    EditEquipmentItemComponent,
+    EquipmentDeliveryDatesComponent,
+    EquipmentItemPurchaseHistoryComponent,
+    RegularTextForm,
+    EquipmentBannerComponent
+  ],
+  providers: [
+    OrderService,
+    OrderInteractionService,
+    AdminService
+  ]
+})
+export class OrderModule { }

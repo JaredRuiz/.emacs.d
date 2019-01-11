@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Wegmans.EOA.Common</id>
+<<<<<<< HEAD
+    <version>0.0.56-alpha</version>
+=======
+    <version>0.0.57-alpha</version>
+>>>>>>> develop
+    <title>Wegmans.EOA.Common</title>
+    <authors>Wegmans</authors>
+    <owners>Wegmans</owners>
+    <projectUrl>https://wegmans.visualstudio.com/BASS1/CEI/</projectUrl>
+    <iconUrl>https://wegmans.visualstudio.com/BASS1/CEI/_git/eoa-backend-common</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Common code used in EOA API projects (contracts, storage, security, etc.)</description>
+    <releaseNotes>Updates for EAM integration</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+  </metadata>
+</package>

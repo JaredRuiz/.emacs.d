@@ -1,0 +1,175 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { Constants } from '@app/app-constants';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { EquipmentViewModel } from '@app/order/shared/viewmodels/equipment-viewmodel';
+import { ProjectListItemViewModel } from '@app/order/shared/viewmodels/project-list-item-viewmodel';
+import { CommentViewModel } from '@app/order/shared/viewmodels/comment-viewmodel';
+import { Project } from '@app/order/shared/contracts/project';
+import { Department } from '@app/order/shared/contracts/department';
+import { EquipmentItemPatchDocumentModel } from '@app/shared/models/equipment-item-patch-document.model';
+import { SplitEquipmenViewModel } from '@app/order/shared/viewmodels/split-equipment-viewmodel';
+import { EquipmentCommentType } from '@app/shared/enums/equipment-comment-type.enum';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OrderService {
+
+  constructor(private http: HttpClient) { }
+
+  getProjectDetails(projectId: string): Observable<Project> {
+    const url = environment.orderAPIBaseUrl +
+      Constants.getProjectDetailsUrl.replace(Constants.projectIdParam, projectId);
+    return this.http.get<Project>(url).pipe(map((r) => {
+      r.equipments.forEach(equipmentItem => {
+        this.mapEquipmentFields(<EquipmentViewModel>equipmentItem);
+      });
+      return r;
+    }));
+  }
+
+  getProjects(): Observable<Array<ProjectListItemViewModel>> {
+    const url = environment.orderAPIBaseUrl + Constants.getProjectListUrl;
+    return this.http.get<Array<ProjectListItemViewModel>>(url);
+  }
+
+  createProject(newProject: Project): Observable<Boolean> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const url = environment.orderAPIBaseUrl +
+      Constants.createProjectUrl;
+
+    return this.http.post<Project>(url, JSON.stringify(newProject), { headers: headers, observe: 'response' })
+      .pipe(
+        map((r) => {
+          return true;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  updateProject(updatedProject: Project): Observable<Project> {
+    const url = environment.orderAPIBaseUrl + Constants.updateProjectUrl
+      .replace(Constants.projectIdParam, updatedProject.id);
+    return this.http.put<Project>(url, updatedProject)
+      .pipe(
+        map((r) => {
+          return r;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e);
+        })
+      );
+  }
+
+  AddCommentToEquipment(comment: CommentViewModel, projectId: string, equipmentId: string): Observable<CommentViewModel> {
+    const url = environment.orderAPIBaseUrl + Constants.addCommentForEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    return this.http.post<CommentViewModel>(url, comment);
+  }
+
+  getDepartments(allInclusive: boolean): Observable<Array<Department>> {
+    const url = environment.adminAPIBaseUrl + Constants.getDepartmentsUrl;
+    const httpParams = new HttpParams().set('allInclusive', allInclusive ? 'true' : 'false');
+    return this.http.get<Array<Department>>(url, { params: httpParams }).pipe(map((r) => r));
+  }
+
+  UpdateCommentInEquipment(comment: CommentViewModel, projectId: string, equipmentId: string): Observable<CommentViewModel> {
+    const url = environment.orderAPIBaseUrl + Constants.updateCommentInEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId)
+      .replace(Constants.commentIdParam, comment.id);
+
+    return this.http.put<CommentViewModel>(url, comment);
+  }
+
+  patchEquipmentUpdates(
+    projectId: string,
+    equipmentId: string,
+    updatePath: string,
+    modifiedEquipmentPatch: Array<EquipmentItemPatchDocumentModel>): Observable<EquipmentViewModel> {
+    const url = (environment.orderAPIBaseUrl + Constants.patchEquipmenUpdatesUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId)) + updatePath;
+    return this.http.patch<EquipmentViewModel>(url, modifiedEquipmentPatch).pipe(map(equipment => {
+      this.mapEquipmentFields(equipment);
+      return equipment;
+    }));
+  }
+
+  splitEquipments(projectId: string, equipmentId: string,
+    splittedEquipment: SplitEquipmenViewModel): Observable<Array<EquipmentViewModel>> {
+    const url = environment.orderAPIBaseUrl + Constants.splitEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+
+    return this.http.put<Array<EquipmentViewModel>>(url, splittedEquipment).pipe(map(equipments => {
+      equipments.forEach(equipment => {
+        this.mapEquipmentFields(equipment);
+      });
+      return equipments;
+    }));
+  }
+
+  generateEquipmentDeliveryDates(projectId: string) {
+    const url = environment.orderAPIBaseUrl + Constants.generateEquipmentDeliveryDatesUrl
+      .replace(Constants.projectIdParam, projectId);
+
+    return this.http.put(url, null);
+  }
+
+  sendSelectedEquipmentsToProcure(projectId: string, ids: string[]) {
+
+    const url = environment.orderAPIBaseUrl + Constants.sendSelectedEquipmentsToProcureUrl
+      .replace(Constants.projectIdParam, projectId);
+
+    return this.http.put(url, ids);
+  }
+
+  updateEquipmentQuantity(projectId: string, equipmentId: string): Observable<EquipmentViewModel> {
+    const url = environment.orderAPIBaseUrl + Constants.updateCommentInEquipmentUrl
+      .replace(Constants.projectIdParam, projectId)
+      .replace(Constants.equipmentIdParam, equipmentId);
+    return this.http.put<EquipmentViewModel>(url, null);
+  }
+
+  private mapEquipmentFields(equipment: EquipmentViewModel) {
+
+    let orderComment = equipment.comments.find(x => x.type.trimAll() === EquipmentCommentType[EquipmentCommentType.OrderingComments]);
+    let procureComment = equipment.comments.find(x => x.type.trimAll() === EquipmentCommentType[EquipmentCommentType.ProcurementComments]);
+
+    equipment.hasComments = !!orderComment && !!orderComment.id || !!procureComment && !!procureComment.id;
+
+    if (!orderComment) {
+      orderComment = <CommentViewModel>{ 'type': 'Ordering Comments' };
+      equipment.comments.push(orderComment);
+    }
+
+    if (!procureComment) {
+      procureComment = <CommentViewModel>{ 'type': 'Procurement Comments' };
+      equipment.comments.push(procureComment);
+    }
+
+    equipment.finishesData = this.mapFinishes(equipment);
+  }
+
+  private mapFinishes(equipment: EquipmentViewModel) {
+    let finishesString;
+      
+    if (equipment.finishesSpecificationRequired) {
+      finishesString = Object.keys(equipment.finishes).every(key => {
+        return equipment.finishes[key];
+      }) ? 'Required Finishes Defined' : 'Required Finishes Missing';
+    } else {
+      finishesString = 'Does Not Require Finishes';
+    }
+
+    return finishesString;
+  }
+}

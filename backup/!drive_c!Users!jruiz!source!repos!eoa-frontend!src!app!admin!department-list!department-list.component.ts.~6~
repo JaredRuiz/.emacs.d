@@ -1,0 +1,174 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { DepartmentViewModel } from '@app/admin/shared/viewmodels/department.viewmodel';
+import { ModalDialogComponent } from '@app/shared-ui/modal-dialog/modal-dialog.component';
+import { AdminService } from '@app/admin/shared/admin.service';
+declare var $: any;
+
+@Component({
+  selector: 'app-department-list',
+  templateUrl: './department-list.component.html'
+})
+export class DepartmentListComponent implements OnInit {
+
+  @ViewChild('createDepartmentModal') createDepartmentModal: ModalDialogComponent;
+  @ViewChild('createDeptForm') createDeptForm: NgForm;
+
+  allDepartments: Array<DepartmentViewModel>;
+  departments: Array<DepartmentViewModel>;
+  selectedDepartment: DepartmentViewModel = new DepartmentViewModel();
+  departmentNumberInvalid: boolean = false;    
+  searchTerm = '';
+
+  constructor(private adminService: AdminService) { }
+
+  ngOnInit() {
+
+    this.adminService.getDepartments(true).subscribe(x => {
+      this.allDepartments = <DepartmentViewModel[]>x;
+      this.allDepartments.sort((a, b) => (a.number + a.description).localeCompare(b.number + b.description));
+      this.filterDepartments();
+    });
+  }
+
+  onCreateNewDepartment() {
+    this.selectedDepartment = new DepartmentViewModel();
+    this.createDeptForm.form.reset();
+    this.createDepartmentModal.show();
+  }
+
+  onEditDepartment(department: DepartmentViewModel) {
+    // make a deep copy of the department so UI does not accidentally update
+    this.selectedDepartment = $.extend(true, {}, department);
+    this.createDepartmentModal.show();
+  }
+
+  onCreateDepartmentCancelled() {
+    this.createDeptForm.form.reset();
+    this.createDepartmentModal.hide();
+  }
+    
+  onCreateDepartmentConfirmed() {
+    this.padSelectedDepartmentNumber();
+        
+    if (this.selectedDepartment.id) {
+      this.tryUpdatingDepartment();
+    } else {
+      this.saveDepartment();
+    }
+  }
+
+  tryUpdatingDepartment() {
+    if (this.departmentNumberIsDuplicate()) {
+      this.createDeptForm.form.controls['deptNumberInput'].
+        setErrors({ 'duplicate': true });
+    } else if (this.departmentNameIsDuplicate()) {
+      this.createDeptForm.form.controls['deptNameInput']
+        .setErrors({ 'duplicate': true });
+    } else {
+      this.updateDepartment();
+    }
+  }
+
+  updateDepartment() {
+      this.adminService.updateDepartment(this.selectedDepartment).subscribe(x => {
+        let updatedDepartment = <DepartmentViewModel>x;
+        const indexToReplace = this.departments.map(a => a.id).indexOf(updatedDepartment.id);
+          
+        if (indexToReplace >= 0) {
+          this.departments.splice(indexToReplace, 1, updatedDepartment);
+        } else {
+          this.departments.push(updatedDepartment);
+        }
+
+        this.allDepartments.sort((a, b) => (a.number + a.description).localeCompare(b.number + b.description));          
+        this.filterDepartments();
+        this.createDepartmentModal.hide();
+      }, e => {
+        const propertyInError = Object.keys(e.error)[0];
+          
+        if (propertyInError === 'id') {
+          this.createDeptForm.form.controls['deptIdInput'].setErrors({ 'invalid': true });
+        } else if (propertyInError === 'description') {
+          this.createDeptForm.form.controls['deptNameInput'].setErrors({ 'invalid': true });
+        } else if (propertyInError === 'number') {
+          this.createDeptForm.form.controls['deptNumberInput'].setErrors({ 'invalid': true });
+        }
+      });      
+  }
+
+  saveDepartment() {
+    this.adminService.createDepartment(this.selectedDepartment).subscribe(x => {
+      this.departments.push(<DepartmentViewModel>x);
+      this.departments.sort((a, b) => (a.number + a.description).localeCompare(b.number + b.description));
+      this.createDepartmentModal.hide();
+    }, e => {
+      const propertyInError = Object.keys(e.error)[0];
+      if (propertyInError === 'description') {
+        this.createDeptForm.form.controls['deptNameInput'].setErrors({ 'duplicate': true });
+      } else if (propertyInError === 'number') {
+        this.createDeptForm.form.controls['deptNumberInput'].setErrors({ 'duplicate': true });
+      }
+    });
+  }
+    
+  onSearch() {
+    this.filterDepartments();
+  }
+
+  trackDepartment(index, department: DepartmentViewModel) {
+    return department ? department.id : index;
+  }
+
+  filterDepartments() {
+    if (!this.allDepartments) {
+      return;
+    }
+
+    if (!this.searchTerm) {
+      this.departments = this.allDepartments;
+      return;
+    }
+
+    this.departments = this.allDepartments.filter(x =>
+      (x.description && x.description.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
+      (x.number && x.number.toLowerCase().includes(this.searchTerm.toLowerCase()))
+    );
+  }
+
+  private departmentNumberIsDuplicate() : boolean {
+    let matchingDepartments = this.departments
+      .find(x => x.number === this.selectedDepartment.number);
+    let duplicate = false;
+
+    if (matchingDepartments) {
+      duplicate = true;
+    }
+
+    return duplicate;
+  }
+
+  private departmentNameIsDuplicate() : boolean {
+    let matchingDepartments = this.departments
+      .find(x => x.description === this.selectedDepartment.description);
+    let duplicate = false;
+
+    if (matchingDepartments) {
+      duplicate = true;
+    }
+
+    return duplicate;
+  }    
+
+  private padSelectedDepartmentNumber() {
+    var departmentNumber = this.selectedDepartment.number;
+      
+    if (departmentNumber.length <= 1) {
+      departmentNumber = '00' + departmentNumber;
+    }
+
+    if (departmentNumber.length === 2) {
+      departmentNumber = '0' + departmentNumber;
+    }
+  }
+}

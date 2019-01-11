@@ -1,0 +1,9 @@
+{
+  "OrderApiBase": "https://wfm-eoa-orderapi-cert.azurewebsites.net/",
+  "QueueConnectionString": "Endpoint=sb://eoa-servicebus-cert.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=yOIZt5YPqBVh8kvbxHiYbD8GIAdb1KSIstGpv0H6vEk=",
+  "ClientId": "e5672aca-fdc8-45ab-b936-89714473eef2",
+  "TenantId": "e762425f-d31b-4ea9-9259-ed6d3e077594",
+  "Instance": "https://login.microsoftonline.com/",
+  "AccessKey": "mXO1OfgJkyEPxRLyBJy1BFyLC8vTzKJtgN6uKRwEZ48=",
+  "EOACreateProjectURL": "http://wfm-eoa-cert.azurewebsites.net/"
+}

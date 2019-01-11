@@ -1,0 +1,49 @@
+.Shopping-Cart-Banner {
+  border-radius: 2px;
+  box-shadow: 0 -2px 3px 0 $dark-blue-grey-20;
+  background-color: $pale-grey-five;
+  border: solid 1px $bluey-grey-46;
+  width: 100%;
+  right: 0px;
+  position: fixed;
+  bottom: 0;
+}
+
+.Shopping-Cart-Container {
+  @extend .d-flex;
+  @extend .mb-3;
+  margin: 15px 30px 15px 30px;
+  border-radius: 2px;
+  background-color: $white; //   background-color: var(--white);
+  box-shadow: 0 0 10px 0 $dark-grey-blue-20;
+}
+
+.Shopping-Cart-Ellipsis-Icon {
+  width: 18px;
+  height: 18px;
+  background-color: $lip-stick;
+  border-radius: 10px;
+  position: fixed;
+  margin-left: -10px;
+  margin-top: -8px;
+}
+
+.Shopping-Cart-Details-Text {
+  @extend .p-2;
+  @extend .d-flex;
+  @extend .align-items-center;
+  @extend .flex-grow-1;
+  padding-left: 25px !important;
+}
+
+.Shopping-Cart-Button-Container {
+  @extend .p-2;
+  @extend .d-flex;
+  @extend .align-items-center;
+  padding: 0px !important;
+  padding-right: 15px !important;
+  button {
+    @extend .Primary-Default-Button;
+    height: 45px !important;
+  }
+}

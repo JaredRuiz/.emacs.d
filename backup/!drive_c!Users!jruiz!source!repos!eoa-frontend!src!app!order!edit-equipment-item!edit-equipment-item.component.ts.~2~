@@ -1,0 +1,140 @@
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { EquipmentViewModel } from '@app/order/shared/viewmodels/equipment-viewmodel';
+import { SplitEquipmenViewModel } from '@app/order/shared/viewmodels/split-equipment-viewmodel';
+import { FormGroup, FormArray, FormControl, NgForm } from '@angular/forms';
+declare var $: any;
+
+@Component({
+  selector: 'app-edit-equipment-item',
+  templateUrl: './edit-equipment-item.component.html'
+})
+export class EditEquipmentItemComponent implements OnInit {
+
+  @ViewChild('editEquipmentForm') editEquipmentForm: NgForm;
+
+  equipmentItemSelectedToEditTracked = new EquipmentViewModel();
+  @Input() set equipmentItemSelectedToEdit(value: EquipmentViewModel) {
+    this.equipmentItemSelectedToEditTracked = $.extend(true, {}, value);
+    this.orginialEquipmentItemSelectedToEdit = $.extend(true, {}, value);
+  }
+  get equipmentItemSelectedToEdit() {
+    return $.extend(true, {}, this.equipmentItemSelectedToEditTracked);
+  }
+
+  orginialEquipmentItemSelectedToEdit: EquipmentViewModel;
+  displaySplitQuantity = false;
+  addAlternateDeliveryLocation = false;
+  splitEquipmentItem: SplitEquipmenViewModel;
+  disableSplitButton = false;
+
+  @Output() cancelEquipmentItemEditTriggered = new EventEmitter();
+  @Output() saveEquipmentItemUpdatesTriggered = new EventEmitter<any>();
+
+  private static markAsTouched(group: FormGroup | FormArray) {
+    Object.keys(group.controls).map((field) => {
+      const control = group.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof FormGroup) {
+        this.markAsTouched(control);
+      }
+    });
+  }
+
+  constructor() { }
+
+  ngOnInit() { }
+
+  onSplitQuantityButtonClicked() {
+    if (this.equipmentItemSelectedToEditTracked.currentTotalQuantity > 1) {
+      this.displaySplitQuantity = true;
+      this.splitEquipmentItem = <SplitEquipmenViewModel>{
+        splitItemRevisionBulletinNo: this.equipmentItemSelectedToEditTracked.revisionBulletinNo,
+        splitItemDeliveryDate: this.equipmentItemSelectedToEditTracked.deliveryDate,
+        splitQuantity: 1,
+        alternateDeliveryLocation: ''
+      };
+      this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity - 1;
+    }
+  }
+
+  onOriginalQuantityChangeClicked(isIncrement) {
+    if (!this.displaySplitQuantity) {
+      return;
+    }
+    if (isIncrement) {
+      // tslint:disable-next-line:max-line-length
+      if (this.equipmentItemSelectedToEditTracked.currentTotalQuantity < this.orginialEquipmentItemSelectedToEdit.currentTotalQuantity - 1) {
+        this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity + 1;
+        this.splitEquipmentItem.splitQuantity = this.splitEquipmentItem.splitQuantity - 1;
+      }
+    } else {
+      if (this.equipmentItemSelectedToEditTracked.currentTotalQuantity > 1) {
+        this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity - 1;
+        this.splitEquipmentItem.splitQuantity = this.splitEquipmentItem.splitQuantity + 1;
+      }
+    }
+  }
+
+  onSplitEquipmentItemQuantityChangeClicked(isIncrement) {
+    if (isIncrement) {
+      if (this.equipmentItemSelectedToEditTracked.currentTotalQuantity > 1) {
+        this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity - 1;
+        this.splitEquipmentItem.splitQuantity = this.splitEquipmentItem.splitQuantity + 1;
+      }
+    } else {
+      if (this.splitEquipmentItem.splitQuantity > 1) {
+        this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity + 1;
+        this.splitEquipmentItem.splitQuantity = this.splitEquipmentItem.splitQuantity - 1;
+      }
+    }
+  }
+
+  onEquipmentItemDeliveryDateSelectionTriggered(selectedDeliveryDate) {
+    this.equipmentItemSelectedToEditTracked.deliveryDate = selectedDeliveryDate;
+  }
+
+  onSplitEquipmentItemDeliveryDateSelectionTriggered(selectedDeliveryDate) {
+    this.splitEquipmentItem.splitItemDeliveryDate = selectedDeliveryDate;
+  }
+
+  onSaveEquipmentItemUpdatesClicked() {
+    EditEquipmentItemComponent.markAsTouched(this.editEquipmentForm.form);
+    if (this.editEquipmentForm.valid && this.displaySplitQuantity && this.splitEquipmentItem.splitQuantity > 0) {
+      this.splitEquipmentItem.remainderQuantity = this.equipmentItemSelectedToEditTracked.currentTotalQuantity;
+      this.splitEquipmentItem.editItemdeliveryDate = this.equipmentItemSelectedToEditTracked.deliveryDate;
+      this.splitEquipmentItem.editItemRevisionBulletinNo = this.equipmentItemSelectedToEditTracked.revisionBulletinNo;
+      this.saveEquipmentItemUpdatesTriggered.emit(
+        { editEquimentItem: this.equipmentItemSelectedToEditTracked, splitEquipmentItem: this.splitEquipmentItem }
+      );
+      this.reset();
+    } else if (this.editEquipmentForm.valid && !this.displaySplitQuantity) {
+      this.saveEquipmentItemUpdatesTriggered.emit(
+        { editEquimentItem: this.equipmentItemSelectedToEditTracked }
+      );
+      this.reset();
+    }
+  }
+
+  onCancelEquipmentItemUpdatesClicked() {
+    this.equipmentItemSelectedToEditTracked.deliveryDate = this.orginialEquipmentItemSelectedToEdit.deliveryDate;
+    this.equipmentItemSelectedToEditTracked.revisionBulletinNo = this.orginialEquipmentItemSelectedToEdit.revisionBulletinNo;
+    this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.orginialEquipmentItemSelectedToEdit.currentTotalQuantity;
+    this.reset();
+    this.cancelEquipmentItemEditTriggered.emit();
+  }
+
+  onHideSplitQuantityCardClicked() {
+    this.reset();
+    this.displaySplitQuantity = false;
+    this.splitEquipmentItem = null;
+    this.equipmentItemSelectedToEditTracked.currentTotalQuantity = this.orginialEquipmentItemSelectedToEdit.currentTotalQuantity;
+  }
+
+  private reset() {
+    this.displaySplitQuantity = false;
+    this.splitEquipmentItem = null;
+    this.addAlternateDeliveryLocation = false;
+    this.disableSplitButton = false;
+  }
+}

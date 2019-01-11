@@ -1,0 +1,159 @@
+.Base-Icon-Font {
+  font-family: $icon-font-family !important;
+}
+
+.Space-Man {
+  padding-right: 10px;
+}
+
+.Plus-Icon {
+  @extend .icon-add-icon;
+  @extend .Base-Icon-Font;
+}
+
+.Plus-Solid-Icon {
+  @extend .icon-add-solid;
+  @extend .Base-Icon-Font;
+}
+
+<<<<<<< HEAD
+.Accessory-Icon {
+  @extend .icon-accessory;
+=======
+.Lightning-Bolt-Solid-Icon {
+  @extend .icon-recent-add;
+  @extend .Base-Icon-Font;
+}
+
+.Copy-Icon {
+  @extend .icon-copy-1;
+>>>>>>> develop
+  @extend .Base-Icon-Font;
+}
+
+.Close-Icon {
+  @extend .icon-close-icon;
+  @extend .Base-Icon-Font;
+}
+
+.Location-Icon {
+  @extend .icon-location-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Construction-Icon {
+  @extend .icon-hammer-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Department-Icon {
+  @extend .icon-department-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Finish-Icon {
+  @extend .icon-brush-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Category-Icon {
+  @extend .icon-category-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Vendor-Icon {
+  @extend .icon-store-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Manufacture-Icon {
+  @extend .icon-manufacture-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Sort-Up-Icon {
+  @extend .icon-sort-up;
+  @extend .Base-Icon-Font;
+}
+
+.Sort-Down-Icon {
+  @extend .icon-sort-down;
+  @extend .Base-Icon-Font;
+}
+
+.Back-Arrow-Icon {
+  @extend .icon-back-arrow;
+  @extend .Base-Icon-Font;
+}
+
+.Calendar-Icon {
+  @extend .icon-calendar-icon;
+  @extend .Base-Icon-Font;
+}
+
+.Accordion-Open-Icon {
+  @extend .icon-accordian-opener;
+  @extend .Base-Icon-Font;
+}
+
+.Accordion-Close-Icon {
+  @extend .icon-accordian-closer;
+  @extend .Base-Icon-Font;
+}
+
+.Comment-Icon {
+  @extend .icon-comment;
+  @extend .Base-Icon-Font;
+}
+
+.Status-Icon {
+  @extend .icon-status-dark;
+  @extend .Base-Icon-Font;
+}
+
+.Check-Icon {
+  @extend .icon-circle-check;
+  @extend .Base-Icon-Font;
+}
+
+.Discrepancies-Icon {
+  @extend .icon-warning;
+  @extend .Base-Icon-Font;
+}
+
+.Edit-Icon {
+  @extend .icon-edit;
+  @extend .Base-Icon-Font;
+  margin-right: 6px;
+}
+
+.Delete-Icon {
+  @extend .icon-deleted;
+  @extend .Base-Icon-Font;
+  cursor: pointer;
+}
+
+.Search-Icon {
+  @extend .icon-search;
+  @extend .Base-Icon-Font;
+}
+
+.Backward-Icon {
+  @extend .icon-backward;
+  @extend .Base-Icon-Font;
+}
+
+.Forward-Icon {
+  @extend .icon-forward;
+  @extend .Base-Icon-Font;
+}
+
+.Split-Icon {
+  @extend .icon-split;
+  @extend .Base-Icon-Font;
+}
+
+.Short-Arrow-Icon {
+  @extend .icon-short-arrow;
+  @extend .Base-Icon-Font;
+}

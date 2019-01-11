@@ -1,0 +1,16 @@
+import { EquipmentGroupCardModel } from '@app/shared-ui/equipment-group-card-model';
+import { EquipmentViewModel } from '@app/order/shared/viewmodels/equipment-viewmodel';
+
+export class EquipmentGroupViewModel implements EquipmentGroupCardModel {
+    groupKey: string;
+    items: EquipmentViewModel[];
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+
+    // TODO: can we just define these here and not in the interface ??
+    finishesCount: number;
+    newItemsCount: number;
+    discrepanciesCount: number;
+    deletedCount: number;
+}

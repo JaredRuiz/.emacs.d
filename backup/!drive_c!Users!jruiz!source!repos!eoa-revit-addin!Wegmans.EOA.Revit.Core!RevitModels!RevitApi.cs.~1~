@@ -1,0 +1,63 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Wegmans.EOA.Revit.Core.Contracts;
+
+namespace Wegmans.EOA.Revit.Core.RevitModels
+{
+    public class RevitApi : IRevitApi
+    {
+        private IRevitDocument _doc;
+
+        public RevitApi(IRevitDocument doc)
+        {
+            _doc = doc;
+        }
+
+        public bool IsRemodel() => _doc.IsRemodel();
+        public bool IsNewStore() => !_doc.IsRemodel();
+
+        public RevitDump GetProjectDump(EoaProject project)
+        {
+
+            var globalProjectInfo = _doc.GetGlobalProjectInfo();
+            var projectDump = new RevitDump
+            {
+                projectId = project.Id,
+                storeNumber = globalProjectInfo["storeNumber"],
+                pn = globalProjectInfo["projectNumber"],
+                equipmentList = GetEquipmentList()
+            };
+
+            return projectDump;
+        }
+
+        private List<EquipmentEntity> GetEquipmentList()
+        {
+            var equipmentList = _doc.GetEquipmentList();
+            var condensedEquipmentList = CondenseEquipmentList(equipmentList);
+
+            return condensedEquipmentList;
+        }
+        
+        private List<EquipmentEntity> CondenseEquipmentList(List<EquipmentEntity> equipmentList)
+        {
+            var finalEquipmentList = new List<EquipmentEntity>();
+
+            foreach (var equipment in equipmentList)
+            {
+                var matchingEquipment = finalEquipmentList.FirstOrDefault(eq => equipment.MatchesEquipment(eq));
+
+                if (matchingEquipment != null)
+                {
+                    matchingEquipment.CombineWithEquipment(equipment);
+                }
+                else
+                {
+                    finalEquipmentList.Add(equipment);
+                }
+            }
+
+            return finalEquipmentList;
+        }
+    }
+}

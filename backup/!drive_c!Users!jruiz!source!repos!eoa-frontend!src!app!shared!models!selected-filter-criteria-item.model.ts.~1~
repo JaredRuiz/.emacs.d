@@ -1,0 +1,7 @@
+import { BadgePillDataItemModel } from '@app/shared/models/badge-pill-data-item.model';
+export class SelectedFilterCriteriaItemModel implements BadgePillDataItemModel {
+    text: string;
+    type: string;
+    property: string;
+    value: string;
+}

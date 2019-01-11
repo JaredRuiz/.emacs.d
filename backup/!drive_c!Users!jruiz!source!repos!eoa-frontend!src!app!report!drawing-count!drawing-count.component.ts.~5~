@@ -1,0 +1,119 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FilterCriteriaItemModel } from '@app/shared/models/filter-criteria-item.model';
+import { ReportViewModel } from '@app/report/shared/view-models/report-viewmodel';
+import { ReportEquipmentViewModel } from '@app/report/shared/view-models/report-equipment-viewmodel';
+import { ReportService } from '@app/report/shared/report.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Events } from '@app/shared/events';
+import { EventBus } from '@app/shared/eventbus';
+import { ReportColumnHeaderViewModel } from '@app/report/shared/view-models/report-column-header-viewmodel';
+import { ReportProjectViewModel } from '@app/report/shared/view-models/report-project-viewmodel';
+import { SelectedFilterCriteriaItemModel } from '@app/shared/models/selected-filter-criteria-item.model';
+import { DrawingCountConfiguration } from './drawing-count-configuration';
+declare var $: any;
+
+@Component({
+  selector: 'app-drawing-count-report',
+  templateUrl: './drawing-count.component.html'
+})
+export class DrawingCountReportComponent implements OnInit, OnDestroy {
+
+  groupByCriteria: Array<any>;
+  selectedGroupByCriteria: any;
+
+  orderByCriteria: Array<any>;
+  selectedOrderByCriteria: any;
+
+  reportHeaders: Array<ReportColumnHeaderViewModel>;
+
+  reportFeed: ReportViewModel;
+
+  specialFilterCriteriaItems: FilterCriteriaItemModel[];
+  advancedFilterCriteriaItems: FilterCriteriaItemModel[];
+
+  originalEquipments: Array<ReportEquipmentViewModel>;
+
+  selectedProject: ReportProjectViewModel;
+
+  selectedAdvancedFilterCriteriaItems = new Array<SelectedFilterCriteriaItemModel>();
+
+  constructor(
+    private reportService: ReportService,
+    private bus: EventBus
+  ) {
+    this.advancedFilterCriteriaItems = <FilterCriteriaItemModel[]>DrawingCountConfiguration.advancedFilterSettings;
+  }
+
+  ngOnInit() {
+
+    this.reportHeaders = <ReportColumnHeaderViewModel[]>DrawingCountConfiguration.reportHeaderSettings;
+
+    this.groupByCriteria = [
+      { 'label': 'department', 'fn': (e: any) => e.departmentNumber + ' ' + e.departmentDescription }
+    ];
+
+    this.selectedGroupByCriteria = this.groupByCriteria[0];
+  }
+
+  ngOnDestroy() {
+    this.selectedAdvancedFilterCriteriaItems = this.reportFeed = this.originalEquipments = this.selectedProject = null;
+  }
+
+  onSelectedProjectChangeTriggered(selectedProject) {
+    this.selectedProject = selectedProject;
+    this.loadEquipments();
+  }
+
+  onSelectedSpecialFiltersChangeTriggered(eventData: any) {
+    if (!eventData.selectedSpecialFilterItems
+      || !Array.isArray(eventData.selectedSpecialFilterItems)
+      || eventData.selectedSpecialFilterItems.length === 0) {
+      return;
+    }
+
+    this.selectedAdvancedFilterCriteriaItems = []; // reset advanced filters to render report with special filters only
+    let filteredEquipments = $.extend(true, [], this.originalEquipments);
+    for (const criteria of eventData.selectedSpecialFilterItems.filter(x => x.text !== 'ALL')) {
+      filteredEquipments = filteredEquipments.filter(item => {
+        if (item[criteria.property] === criteria.text) {
+          return true;
+        }
+        return false;
+      });
+    }
+    this.reportFeed = <ReportViewModel>{
+      reportHeaders: this.reportHeaders,
+      projects: [this.selectedProject],
+      reportData: filteredEquipments
+    };
+  }
+
+  onSelectedAdvancedFiltersChangeTriggered(selectedAdvancedFilterItems: SelectedFilterCriteriaItemModel[]) {
+    this.selectedAdvancedFilterCriteriaItems = selectedAdvancedFilterItems;
+
+      console.log('in advanced function');
+      console.log(this.reportFeed.reportData);
+
+  }
+
+  private loadEquipments() {
+    this.reportService.getDrawingCount(this.selectedProject.id)
+      .subscribe(equipments => {
+        this.originalEquipments = $.extend(true, [], equipments);
+        this.reportFeed = {
+          reportHeaders: this.reportHeaders,
+          projects: [this.selectedProject],
+          reportData: equipments
+        };
+      },
+        (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.status === 404) {
+            this.bus.publish(Events.WARNING_NOTIFICATION,
+              'Unable to find a project with ' +
+              'the requested id. Try refreshing page for an updated list of projects.');
+          } else {
+            this.bus.publish(Events.WARNING_NOTIFICATION, errorResponse.message);
+          }
+        });
+  }
+}

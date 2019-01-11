@@ -1,0 +1,14 @@
+import { PurchaseHistory } from '@app/order/shared/contracts/purchase-history';
+
+export class PurchaseHistoryViewModel  implements PurchaseHistory {
+  currentTotalQuantity: string;
+  newTotalQuantity: string;
+  historyCreatedDate: string;
+  revisionBulletinNo: string;
+  deliveryDate: string;
+  purchaseOrderNo: string;
+  purchaseOrderCreationDate: string;
+  comments: string;
+  commentsExpanded: boolean = false;
+  beingEdited: boolean = false;
+}

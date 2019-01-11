@@ -1,0 +1,85 @@
+<div class="Scroll-Content">
+
+  <div class="Group-List-Container">
+
+    <div class="Row">
+      <span class="Search-Icon"></span>
+      <input (keyup)="onSearch()" class="Department-Search-Input" type="text" autocomplete="off" placeholder="Search Departments"
+             [(ngModel)]="searchTerm" #searchDeptInput>
+      <button class="Create-Department-Button" type="submit" (click)="onCreateNewDepartment()">+ CREATE A NEW
+        DEPARTMENT</button>
+    </div>
+
+    <div class="Border">
+    </div>
+
+    <div class="Group-Card-Container">
+      <div class="Group-Card" *ngFor="let  department of departments; trackBy: trackDepartment">
+        <div class="Row">
+          <div class="Group-Header-Wrapper">
+            <span class="Group-Header-Text">
+              {{ department.number }} {{ department.description }}
+            </span>
+          </div>
+          <div class="Card-Buttons-Wrapper">
+            <button class="Edit-Construction-Button" type="submit" (click)="onEditDepartment(department)">
+              <span class="Edit-Icon"></span>
+              <span>EDIT DEPT</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal-dialog [modelId]="'createDepartmentModal'" [width]="'900px'" #createDepartmentModal>
+
+  <div modal-section="header">
+    <span *ngIf="!selectedDepartment.id">Create New Department</span>
+    <span *ngIf="selectedDepartment.id">Editing Department</span>
+  </div>
+
+  <div modal-section="body">
+    <form #createDeptForm="ngForm" autocomplete="off" novalidate>
+      <div class="Create-Department-Body-Wrapper">
+        <div class="Form-Control-Group">
+          <label for="deptNumberInput">Department Number</label>
+          <input id="deptNumberInput" name="deptNumberInput" type="text" autocomplete="off" class="Department-Number-Input"
+                 [(ngModel)]="selectedDepartment.number" placeholder="ex: 001" required #deptNumber="ngModel">
+          <span *ngIf="deptNumber.invalid && (deptNumber.dirty || deptNumber.touched) && deptNumber.errors?.required"
+                class="Invalid-Message-Container">
+            Department Number is required.
+          </span>
+          <span *ngIf="deptNumber.errors?.duplicate" class="Invalid-Message-Container">
+            Department Number already exists.
+          </span>
+        </div>
+
+        <div class="Form-Control-Group">
+          <label for="deptNameInput">Department Name</label>
+          <input id="deptNameInput" name="deptNameInput" type="text" autocomplete="off" class="Department-Name-Input"
+                 [(ngModel)]="selectedDepartment.description" placeholder="ex: Deli" required #deptName="ngModel">
+          <span *ngIf="deptName.invalid && (deptName.dirty || deptName.touched) && deptName.errors?.required" class="Invalid-Message-Container">
+            Department Name is required.
+          </span>
+          <span *ngIf="deptName.errors?.duplicate" class="Invalid-Message-Container">
+            Department Name already exists.
+          </span>
+        </div>
+      </div>
+
+      <div class="Create-Department-Button-Wrapper">
+        <button class="Secondary-Default-Button" id="cancelCreateDepartmentBtn" type="button" (click)="createDepartmentModal.hide()">
+          <span class="ButtonText">Cancel</span>
+        </button>
+        <button [disabled]="createDeptForm.invalid" class="Create-Department-Button" id="createDepartmentBtn" type="submit"
+                (click)="onCreateDepartmentConfirmed()">
+          <span *ngIf="!selectedDepartment.id">CREATE DEPARTMENT</span>
+          <span *ngIf="selectedDepartment.id">UPDATE DEPARTMENT</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</app-modal-dialog>

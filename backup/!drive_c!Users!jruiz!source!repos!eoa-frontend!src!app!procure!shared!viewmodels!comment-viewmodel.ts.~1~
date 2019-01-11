@@ -1,0 +1,14 @@
+import { Comment } from '@app/procure/shared/contracts/comment';
+
+export class CommentViewModel implements Comment {
+    id: string;
+    type: string;
+    comment: string;
+    createdOn: string;
+    createdBy: string;
+
+    selected: boolean;
+    disabled: boolean;
+    expanded: boolean;
+    beingEdited: boolean;
+}

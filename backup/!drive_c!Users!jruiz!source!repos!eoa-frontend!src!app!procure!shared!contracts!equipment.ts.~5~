@@ -1,0 +1,34 @@
+import { PurchaseOrder } from '@app/procure/shared/contracts/purchase-order';
+import { Finish } from '@app/procure/shared/contracts/finish';
+
+export interface Equipment {
+
+    id: string;
+    equipmentCode: string;
+    storeNumber: string;
+    partSecondaryCommodityCode: string;
+    partSecondaryCommodityDescription: string;
+    previousTotalQuantity: number;
+    currentTotalQuantity: number;
+    floorQuantity: Array<
+    {
+        floor: string;
+        quantity: number;
+    }>;
+    departmentDescription: string;
+    departmentNumber: string;
+    partNumber: string;
+    manufacturer: string;
+    manufacturerDescription: string;
+    vendor: string;
+    deliveryDate: string;
+    requestedBy: string;
+    projectId: string;
+    procurementMethod: string;
+    purchaseOrder: PurchaseOrder;
+    quantityChangeECVerified: boolean;
+    quantityChangeIPVerified: boolean;
+    finishesSpecificationRequired: boolean;
+    finishes: Array<Finish>;
+    finishesMissing: boolean;
+}

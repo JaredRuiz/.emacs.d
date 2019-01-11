@@ -1,0 +1,27 @@
+import { Department } from '@app/order/shared/contracts/department';
+import { Equipment } from '@app/order/shared/contracts/equipment';
+import { PurchaseOrder } from '@app/order/shared/contracts/purchase-order';
+
+export interface Project {
+    id: string;
+    projectName: string;
+    isActive: boolean;
+    isDeleted: boolean;
+    projectRequestNumber: string;
+    storeName: string;
+    storeNumber: string;
+    openDate: string;
+    turnoverDate: string;
+    arNumber: string;
+    constructionJobNumber: string;
+    projectNotes: string;
+    projectType: string;
+    projectSubType: string;
+    description: string;
+    maintenanceWorkOrderNumber: string;
+    departments: Array<Department>;
+    equipments: Array<Equipment>;
+    purchaseOrders: PurchaseOrder;
+    isRemodel: boolean;
+    deliveryScheduleAssigned: boolean;
+}

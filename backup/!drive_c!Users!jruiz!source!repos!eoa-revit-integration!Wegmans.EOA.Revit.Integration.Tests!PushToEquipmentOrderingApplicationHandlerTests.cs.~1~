@@ -1,0 +1,531 @@
+﻿using AutoMapper;
+using FakeItEasy;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wegmans.EOA.Common.Contracts.Entities;
+using Wegmans.EOA.Common.Contracts.Services;
+using Wegmans.EOA.Revit.Integration.Process.Models;
+using Wegmans.EOA.Revit.Integration.Process.Processors;
+using Wegmans.EOA.Revit.Integration.Process;
+
+namespace Wegmans.EOA.Revit.Integration.Tests
+{
+    [TestClass]
+    public class PushToEquipmentOrderingApplicationHandlerTests
+    {
+        private IAddEquipmentItemProcessor _addProcessor;
+        private IUpdateEquipmentItemProcessor _updateProcessor;
+        private IDeleteEquipmentItemProcessor _deleteProcessor;
+        private IMapper _mapper;
+        private EquipmentDto _revitEquipmentListItem1;
+        private EquipmentDto _revitEquipmentListItem2;
+        private EquipmentDto _revitEquipmentListItem3;
+        private EquipmentDto _newRevitEquipmentListItem;
+        private ProjectEquipmentListDto _revitProjectEquipmentList;
+        private EquipmentItemEntity _mappedEquipmentItem; // _mappedequipmentItem4 ??
+        private EquipmentItemEntity _mappedEquipmentItem2;
+        private EquipmentItemEntity _splitMappedEquipmentItem1;
+        private EquipmentItemEntity _splitMappedEquipmentItem2;
+        private PurchaseOrder _purchaseOrder;
+        private ProjectEntity _project;
+        private DepartmentEntity _department;
+        private IPushEquipmentUpdatesHandler _pushEquipmentUpdatesHandler;
+        private IStorageService<ProjectEntity> _projectRepository;
+        private IStorageService<DepartmentEntity> _departmentRepository;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _mapper = A.Fake<IMapper>();
+            _revitEquipmentListItem1 = new EquipmentDto
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                FloorNumber = "1",
+                Quantity = 2,
+                FinishesSpecificationRequired = true
+            };
+
+            _revitEquipmentListItem2 = new EquipmentDto
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                FloorNumber = "2",
+                Quantity = 2,
+                FinishesSpecificationRequired = true
+            };
+
+            _revitEquipmentListItem3 = new EquipmentDto
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                FloorNumber = "3",
+                Quantity = 2,
+                FinishesSpecificationRequired = false
+            };
+
+            _newRevitEquipmentListItem = new EquipmentDto
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "500",
+                FloorNumber = "1",
+                Quantity = 2,
+                FinishesSpecificationRequired = false
+            };
+
+            _revitProjectEquipmentList = new ProjectEquipmentListDto
+            {
+                ProjectId = "324324",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1, _revitEquipmentListItem2, _revitEquipmentListItem3 }
+            };
+
+            _mappedEquipmentItem = new EquipmentItemEntity
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                CurrentTotalQuantity = 10,
+                PreviousTotalQuantity = 0,
+                RevisionBulletinNo = "abc123-r",
+                FloorQuantity = new List<FloorQuantity> { new FloorQuantity { Floor = "4", Quantity = 10 } }
+            };
+
+            _splitMappedEquipmentItem1 = new EquipmentItemEntity
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                CurrentTotalQuantity = 4,
+                PreviousTotalQuantity = 0,
+                RevisionBulletinNo = "1-r",
+                FloorQuantity = new List<FloorQuantity> { new FloorQuantity { Floor = "1", Quantity = 10 } }
+            };
+
+            _splitMappedEquipmentItem2 = new EquipmentItemEntity
+            {
+                DepartmentNumber = "1",
+                EquipmentCode = "1",
+                CurrentTotalQuantity = 6,
+                PreviousTotalQuantity = 0,
+                RevisionBulletinNo = "2-r",
+                FloorQuantity = new List<FloorQuantity> { new FloorQuantity { Floor = "1", Quantity = 10 } }
+            };
+
+            _purchaseOrder = new PurchaseOrder
+            {
+                Number = "abc123",
+                DeliveryDate = null,
+                CreationDate = null
+            };
+
+            _addProcessor = A.Fake<AddEquipmentItemProcessor>(x => x.WithArgumentsForConstructor(new object[] { _mapper }));
+            _updateProcessor = A.Fake<UpdateEquipmentItemProcessor>(x => x.WithArgumentsForConstructor(new object[] { _mapper }));
+            _deleteProcessor = A.Fake<DeleteEquipmentItemProcessor>(x => x.WithArgumentsForConstructor(new object[] { _mapper }));
+
+            _project = new ProjectEntity { Equipments = new List<EquipmentItemEntity>() };
+            _projectRepository = A.Fake<IStorageService<ProjectEntity>>();
+            A.CallTo(() => _projectRepository.Get(A<string>.Ignored)).Returns(_project);
+
+            _department = new DepartmentEntity { };
+            _departmentRepository = A.Fake<IStorageService<DepartmentEntity>>();
+            A.CallTo(() => _departmentRepository.Get(A<string>.Ignored)).Returns(_department);
+
+            _pushEquipmentUpdatesHandler = A.Fake<PushEquipmentUpdatesHandler>(x =>  x.WithArgumentsForConstructor(new object[] { _projectRepository, _departmentRepository, _addProcessor, _updateProcessor, _deleteProcessor }));
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Be_Added_When_None_Matches_In_Existing_List()
+        {
+            var addedEquipmentItem = _addProcessor.Invoke(_revitProjectEquipmentList.EquipmentList, false);
+            Assert.IsTrue(addedEquipmentItem.InitialTotalQuantity > 0);
+            Assert.IsTrue(addedEquipmentItem.InitialTotalQuantity == 6);
+            Assert.IsTrue(addedEquipmentItem.CurrentTotalQuantity == 6);
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Be_Updated_Total_Quantity_When_Equipment_Item_Already_Existing_With_Non_EAM_Staus()
+        {
+            _revitProjectEquipmentList.EquipmentList[0].Quantity = 4;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)).Returns(_mappedEquipmentItem);
+            _updateProcessor.Invoke(_revitProjectEquipmentList.EquipmentList, _mappedEquipmentItem);
+            Assert.IsTrue(_mappedEquipmentItem.CurrentTotalQuantity == 8);
+        }
+
+        [TestMethod] // TODO: UpdateEquipmentItemProcessor_Updates_Quantities_For_Released_Items
+        public void Equipment_Item_Should_Be_Updated_New_Total_Quantity_When_Equipment_Item_Already_Existing_With_Released_Status()
+        {
+            _revitProjectEquipmentList.EquipmentList[0].Quantity = 4;
+            _mappedEquipmentItem.CurrentTotalQuantity = 6;
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Released;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            var originalTotalQuantity = _mappedEquipmentItem.CurrentTotalQuantity;
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)).Returns(_mappedEquipmentItem);
+            _updateProcessor.Invoke(_revitProjectEquipmentList.EquipmentList, _mappedEquipmentItem);
+            Assert.IsTrue(_mappedEquipmentItem.CurrentTotalQuantity == 6);
+            Assert.IsTrue(_mappedEquipmentItem.NewTotalQuantity == 8);
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Be_Updated_New_Total_Quantity_When_Equipment_Item_Already_Existing_With_Ordered_Staus()
+        {
+            _revitProjectEquipmentList.EquipmentList[0].Quantity = 4;
+            _mappedEquipmentItem.CurrentTotalQuantity = 6;
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Ordered;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            var originalTotalQuantity = _mappedEquipmentItem.CurrentTotalQuantity;
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)).Returns(_mappedEquipmentItem);
+            _updateProcessor.Invoke(_revitProjectEquipmentList.EquipmentList, _mappedEquipmentItem);
+            Assert.IsTrue(_mappedEquipmentItem.CurrentTotalQuantity == 6);
+            Assert.IsTrue(_mappedEquipmentItem.NewTotalQuantity == 8);
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Be_Removed_When_Equipment_Status_Is_Counted()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Counted;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            _revitProjectEquipmentList.EquipmentList = new List<EquipmentDto>();
+
+            _pushEquipmentUpdatesHandler.Execute(_revitProjectEquipmentList);
+            Assert.IsTrue(_project.Equipments.Count == 0);
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Be_Marked_Deleted_When_Equipment_Item_Already_Existing_With_Non_EAM_Staus()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Added;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            _revitProjectEquipmentList.EquipmentList = new List<EquipmentDto>();
+
+            _pushEquipmentUpdatesHandler.Execute(_revitProjectEquipmentList);
+            Assert.IsTrue(_project.Equipments.Count == 1);
+            Assert.IsTrue(_mappedEquipmentItem.IsDeleted);
+            Assert.IsFalse(_mappedEquipmentItem.RemoveFromDatabase);
+        }
+
+        [TestMethod]
+        public void DeleteEquipmentItemProcessor_Marks_An_Unreleased_Item_As_Deleted()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Counted;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            _revitProjectEquipmentList.EquipmentList = new List<EquipmentDto>();
+            _deleteProcessor.Invoke(_mappedEquipmentItem);
+<<<<<<< HEAD
+            Assert.IsTrue(_mappedEquipmentItem.CurrentTotalQuantity == 0);
+            Assert.IsTrue(_mappedEquipmentItem.NewTotalQuantity == 0);
+            Assert.IsTrue(_mappedEquipmentItem.IsDeleted);
+            Assert.IsTrue(_mappedEquipmentItem.PurchaseHistory.Count == 0);
+=======
+
+            _pushEquipmentUpdatesHandler.Execute(_revitProjectEquipmentList);
+            Assert.IsTrue(_project.Equipments.Count == 1);
+            Assert.IsFalse(_mappedEquipmentItem.IsDeleted);
+            Assert.IsFalse(_mappedEquipmentItem.RemoveFromDatabase);
+>>>>>>> develop
+        }
+
+        [TestMethod]
+        public void DeleteEquipmentItemProcessor_Marks_A_Released_Item_As_Not_Deleted_But_Decrements_Quantity()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Ordered;
+            _mappedEquipmentItem.PurchaseOrder = _purchaseOrder;
+            _project.Equipments.Add(_mappedEquipmentItem);
+            _revitProjectEquipmentList.EquipmentList = new List<EquipmentDto>();
+            _deleteProcessor.Invoke(_mappedEquipmentItem);
+            Assert.IsTrue(_mappedEquipmentItem.CurrentTotalQuantity == 10);
+            Assert.IsTrue(_mappedEquipmentItem.NewTotalQuantity == 0);
+            Assert.IsFalse(_mappedEquipmentItem.IsDeleted);
+            Assert.IsTrue(_mappedEquipmentItem.PurchaseHistory.Count == 1);
+
+            var purchaseHistory = _mappedEquipmentItem.PurchaseHistory[0];
+            Assert.IsTrue(purchaseHistory.CurrentTotalQuantity == 10);
+            Assert.IsTrue(purchaseHistory.NewTotalQuantity == 0);
+            Assert.IsTrue(purchaseHistory.DeliveryDate == default(DateTime));
+            Assert.IsTrue(purchaseHistory.PurchaseOrderCreationDate == default(DateTime));
+            Assert.IsTrue(purchaseHistory.PurchaseOrderNo == "abc123");
+            Assert.IsTrue(purchaseHistory.RevisionBulletinNo == "abc123-r");
+        }
+
+        [TestMethod]
+        public void Equipment_Item_Should_Update_Add_Marked_Delete_Appropriately_When_Handle_Method_Invoked()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Ordered;
+            _project.Equipments.Add(_mappedEquipmentItem); // Should add new total quantity
+
+            var equipmentItemInEOA = new EquipmentItemEntity { DepartmentNumber = "1", EquipmentCode = "2" };
+            _project.Equipments.Add(equipmentItemInEOA); // Should be marked deleted
+
+            _revitProjectEquipmentList.EquipmentList.AddRange(
+                new List<EquipmentDto> {
+                    new EquipmentDto { DepartmentNumber = "1", EquipmentCode = "3", FloorNumber = "", Quantity = 5 },
+                    new EquipmentDto { DepartmentNumber = "1", EquipmentCode = "3", FloorNumber = "1", Quantity = 5 }
+                }); // Should add new equipment item
+
+            Assert.IsTrue(_mappedEquipmentItem.FloorQuantity.Any(x => x.Floor == "4")); // Floor 4 should exist before update
+
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)).Returns(_mappedEquipmentItem);
+            _pushEquipmentUpdatesHandler.Execute(_revitProjectEquipmentList);
+
+            Assert.IsTrue(_project.Equipments.Count() == 3);
+            Assert.IsTrue(!_mappedEquipmentItem.FloorQuantity.Any(x => x.Floor == "4")); // Floor 4 should be removed after update
+            Assert.IsTrue(_project.Equipments[0].NewTotalQuantity == 6);
+            Assert.IsTrue(_project.Equipments[1].IsDeleted);
+            Assert.IsTrue(_project.Equipments[2].CurrentTotalQuantity == 10 && _project.Equipments[2].OrderingStatus == OrderingStatus.Added);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Updates_Count_Of_Floor_Number_Of_Unreleased_Items()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Counted;
+            _mappedEquipmentItem.FloorQuantity.FirstOrDefault().Floor = "1";
+            _project.Equipments.Add(_mappedEquipmentItem);
+
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(
+                A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)
+            ).Returns(_mappedEquipmentItem);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1 }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 1);
+            var equipmentItem = _project.Equipments[0];
+
+            Assert.IsTrue(equipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 2);
+            Assert.IsTrue(equipmentItem.CurrentTotalQuantity == 2);
+            Assert.IsTrue(equipmentItem.PreviousTotalQuantity == 10);
+            Assert.IsTrue(equipmentItem.NewTotalQuantity == null);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Removes_And_Adds_Floors_Of_Unreleased_Items_Not_In_Revit()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Counted;
+            _project.Equipments.Add(_mappedEquipmentItem);
+
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(
+                A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)
+            ).Returns(_mappedEquipmentItem);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1 }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 1);
+            var equipmentItem = _project.Equipments[0];
+
+            Assert.IsTrue(equipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 2);
+            Assert.IsTrue(equipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "4") == null);
+            Assert.IsTrue(equipmentItem.CurrentTotalQuantity == 2);
+            Assert.IsTrue(equipmentItem.PreviousTotalQuantity == 10);
+            Assert.IsTrue(equipmentItem.NewTotalQuantity == null);
+            Assert.IsTrue(equipmentItem.PurchaseHistory.Count == 0);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Adds_Purchase_History_Object_For_Requested_Items_Whose_Quantity_Has_Changed()
+        {
+            _mappedEquipmentItem.OrderingStatus = OrderingStatus.Requested;
+            _mappedEquipmentItem.PurchaseOrder = _purchaseOrder;
+            _project.Equipments.Add(_mappedEquipmentItem);
+
+            A.CallTo(() => _mapper.Map<EquipmentDto, EquipmentItemEntity>(
+                A<EquipmentDto>.Ignored, A<EquipmentItemEntity>.Ignored)
+            ).Returns(_mappedEquipmentItem);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1 }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 1);
+            var equipmentItem = _project.Equipments[0];
+
+            Assert.IsTrue(equipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 2);
+            Assert.IsTrue(equipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "4") == null);
+            Assert.IsTrue(equipmentItem.CurrentTotalQuantity == 10);
+            Assert.IsTrue(equipmentItem.PreviousTotalQuantity == 10);
+            Assert.IsTrue(equipmentItem.NewTotalQuantity == 2);
+            Assert.IsTrue(equipmentItem.PurchaseHistory.Count == 1);
+
+            var purchaseHistory = equipmentItem.PurchaseHistory[0];
+            Assert.IsTrue(purchaseHistory.CurrentTotalQuantity == 10);
+            Assert.IsTrue(purchaseHistory.NewTotalQuantity == 2);
+            Assert.IsTrue(purchaseHistory.DeliveryDate == default(DateTime));
+            Assert.IsTrue(purchaseHistory.PurchaseOrderCreationDate == default(DateTime));
+            Assert.IsTrue(purchaseHistory.PurchaseOrderNo == "abc123");
+            Assert.IsTrue(purchaseHistory.RevisionBulletinNo == "abc123-r");
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Adds_New_Revit_Item_Not_In_DB_As_Entity()
+        {
+            _project.Equipments.Add(_mappedEquipmentItem); // add one item to DB
+
+            A.CallTo(() => _mapper.Map<EquipmentItemEntity>(A<EquipmentDto>.Ignored))
+                .Returns(_mappedEquipmentItem = new EquipmentItemEntity
+                {
+                    DepartmentNumber = "1",
+                    EquipmentCode = "500",
+                    FloorQuantity = new List<FloorQuantity>()
+                });
+
+            // add new piece of equipment to Revit which did not exist before
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1, _newRevitEquipmentListItem }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 2);
+            var originalEquipmentItem = _project.Equipments.Single(x => x.EquipmentCode == "1");
+            Assert.IsTrue(originalEquipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "4").Quantity == 10);
+            Assert.IsTrue(originalEquipmentItem.CurrentTotalQuantity == 10);
+
+            var newEquipmentItem = _project.Equipments.Single(x => x.EquipmentCode == "500");
+            Assert.IsTrue(newEquipmentItem.FloorQuantity.Count == 1);
+            Assert.IsTrue(newEquipmentItem.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 2);
+            Assert.IsTrue(newEquipmentItem.InitialTotalQuantity == 2);
+            Assert.IsTrue(newEquipmentItem.PreviousTotalQuantity == 2);
+            Assert.IsTrue(newEquipmentItem.CurrentTotalQuantity == 2);
+            Assert.IsTrue(newEquipmentItem.OrderingStatus == OrderingStatus.Added);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Updates_Count_Of_Floor_Number_Of_Split_Items_When_Increased()
+        {
+            // add some split items to EOA
+            _project.Equipments.Add(_splitMappedEquipmentItem1);
+            _project.Equipments.Add(_splitMappedEquipmentItem2);
+
+            // increase the corresponding item count in Revit
+            _revitEquipmentListItem1.Quantity = 12;
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem1)
+            ).Returns(_splitMappedEquipmentItem1);
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem2)
+            ).Returns(_splitMappedEquipmentItem2);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1 }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 3);
+
+            var firstSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == 4);
+            Assert.IsTrue(firstSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 12);
+            Assert.IsTrue(firstSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(firstSplitEquipment.PurchaseHistory.Count == 0);
+
+
+            var secondSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == 6);
+            Assert.IsTrue(secondSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 12);
+            Assert.IsTrue(secondSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(secondSplitEquipment.PurchaseHistory.Count == 0);
+
+            var newSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == 2);
+            Assert.IsTrue(newSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 12);
+            Assert.IsTrue(newSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(newSplitEquipment.PurchaseHistory.Count == 0);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Updates_Count_Of_Floor_Number_Of_Split_Items_When_Decreased()
+        {
+            // add some split items to EOA
+            _project.Equipments.Add(_splitMappedEquipmentItem1);
+            _project.Equipments.Add(_splitMappedEquipmentItem2);
+
+            // decrease the corresponding item count in Revit
+            _revitEquipmentListItem1.Quantity = 8;
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem1)
+            ).Returns(_splitMappedEquipmentItem1);
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem2)
+            ).Returns(_splitMappedEquipmentItem2);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> { _revitEquipmentListItem1 }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 3);
+
+            var firstSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == 4);
+            Assert.IsTrue(firstSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 8);
+            Assert.IsTrue(firstSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(firstSplitEquipment.PurchaseHistory.Count == 0);
+
+
+            var secondSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == 6);
+            Assert.IsTrue(secondSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 8);
+            Assert.IsTrue(secondSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(secondSplitEquipment.PurchaseHistory.Count == 0);
+
+            var newSplitEquipment = _project.Equipments.Single(x => x.CurrentTotalQuantity == -2);
+            Assert.IsTrue(newSplitEquipment.FloorQuantity.FirstOrDefault(x => x.Floor == "1").Quantity == 8);
+            Assert.IsTrue(newSplitEquipment.FloorQuantity.Count == 1);
+            Assert.IsTrue(newSplitEquipment.PurchaseHistory.Count == 0);
+        }
+
+        [TestMethod]
+        public void PushEquipmentUpdatesHandler_Deletes_All_DB_Items_If_No_Corrsponding_Revit_Items()
+        {
+            // add some split items to EOA
+            _project.Equipments.Add(_splitMappedEquipmentItem1);
+            _project.Equipments.Add(_splitMappedEquipmentItem2);
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem1)
+            ).Returns(_splitMappedEquipmentItem1);
+
+            A.CallTo(() =>
+                _mapper.Map<EquipmentDto, EquipmentItemEntity>(_revitEquipmentListItem1, _splitMappedEquipmentItem2)
+            ).Returns(_splitMappedEquipmentItem2);
+
+            _pushEquipmentUpdatesHandler.Execute(new ProjectEquipmentListDto
+            {
+                ProjectId = "123",
+                EquipmentList = new List<EquipmentDto> {
+                    new EquipmentDto
+                    {
+                        EquipmentCode = "100",
+                        DepartmentNumber = "1",
+                        Quantity = 1,
+                        FloorNumber = "1"
+                    }
+                }
+            });
+
+            Assert.IsTrue(_project.Equipments.Count() == 3);
+
+            var firstSplitItem = _project.Equipments.Single(x => x.RevisionBulletinNo == "1-r");
+            Assert.IsTrue(firstSplitItem.IsDeleted);
+
+            var secondSplitItem = _project.Equipments.Single(x => x.RevisionBulletinNo == "2-r");
+            Assert.IsTrue(firstSplitItem.IsDeleted);
+
+            var nonDeletedItem = _project.Equipments.Single(x => x.IsDeleted == false);
+            Assert.IsTrue(nonDeletedItem.CurrentTotalQuantity == 1);
+            // did not add any new items from deletion batch
+            Assert.IsTrue(nonDeletedItem.EquipmentCode != "1");
+        }
+    }
+}
